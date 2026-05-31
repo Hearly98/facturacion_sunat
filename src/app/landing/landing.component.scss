@@ -1,0 +1,591 @@
+// Import variables from CoreUI or define locally
+$primary: #1d65a8;
+$primary-dark: #265182;
+$secondary: #6b7785;
+$success: #229741;
+$warning: #f9b115;
+$danger: #e55353;
+
+$gray-100: #f6f7f8;
+$gray-200: #e5e9ec;
+$gray-300: #d4dce0;
+$gray-500: #8a96a0;
+$gray-700: #4b5662;
+$gray-800: #343332;
+$gray-900: #1a1a1a;
+
+$white: #ffffff;
+$black: #000000;
+$light: $gray-100;
+$dark: $gray-800;
+
+$font-family-base: 'Roboto', 'Helvetica Neue', sans-serif;
+
+// Spacing
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 3rem;
+
+// Typography
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-base: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.25rem;
+$font-size-2xl: 1.5rem;
+$font-size-3xl: 1.875rem;
+$font-size-4xl: 2.25rem;
+$font-size-5xl: 3rem;
+$font-size-6xl: 3.75rem;
+
+$line-height-base: 1.5rem;
+$line-height-lg: 1.75rem;
+$line-height-2xl: 2rem;
+
+// Transitions
+$transition-base: all 0.3s ease;
+
+// Breakpoints
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+// ============================================================
+// HERO SECTION
+// ============================================================
+.hero-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl * 2;
+  align-items: center;
+  padding: $spacing-xl * 3 $spacing-xl * 2;
+  background: linear-gradient(135deg, #{$primary} 0%, #{$primary-dark} 100%);
+  color: $white;
+  min-height: 600px;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: $spacing-xl * 2 $spacing-xl;
+  }
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.hero-title {
+  font-size: $font-size-5xl;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-4xl;
+  }
+}
+
+.hero-subtitle {
+  font-size: $font-size-xl;
+  font-weight: 400;
+  line-height: $line-height-lg;
+  margin: 0;
+  opacity: 0.95;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+.hero-cta {
+  align-self: flex-start;
+  font-weight: 600;
+  transition: $transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.hero-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: $breakpoint-lg) {
+    max-height: 400px;
+  }
+}
+
+.placeholder-image {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 4 / 3;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// ============================================================
+// FEATURES SECTION
+// ============================================================
+.features-section {
+  padding: $spacing-xl * 3 $spacing-xl * 2;
+  background: $white;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: $spacing-xl * 2;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title {
+  font-size: $font-size-4xl;
+  font-weight: 700;
+  color: $gray-900;
+  margin: 0 0 $spacing-md 0;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+.section-description {
+  font-size: $font-size-lg;
+  color: $secondary;
+  margin: 0;
+  line-height: $line-height-lg;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-xl * 2;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-xl;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-card {
+  padding: $spacing-xl * 1.5;
+  background: $white;
+  border: 1px solid $gray-200;
+  border-radius: 12px;
+  transition: $transition-base;
+  text-align: center;
+
+  &:hover {
+    border-color: $primary;
+    box-shadow: 0 8px 24px rgba(29, 101, 168, 0.1);
+    transform: translateY(-4px);
+  }
+}
+
+.feature-icon {
+  margin-bottom: $spacing-lg;
+  display: flex;
+  justify-content: center;
+
+  svg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.feature-title {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  color: $gray-900;
+  margin: 0 0 $spacing-md 0;
+}
+
+.feature-description {
+  font-size: $font-size-base;
+  color: $secondary;
+  margin: 0;
+  line-height: $line-height-base;
+}
+
+// ============================================================
+// INTEGRATIONS SECTION
+// ============================================================
+.integrations-section {
+  padding: $spacing-xl * 3 $spacing-xl * 2;
+  background: $gray-100;
+}
+
+.integrations-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-xl * 2;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-xl;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.integration-item {
+  padding: $spacing-xl * 1.5;
+  background: $white;
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid $gray-200;
+  transition: $transition-base;
+
+  &:hover {
+    box-shadow: 0 8px 24px rgba(29, 101, 168, 0.1);
+    transform: translateY(-4px);
+  }
+}
+
+.integration-icon {
+  margin-bottom: $spacing-lg;
+  display: flex;
+  justify-content: center;
+
+  svg {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+.integration-title {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  color: $gray-900;
+  margin: 0 0 $spacing-md 0;
+}
+
+.integration-description {
+  font-size: $font-size-base;
+  color: $secondary;
+  margin: 0;
+  line-height: $line-height-base;
+}
+
+// ============================================================
+// FAQ SECTION
+// ============================================================
+.faq-section {
+  padding: $spacing-xl * 3 $spacing-xl * 2;
+  background: $white;
+}
+
+.faq-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-xl * 2;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+  }
+}
+
+.faq-item {
+  padding: $spacing-xl;
+  background: $gray-100;
+  border-radius: 12px;
+  border-left: 4px solid $primary;
+}
+
+.faq-title {
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: $gray-900;
+  margin: 0 0 $spacing-md 0;
+}
+
+.faq-answer {
+  font-size: $font-size-base;
+  color: $secondary;
+  margin: 0;
+  line-height: $line-height-lg;
+}
+
+// ============================================================
+// DEMO SECTION
+// ============================================================
+.demo-section {
+  padding: $spacing-xl * 3 $spacing-xl * 2;
+  background: linear-gradient(135deg, #{$primary} 0%, #{$primary-dark} 100%);
+  color: $white;
+}
+
+.demo-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.demo-content {
+  text-align: center;
+}
+
+.demo-title {
+  font-size: $font-size-4xl;
+  font-weight: 700;
+  margin: 0 0 $spacing-md 0;
+
+  @media (max-width: $breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+.demo-subtitle {
+  font-size: $font-size-lg;
+  opacity: 0.95;
+  margin: 0 0 $spacing-xl * 2 0;
+  line-height: $line-height-lg;
+}
+
+.demo-form {
+  background: rgba($white, 0.95);
+  padding: $spacing-xl * 2;
+  border-radius: 12px;
+  color: $gray-900;
+}
+
+.success-alert {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: rgba($success, 0.1);
+  border-left: 4px solid $success;
+  border-radius: 8px;
+  color: $success;
+  margin-bottom: $spacing-lg;
+  font-weight: 500;
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  text-align: left;
+}
+
+.form-label {
+  font-size: $font-size-sm;
+  font-weight: 600;
+  color: $gray-900;
+  margin: 0;
+}
+
+.form-control {
+  padding: $spacing-md $spacing-lg;
+  border: 1px solid $gray-300;
+  border-radius: 6px;
+  font-size: $font-size-base;
+  font-family: $font-family-base;
+  transition: $transition-base;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+
+  &.is-invalid {
+    border-color: $danger;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($danger, 0.1);
+    }
+  }
+}
+
+.invalid-feedback {
+  font-size: $font-size-xs;
+  color: $danger;
+  font-weight: 500;
+}
+
+.btn-submit {
+  width: 100%;
+  font-weight: 600;
+  padding: $spacing-lg $spacing-xl * 2;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: $transition-base;
+  font-size: $font-size-lg;
+
+  @media (max-width: $breakpoint-md) {
+    padding: $spacing-lg $spacing-lg;
+  }
+}
+
+.form-note {
+  font-size: $font-size-sm;
+  color: $secondary;
+  margin: $spacing-lg 0 0 0;
+}
+
+// ============================================================
+// FOOTER
+// ============================================================
+.footer {
+  padding: $spacing-xl * 2 $spacing-xl * 2;
+  background: $gray-800;
+  color: $white;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-xl;
+  max-width: 1200px;
+  margin: 0 auto $spacing-xl * 2;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+.footer-section {
+  h4,
+  p {
+    margin: 0;
+  }
+
+  h4 {
+    margin-bottom: $spacing-md;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    line-height: $line-height-base;
+    opacity: 0.9;
+    margin-bottom: $spacing-sm;
+
+    a {
+      color: $white;
+      text-decoration: none;
+      transition: $transition-base;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
+.footer-title {
+  font-size: $font-size-lg;
+  font-weight: 600;
+}
+
+.footer-description {
+  font-size: $font-size-sm;
+  opacity: 0.9;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: $spacing-xl;
+  border-top: 1px solid rgba($white, 0.1);
+  font-size: $font-size-sm;
+  opacity: 0.8;
+
+  p {
+    margin: 0;
+  }
+}
+
+// ============================================================
+// BUTTON STYLES (Bootstrap compatible)
+// ============================================================
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: $transition-base;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: $primary;
+  color: $white;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+  }
+}
+
+.btn-lg {
+  padding: $spacing-lg $spacing-xl * 1.5;
+  font-size: $font-size-lg;
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family-base;
+  background: $white;
+  color: $gray-900;
+}
+
+section {
+  scroll-margin-top: 100px;
+}

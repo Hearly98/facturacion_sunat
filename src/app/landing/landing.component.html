@@ -1,0 +1,388 @@
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">Facturación Inteligente para tu PyME</h1>
+    <p class="hero-subtitle">
+      Gestiona facturas, cotizaciones y guías de remisión en un solo lugar. Simple, rápido y confiable.
+    </p>
+    <button class="btn btn-primary btn-lg hero-cta" (click)="scrollToDemo()">
+      Solicitar Demo Gratuito
+    </button>
+  </div>
+  <div class="hero-image">
+    <div class="placeholder-image">
+      <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="300" fill="#f6f7f8" />
+        <rect x="50" y="40" width="300" height="220" fill="#1d65a8" opacity="0.1" rx="8" />
+        <rect x="70" y="60" width="120" height="30" fill="#1d65a8" opacity="0.3" rx="4" />
+        <rect x="70" y="110" width="260" height="15" fill="#1d65a8" opacity="0.2" rx="2" />
+        <rect x="70" y="140" width="260" height="15" fill="#1d65a8" opacity="0.2" rx="2" />
+        <rect x="70" y="170" width="260" height="15" fill="#1d65a8" opacity="0.2" rx="2" />
+        <rect x="70" y="200" width="180" height="15" fill="#1d65a8" opacity="0.2" rx="2" />
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+  <div class="section-header">
+    <h2 class="section-title">Todo lo que necesitas</h2>
+    <p class="section-description">
+      Las herramientas esenciales para administrar tu facturación de forma eficiente
+    </p>
+  </div>
+
+  <div class="features-grid">
+    <!-- Feature 1: Facturas -->
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M8 6H32V42H8C6.9 42 6 41.1 6 40V8C6 6.9 6.9 6 8 6Z"
+            stroke="#1d65a8"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path d="M14 14H28" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+          <path d="M14 22H28" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+          <path d="M14 30H22" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <h3 class="feature-title">Facturas Electrónicas</h3>
+      <p class="feature-description">
+        Emite facturas, boletas y notas de crédito con validación automática de SUNAT.
+      </p>
+    </div>
+
+    <!-- Feature 2: Cotizaciones -->
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M42 6H6C4.9 6 4 6.9 4 8V40C4 41.1 4.9 42 6 42H42C43.1 42 44 41.1 44 40V8C44 6.9 43.1 6 42 6Z"
+            stroke="#1d65a8"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path d="M4 16H44" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+          <path d="M14 28H20" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+          <path d="M14 36H34" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <h3 class="feature-title">Cotizaciones</h3>
+      <p class="feature-description">
+        Crea cotizaciones profesionales y conviértelas en facturas al instante.
+      </p>
+    </div>
+
+    <!-- Feature 3: Guías de Remisión -->
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M6 8H24V38H6C5.45 38 5 37.55 5 37V9C5 8.45 5.45 8 6 8Z"
+            stroke="#1d65a8"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path d="M24 8H42V38H24" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M12 16H18" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+          <path d="M12 24H18" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <h3 class="feature-title">Guías de Remisión</h3>
+      <p class="feature-description">
+        Registra y controla el movimiento de mercancías entre almacenes y clientes.
+      </p>
+    </div>
+
+    <!-- Feature 4: Gestión de Productos -->
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M42 12L24 2L6 12V36C6 37.1 6.9 38 8 38H40C41.1 38 42 37.1 42 36V12Z"
+            stroke="#1d65a8"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path d="M24 26V38" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+          <path d="M10 24H38" stroke="#1d65a8" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+      <h3 class="feature-title">Catálogo de Productos</h3>
+      <p class="feature-description">
+        Organiza tu inventario, controla stock y gestiona múltiples almacenes.
+      </p>
+    </div>
+
+    <!-- Feature 5: Reportes -->
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M8 6H40C41.1 6 42 6.9 42 8V40C42 41.1 41.1 42 40 42H8C6.9 42 6 41.1 6 40V8C6 6.9 6.9 6 8 6Z"
+            stroke="#1d65a8"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path d="M10 18H20V34H10Z" fill="#1d65a8" opacity="0.3" />
+          <path d="M24 14H34V34H24Z" fill="#1d65a8" opacity="0.5" />
+        </svg>
+      </div>
+      <h3 class="feature-title">Reportes Detallados</h3>
+      <p class="feature-description">
+        Analiza ventas, compras y movimientos con reportes customizables en tiempo real.
+      </p>
+    </div>
+
+    <!-- Feature 6: Permisos y Roles -->
+    <div class="feature-card">
+      <div class="feature-icon">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M24 24C28.42 24 32 20.42 32 16C32 11.58 28.42 8 24 8C19.58 8 16 11.58 16 16C16 20.42 19.58 24 24 24Z"
+            stroke="#1d65a8"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M12 42C12 42 6 38 6 30V26C6 22 9 20 12 20H36C39 20 42 22 42 26V30C42 38 36 42 36 42H12Z"
+            stroke="#1d65a8"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <h3 class="feature-title">Control de Acceso</h3>
+      <p class="feature-description">
+        Gestiona permisos y roles para cada miembro del equipo de forma segura.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Integrations Section -->
+<section class="integrations-section">
+  <div class="section-header">
+    <h2 class="section-title">Integrado con SUNAT</h2>
+    <p class="section-description">
+      Validación automática de datos y consulta de DNI y RUC en tiempo real
+    </p>
+  </div>
+
+  <div class="integrations-container">
+    <div class="integration-item">
+      <div class="integration-icon">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="12" fill="#1d65a8" opacity="0.1" />
+          <text x="32" y="40" font-size="24" font-weight="bold" text-anchor="middle" fill="#1d65a8">
+            DNI
+          </text>
+        </svg>
+      </div>
+      <h3 class="integration-title">Consulta de DNI</h3>
+      <p class="integration-description">
+        Valida datos de personas naturales directamente con SUNAT. Información completa al instante.
+      </p>
+    </div>
+
+    <div class="integration-item">
+      <div class="integration-icon">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="12" fill="#1d65a8" opacity="0.1" />
+          <text x="32" y="40" font-size="24" font-weight="bold" text-anchor="middle" fill="#1d65a8">
+            RUC
+          </text>
+        </svg>
+      </div>
+      <h3 class="integration-title">Consulta de RUC</h3>
+      <p class="integration-description">
+        Obtén información de empresas registradas en SUNAT. Validación automática del RUC.
+      </p>
+    </div>
+
+    <div class="integration-item">
+      <div class="integration-icon">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="12" fill="#229741" opacity="0.1" />
+          <circle cx="32" cy="32" r="24" stroke="#229741" stroke-width="3" fill="none" />
+          <path d="M20 32L28 40L44 24" stroke="#229741" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <h3 class="integration-title">Validación Automática</h3>
+      <p class="integration-description">
+        Los datos se validan automáticamente durante la emisión de comprobantes.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+  <div class="section-header">
+    <h2 class="section-title">Preguntas Frecuentes</h2>
+  </div>
+
+  <div class="faq-container">
+    <div class="faq-item">
+      <h3 class="faq-title">¿Cómo puedo comenzar?</h3>
+      <p class="faq-answer">
+        Solicita un demo gratuito y nuestro equipo te mostrará todas las características.
+        En 24 horas recibirás tus credenciales para acceder a la plataforma.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <h3 class="faq-title">¿Qué pasa con mis datos?</h3>
+      <p class="faq-answer">
+        Tus datos están seguros con nosotros. Usamos encriptación de nivel empresarial
+        y cumplimos con todas las normativas de privacidad en Perú.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <h3 class="faq-title">¿Es compatible con SUNAT?</h3>
+      <p class="faq-answer">
+        Sí. FactuLink está 100% integrado con SUNAT. Todas las facturas se emiten
+        directamente en el sistema de SUNAT de manera electrónica.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <h3 class="faq-title">¿Puedo usar múltiples sucursales?</h3>
+      <p class="faq-answer">
+        Por supuesto. FactuLink soporta múltiples sucursales, almacenes y usuarios
+        con diferentes permisos en una sola plataforma.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <h3 class="faq-title">¿Hay capacitación?</h3>
+      <p class="faq-answer">
+        Sí. Te proporcionamos capacitación gratuita y material de ayuda. Nuestro equipo
+        también está disponible para resolver tus dudas.
+      </p>
+    </div>
+
+    <div class="faq-item">
+      <h3 class="faq-title">¿Qué planes tienen?</h3>
+      <p class="faq-answer">
+        Contáctanos para conocer nuestros planes. Diseñamos soluciones personalizadas
+        según las necesidades de tu negocio.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Demo CTA Section -->
+<section class="demo-section" #demoSection>
+  <div class="demo-container">
+    <div class="demo-content">
+      <h2 class="demo-title">¿Listo para transformar tu facturación?</h2>
+      <p class="demo-subtitle">
+        Solicita una demostración gratuita y descubre cómo FactuLink puede simplificar tu gestión.
+      </p>
+
+      <form [formGroup]="demoForm" (ngSubmit)="onDemoSubmit()" class="demo-form">
+        <!-- Success Message -->
+        <div *ngIf="demoFormSuccess" class="success-alert">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path
+              d="M18.75 5L7.5 16.25L1.25 10"
+              stroke="#229741"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>¡Solicitud enviada! En 24 horas recibirás tus credenciales de acceso al demo.</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="companyName" class="form-label">Nombre de la Empresa *</label>
+            <input
+              type="text"
+              id="companyName"
+              formControlName="companyName"
+              class="form-control"
+              [class.is-invalid]="companyName?.invalid && demoFormSubmitted"
+              placeholder="Ej: Mi Negocio S.A.C."
+            />
+            <div *ngIf="companyName?.invalid && demoFormSubmitted" class="invalid-feedback">
+              Campo requerido
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Correo Electrónico *</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="form-control"
+              [class.is-invalid]="email?.invalid && demoFormSubmitted"
+              placeholder="tu@email.com"
+            />
+            <div *ngIf="email?.invalid && demoFormSubmitted" class="invalid-feedback">
+              Ingresa un correo válido
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="phone" class="form-label">Teléfono *</label>
+            <input
+              type="tel"
+              id="phone"
+              formControlName="phone"
+              class="form-control"
+              [class.is-invalid]="phone?.invalid && demoFormSubmitted"
+              placeholder="+51 999 999 999"
+            />
+            <div *ngIf="phone?.invalid && demoFormSubmitted" class="invalid-feedback">
+              Campo requerido
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-submit">
+          Solicitar Demo Gratuito
+        </button>
+
+        <p class="form-note">Nos contactaremos contigo en un plazo de 24 horas hábiles.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4 class="footer-title">FactuLink</h4>
+      <p class="footer-description">Facturación inteligente para tu PyME</p>
+    </div>
+    <div class="footer-section">
+      <h4 class="footer-title">Contacto</h4>
+      <p>Email: info@factulink.com</p>
+      <p>Teléfono: +51 1 XXXX XXXX</p>
+    </div>
+    <div class="footer-section">
+      <h4 class="footer-title">Legal</h4>
+      <p><a href="#">Términos de Servicio</a></p>
+      <p><a href="#">Política de Privacidad</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2024 FactuLink. Todos los derechos reservados.</p>
+  </div>
+</footer>
