@@ -60,8 +60,9 @@ export class QuotationListPage extends BaseSearchComponent implements OnInit {
 
   availableStates = [
     { codigo: '01', nombre: 'Pendientes', color: 'warning' },
-    { codigo: '02', nombre: 'Aprobados', color: 'success' },
+    { codigo: '02', nombre: 'Facturados', color: 'success' },
     { codigo: '03', nombre: 'Anulados', color: 'danger' },
+    { codigo: '04', nombre: 'En Proceso', color: 'warning' },
   ];
 
   readonly #router = inject(Router);

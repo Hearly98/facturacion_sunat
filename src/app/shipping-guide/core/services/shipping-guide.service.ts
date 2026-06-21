@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { BaseService } from '../../../shared/services/base.service';
 import { environment } from '../../../../environments/environment';
 import { ResponseDto } from '../../../shared/models/api/response.dto';
-import { ShippingGuideModel } from '../models/shipping-guide.model';
+import { GetShippingGuideModel } from '../models/get-shipping-guide.model';
 import { QueryParamsModel } from '../../../shared/models/query/query-params.model';
 import { QueryResultsModel } from '../../../shared/models/query/query-results.model';
 import { SerieModel } from 'src/app/series/core/models/serie.model';
@@ -17,8 +17,8 @@ export class ShippingGuideService extends BaseService {
     super(http, `${environment.apiUrl}/guias-remision`);
   }
 
-  search(params: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<ShippingGuideModel>>> {
-    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<ShippingGuideModel>>>(
+  search(params: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<GetShippingGuideModel>>> {
+    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<GetShippingGuideModel>>>(
       `/search`,
       params
     );
@@ -28,20 +28,20 @@ export class ShippingGuideService extends BaseService {
     return this.getRequest<ResponseDto<SerieModel[]>>(`/series`);
   }
 
-  getById(id: number): Observable<ResponseDto<ShippingGuideModel>> {
-    return this.getRequest<ResponseDto<ShippingGuideModel>>(`/${id}`);
+  getById(id: number): Observable<ResponseDto<GetShippingGuideModel>> {
+    return this.getRequest<ResponseDto<GetShippingGuideModel>>(`/${id}`);
   }
 
-  create(data: any): Observable<ResponseDto<ShippingGuideModel>> {
-    return this.postRequest<any, ResponseDto<ShippingGuideModel>>('/', data);
+  create(data: any): Observable<ResponseDto<GetShippingGuideModel>> {
+    return this.postRequest<any, ResponseDto<GetShippingGuideModel>>('/', data);
   }
 
   delete(id: number): Observable<ResponseDto<void>> {
     return this.deleteRequest(`/${id}`);
   }
 
-  update(id: number, data: any): Observable<ResponseDto<ShippingGuideModel>> {
-    return this.putRequest<any, ResponseDto<ShippingGuideModel>>(`/${id}`, data);
+  update(id: number, data: any): Observable<ResponseDto<GetShippingGuideModel>> {
+    return this.putRequest<any, ResponseDto<GetShippingGuideModel>>(`/${id}`, data);
   }
 
   print(id: number): Observable<HttpResponse<Blob>> {

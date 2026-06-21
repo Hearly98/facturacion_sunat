@@ -1,52 +1,36 @@
-export interface ShippingGuideModel {
-  guia_id: number;
-  cot_id: number;
-  serie_id: number;
-  numero_completo: string;
-  fecha_emision: string;
-  fecha_inicio_traslado?: string;
-  tipo_traslado: string;
-  destinatario_nombre: string;
-  partida_ubigeo?: string;
-  partida_direccion?: string;
-  destino_ubigeo?: string;
-  destino_direccion?: string;
-  motivo_traslado?: string;
-  transportista_tipo_doc?: string;
-  transportista_nro_doc?: string;
-  transportista_licencia?: string;
-  transportista_placa?: string;
-  empresa_transporte_tipo_doc?: string;
-  empresa_transporte_nro_doc?: string;
-  empresa_transporte_razon_social?: string;
-  nro_cotizacion?: string;
-  nro_oc?: string;
-  nro_factura?: string;
-  observaciones?: string;
-  est: boolean;
-  detalles?: ShippingGuideDetailModel[];
-  serie?: {
-    ser_id: number;
-    ser_num: string;
-    doc_cod: string;
-  };
-  cliente?: {
-    cli_id: number;
-    cli_nom: string;
-  };
-}
+import { ShippingGuideDetailModel } from './shipping-guide-detail.model';
 
-export interface ShippingGuideDetailModel {
-  guia_det_id: number;
-  guia_id: number;
-  prod_id: number;
-  cantidad: number;
-  peso_unitario: number;
-  peso_total: number;
-  descripcion?: string;
-  producto?: {
-    prod_id: number;
-    prod_nom: string;
-    prod_cod_interno: string;
-  };
+export class ShippingGuideModel {
+  serie_id: number = 0;
+  numero_completo: string = '';
+  suc_id: number = 0;
+  fecha_emision: string = '';
+  nro_cotizacion: string = '';
+  nro_oc: string = '';
+  nro_factura: string = '';
+  fecha_factura: string = '';
+  observaciones: string = '';
+  cli_id: number = 0;
+  nombre_cliente: string = '';
+  doc_cliente: string = '';
+  direccion_cliente: string = '';
+  partida_ubigeo: string = '';
+  partida_direccion: string = '';
+  destino_ubigeo: string = '';
+  destino_direccion: string = '';
+  tipo_traslado: string = '';
+  fecha_inicio_traslado: string = '';
+  transportista_tipo_doc: string = '';
+  transportista_nro_doc: string = '';
+  transportista_licencia: string = '';
+  transportista_placa: string = '';
+  transportista_direccion: string = '';
+  transportista_vehiculo: string = '';
+  empresa_transporte_tipo_doc: string = '';
+  empresa_transporte_nro_doc: string = '';
+  empresa_transporte_razon_social: string = '';
+  motivo_traslado: string = '';
+  peso_bruto: number = 0;
+  est: boolean = false;
+  detalles?: ShippingGuideDetailModel[];
 }

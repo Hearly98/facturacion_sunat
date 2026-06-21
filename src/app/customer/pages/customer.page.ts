@@ -1,4 +1,4 @@
-import { Component, Inject, inject, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, Inject, inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import {
   ButtonDirective,
@@ -79,32 +79,42 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                 <tr>
                   <th>Acciones</th>
                   <th>Nombre</th>
+                  <th>Documento</th>
+                  <th>Teléfono</th>
                 </tr>
               </thead>
               <tbody>
-                @if(customers.length > 0){ @for (customer of customers; track $index) {
-                <tr>
-                  <td>
-                    <button
-                      (click)="openModal(customer.cli_id)"
-                      size="sm"
-                      class="me-2"
-                      cButton
-                      color="info"
-                    >
-                      <svg cIcon name="cilPencil"></svg>
-                    </button>
-                    <button (click)="onDelete(customer.cli_id)" size="sm" cButton color="danger">
-                      <svg cIcon name="cilTrash"></svg>
-                    </button>
-                  </td>
-                  <td>{{ customer.cli_nom }}</td>
-                  <td>{{ customer.cli_documento }}</td>
-                </tr>
-                } }@else {
-                <tr>
-                  <td colspan="2">No hay datos</td>
-                </tr>
+                @if (customers.length > 0) {
+                  @for (customer of customers; track $index) {
+                    <tr>
+                      <td>
+                        <button
+                          (click)="openModal(customer.cli_id)"
+                          size="sm"
+                          class="me-2"
+                          cButton
+                          color="info"
+                        >
+                          <svg cIcon name="cilPencil"></svg>
+                        </button>
+                        <button
+                          (click)="onDelete(customer.cli_id)"
+                          size="sm"
+                          cButton
+                          color="danger"
+                        >
+                          <svg cIcon name="cilTrash"></svg>
+                        </button>
+                      </td>
+                      <td>{{ customer.cli_nom }}</td>
+                      <td>{{ customer.cli_documento }}</td>
+                      <td>{{ customer.cli_telf }}</td>
+                    </tr>
+                  }
+                } @else {
+                  <tr>
+                    <td colspan="4">No hay datos</td>
+                  </tr>
                 }
               </tbody>
             </table>
@@ -122,15 +132,15 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
   `,
   styles: ``,
 })
-export class CustomerPage extends BaseSearchComponent {
+export class CustomerPage extends BaseSearchComponent implements OnInit {
   @ViewChild('customerNewEditModal') customerNewEditModal!: CustomerNewEditModalComponent;
   public form!: TypedFormGroup<FilterForm>;
-  #formBuilder = inject(FormBuilder);
+  readonly #formBuilder = inject(FormBuilder);
   public title = 'Clientes';
-  #customerService = inject(CustomerService);
+  readonly #customerService = inject(CustomerService);
   public customers: GetCustomerModel[] = [];
-  #confirmService = inject(ConfirmService);
-  #globalNotification = inject(GlobalNotification);
+  readonly #confirmService = inject(ConfirmService);
+  readonly #globalNotification = inject(GlobalNotification);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.CUSTOMER, viewContainerRef);
@@ -147,7 +157,7 @@ export class CustomerPage extends BaseSearchComponent {
 
   onSearch(filter = null, page = 1) {
     const sort = filterSort(this.form.value);
-    const filterToUse = filter || mapParams(this.form.value);
+    const filterToUse = filter ?? mapParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);
@@ -160,11 +170,11 @@ export class CustomerPage extends BaseSearchComponent {
           this.total = response.data.total;
           this.customers = response.data.items;
         } else {
-          console.error(response);
+          this.#globalNotification.openAlert(response);
         }
       },
       error: (response) => {
-        console.error(response.messages);
+        this.#globalNotification.openAlert(response.messages);
       },
     });
     this.subscriptions.push(subscription);
@@ -181,7 +191,7 @@ export class CustomerPage extends BaseSearchComponent {
 
   openModal(id?: number) {
     if (this.customerNewEditModal) {
-      this.customerNewEditModal.openModal(id, (customer: GetCustomerModel) => {
+      this.customerNewEditModal.openModal(id, () => {
         this.onSearch();
       });
     }

@@ -1,0 +1,39 @@
+import { ShippingGuideDetailModel } from "../models/shipping-guide-detail.model";
+
+export interface ShippingGuideForm {
+  serie_id: number | null;
+  numero_completo: string | null;
+  suc_id: number | null;
+  fecha_emision: string | null;
+  nro_cotizacion: string | null;
+  id_cotizacion: number | null;
+  nro_oc: string | null;
+  nro_factura: string | null;
+  fecha_factura: string | null;
+  observaciones: string | null;
+  cli_id: number | null;
+  nombre_cliente: string | null;
+  doc_cliente: string | null;
+  direccion_cliente: string | null;
+  partida_ubigeo: string | null;
+  partida_direccion: string | null;
+  destino_ubigeo: string | null;
+  destino_direccion: string | null;
+  tipo_traslado: string | null;
+  fecha_inicio_traslado: string | null;
+  transportista_tipo_doc: string | null;
+  transportista_nro_doc: string | null;
+  transportista_licencia: string | null;
+  transportista_placa: string | null;
+  transportista_direccion: string | null;
+  transportista_vehiculo: string | null;
+  empresa_transporte_tipo_doc: string | null;
+  empresa_transporte_nro_doc: string | null;
+  empresa_transporte_razon_social: string | null;
+  peso_bruto: number | null;
+  motivo_traslado: string | null;
+  est: boolean | null;
+  detalles: ShippingGuideDetailModel[] | null;
+  prod_id: number | null;
+  cot_id: number | null;
+}

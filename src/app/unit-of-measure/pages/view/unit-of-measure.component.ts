@@ -96,11 +96,11 @@ export class UnitOfMeasurePage extends BaseSearchComponent implements OnInit {
           this.total = response.data.total;
           this.units = response.data.items;
         } else {
-          console.error(response);
+          this.#globalNotification.openAlert(response);
         }
       },
       error: (response) => {
-        console.error(response.messages);
+        this.#globalNotification.openToastAlert('Error', response.message, 'danger');
       },
     });
     this.subscriptions.push(subscription);

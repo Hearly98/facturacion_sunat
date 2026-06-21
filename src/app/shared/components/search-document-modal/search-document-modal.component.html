@@ -1,0 +1,174 @@
+<c-modal alignment="center" [visible]="visible" size="lg" (visibleChange)="onVisibleChange($event)">
+  <c-modal-header>
+    <h5 cModalTitle>
+      @if (type() === 'cotizacion') {
+        <svg cIcon name="cilFile" class="me-2 text-primary"></svg>
+        Buscar Cotización
+      } @else {
+        <svg cIcon name="cilTruck" class="me-2 text-primary"></svg>
+        Buscar Guía de Remisión
+      }
+    </h5>
+    <button cButtonClose (click)="close()"></button>
+  </c-modal-header>
+
+  <c-modal-body>
+    <!-- Search input -->
+    <div class="input-group mb-3">
+      <span class="input-group-text">
+        <svg cIcon name="cilSearch"></svg>
+      </span>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchInput()"
+        placeholder="{{
+          type() === 'cotizacion'
+            ? 'Buscar por número o cliente...'
+            : 'Buscar por número o destinatario...'
+        }}"
+      />
+      @if (searchTerm) {
+        <button class="btn btn-outline-secondary" type="button" (click)="clearSearch()">
+          <svg cIcon name="cilX"></svg>
+        </button>
+      }
+    </div>
+
+    <!-- Loading -->
+    @if (loading()) {
+      <div class="text-center py-5">
+        <c-spinner variant="grow" size="sm"></c-spinner>
+        <span class="ms-2 text-muted">Cargando...</span>
+      </div>
+    } @else {
+      <!-- Results -->
+      <div class="document-list" style="max-height: 420px; overflow-y: auto">
+        @if (filteredItems().length === 0) {
+          <div class="text-center py-5 text-muted">
+            <svg
+              cIcon
+              name="cilSearch"
+              class="mb-2"
+              style="width: 40px; height: 40px; opacity: 0.3"
+            ></svg>
+            <p class="mb-0">No se encontraron documentos</p>
+          </div>
+        } @else {
+          @if (type() === 'cotizacion') {
+            @for (item of asCotizaciones(); track item.cot_id) {
+              <div
+                class="document-item border rounded p-3 mb-2 cursor-pointer"
+                (click)="selectCotizacion(item.cot_id)"
+              >
+                <c-row class="mb-4">
+                  <c-col>
+                    <span class="fw-semibold">{{ item.numero_completo }}</span>
+                  </c-col>
+                  <c-col class="text-end">
+                    <button
+                      cButton
+                      color="primary"
+                      size="sm"
+                      variant="outline"
+                      class="ms-2 flex-shrink-0"
+                    >
+                      Seleccionar
+                    </button>
+                  </c-col>
+                </c-row>
+                <c-row class="small text-muted">
+                  <c-col lg="2">
+                    <svg
+                      cIcon
+                      name="cilCalendar"
+                      class="me-1"
+                      style="width: 12px; height: 12px"
+                    ></svg>
+                    {{ item.fecha_emision | date: 'dd/MM/yyyy' }}
+                  </c-col>
+                  <c-col lg="6">
+                    <svg cIcon name="cilUser" class="me-1" style="width: 12px; height: 12px"></svg>
+                    <span class="fw-medium text-dark">{{ item.cliente?.cli_nom }}</span>
+                  </c-col>
+                  <c-col lg="2">
+                    <svg cIcon name="cilMoney" class="me-1" style="width: 12px; height: 12px"></svg>
+                    <span class="fw-medium text-dark"
+                      >S/ {{ item.cot_total | number: '1.2-2' }}</span
+                    >
+                  </c-col>
+                  <c-col lg="2">
+                    <span
+                      class="badge"
+                      [class.bg-warning]="item.estado_cotizacion?.color === 'warning'"
+                      [class.bg-success]="item.estado_cotizacion?.color === 'success'"
+                      [class.bg-danger]="item.estado_cotizacion?.color === 'danger'"
+                    >
+                      {{ item.estado_cotizacion?.nombre }}
+                    </span>
+                  </c-col>
+                </c-row>
+              </div>
+            }
+          } @else {
+            @for (item of asGuias(); track item.guia_id) {
+              <div
+                class="document-item border rounded p-3 mb-2 cursor-pointer"
+                (click)="selectGuia(item)"
+              >
+                <div class="d-flex justify-content-between align-items-start">
+                  <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                      <span class="fw-semibold">{{ item.numero_completo }}</span>
+                      <span
+                        class="badge"
+                        [class.bg-success]="item.est"
+                        [class.bg-danger]="!item.est"
+                      >
+                        {{ item.est ? 'Activo' : 'Anulado' }}
+                      </span>
+                    </div>
+                    <div class="row g-2 small text-muted">
+                      <div class="col-6">
+                        <svg
+                          cIcon
+                          name="cilCalendar"
+                          class="me-1"
+                          style="width: 12px; height: 12px"
+                        ></svg>
+                        {{ item.fecha_emision | date: 'dd/MM/yyyy' }}
+                      </div>
+                      <div class="col-6">
+                        <svg
+                          cIcon
+                          name="cilTruck"
+                          class="me-1"
+                          style="width: 12px; height: 12px"
+                        ></svg>
+                        {{ item.tipo_traslado || '—' }}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    cButton
+                    color="primary"
+                    size="sm"
+                    variant="outline"
+                    class="ms-2 flex-shrink-0"
+                  >
+                    Seleccionar
+                  </button>
+                </div>
+              </div>
+            }
+          }
+        }
+      </div>
+    }
+  </c-modal-body>
+
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="close()">Cerrar</button>
+  </c-modal-footer>
+</c-modal>

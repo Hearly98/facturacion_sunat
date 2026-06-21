@@ -110,7 +110,8 @@ import {
   cilTransfer,
   cilBuilding,
   cilStorage,
-  cilFactory
+  cilFactory,
+  cilCheckCircle
 } from '@coreui/icons';
 
 import { signet } from './signet';
@@ -122,6 +123,7 @@ export const iconSubset = {
   cilStorage,
   cilX,
   cilInfo,
+  cilCheckCircle,
   cilReload,
   cilSearch,
   cilTruck,

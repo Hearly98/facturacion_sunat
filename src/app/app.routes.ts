@@ -3,14 +3,14 @@ import { authGuard, guestGuard } from './core/auth/guards/auth.guard';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: '#',
     loadComponent: () => import('./landing/landing.component').then((m) => m.LandingComponent),
     data: {
       title: 'FactuLink - Facturación para tu PyME',
     },
   },
   {
-    path: 'app',
+    path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./layout').then((m) => m.DefaultLayoutComponent),
     data: {

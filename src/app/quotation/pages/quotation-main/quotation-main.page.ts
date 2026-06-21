@@ -96,8 +96,9 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
   availableStates = [
     { codigo: '01', nombre: 'Pendientes', color: 'warning' },
-    { codigo: '02', nombre: 'Aprobados', color: 'success' },
+    { codigo: '02', nombre: 'Facturados', color: 'success' },
     { codigo: '03', nombre: 'Anulados', color: 'danger' },
+    { codigo: '04', nombre: 'En Proceso', color: 'info' },
   ];
 
   readonly #formBuilder = inject(FormBuilder);
@@ -167,7 +168,9 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
           const data = response.data;
 
           const fechaEmision = data.fecha_emision ? data.fecha_emision.substring(0, 10) : '';
-          const fechaValido = data.fecha_valido_hasta ? data.fecha_valido_hasta.substring(0, 10) : '';
+          const fechaValido = data.fecha_valido_hasta
+            ? data.fecha_valido_hasta.substring(0, 10)
+            : '';
 
           const { detalles, ...rest } = data;
 
@@ -185,22 +188,26 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
           this.detailsArray.clear();
           data.detalles.forEach((det: any) => {
-            this.detailsArray.push(this.#formBuilder.group(buildQuotationDetailForm({
-              prod_id: det.prod_id,
-              cantidad: det.cantidad,
-              prod_nom: det.producto?.prod_nom || det.descripcion,
-              prod_cod: det.producto?.prod_cod_interno || '',
-              unidad: det.producto?.unidad.und_nom || '',
-              precio_unitario: det.precio_unitario,
-              dscto: det.descuento || 0,
-              precio_total: (det.cantidad * det.precio_unitario) - (det.descuento || 0)
-            })));
+            this.detailsArray.push(
+              this.#formBuilder.group(
+                buildQuotationDetailForm({
+                  prod_id: det.prod_id,
+                  cantidad: det.cantidad,
+                  prod_nom: det.producto?.prod_nom || det.descripcion,
+                  prod_cod: det.producto?.prod_cod_interno || '',
+                  unidad: det.producto?.unidad.und_nom || '',
+                  precio_unitario: det.precio_unitario,
+                  dscto: det.descuento || 0,
+                  precio_total: det.cantidad * det.precio_unitario - (det.descuento || 0),
+                }),
+              ),
+            );
           });
         }
       },
       error: () => {
         this.isLoadingForm.set(false);
-      }
+      },
     });
   }
 
@@ -252,11 +259,15 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
     if (!this.selectedProduct) return;
 
     const exists = this.detailsArray.controls.some(
-      (control) => control.value.prod_id === this.selectedProduct.prod_id
+      (control) => control.value.prod_id === this.selectedProduct.prod_id,
     );
 
     if (exists) {
-      this.#globalNotification.openToastAlert('Aviso', 'Este producto ya ha sido agregado', 'warning');
+      this.#globalNotification.openToastAlert(
+        'Aviso',
+        'Este producto ya ha sido agregado',
+        'warning',
+      );
       return;
     }
 
@@ -270,7 +281,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
         precio_unitario: this.selectedProduct.pventa || 0,
         dscto: 0,
         precio_total: null,
-      })
+      }),
     );
 
     this.detailsArray.push(detailForm);
@@ -288,10 +299,12 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
       currencies: this.#currencyService.getAll(),
       sucursal: this.#sucursalService.getAll(),
       paymentMethods: this.#paymentMethodService.getAll(),
-      vendedores: this.#userService.getAll()
+      vendedores: this.#userService.getAll(),
     }).subscribe(({ currencies, sucursal, paymentMethods, vendedores }) => {
-      this.structure.set(quotationStructure(currencies.data, sucursal.data, paymentMethods.data, vendedores.data));
-    })
+      this.structure.set(
+        quotationStructure(currencies.data, sucursal.data, paymentMethods.data, vendedores.data),
+      );
+    });
   }
 
   save() {
@@ -452,7 +465,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
       },
       error: (error) => {
         this.#globalNotification.openToastAlert('Error', error.message, 'danger');
-      }
+      },
     });
   }
 

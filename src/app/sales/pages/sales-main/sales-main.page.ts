@@ -1,4 +1,13 @@
-import { Component, inject, Inject, OnInit, signal, ViewChild, computed, ViewContainerRef } from '@angular/core';
+import {
+  Component,
+  inject,
+  Inject,
+  OnInit,
+  signal,
+  ViewChild,
+  computed,
+  ViewContainerRef,
+} from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -46,9 +55,12 @@ import { DateRangePickerComponent } from '@shared/components/date-range-picker/d
 import { AlmacenService } from 'src/app/almacen/core/services/almacen.service';
 import { mapToSelectOption } from '@shared/functions';
 import { mapSaleCreateDto } from '../../helpers/map-sale-create-dto';
-import { SearchDocumentModalComponent, SearchDocumentType } from '@shared/components/search-document-modal.component';
+import {
+  SearchDocumentModalComponent,
+  SearchDocumentType,
+} from '@shared/components/search-document-modal/search-document-modal.component';
 import { QuotationModel } from 'src/app/quotation/core/models/quotation.model';
-import { ShippingGuideModel } from 'src/app/shipping-guide/core/models/shipping-guide.model';
+import { GetShippingGuideModel } from 'src/app/shipping-guide/core/models/get-shipping-guide.model';
 
 @Component({
   selector: 'app-sales-main',
@@ -80,13 +92,11 @@ import { ShippingGuideModel } from 'src/app/shipping-guide/core/models/shipping-
   templateUrl: './sales-main.page.html',
 })
 export class SalesMainPage extends BaseSearchComponent implements OnInit {
-  @ViewChild('searchDocumentModal') searchDocumentModal!: SearchDocumentModalComponent;
-
   public activeTab = signal<'create' | 'history'>('create');
 
   // Documentos vinculados
   public linkedCotizacion = signal<QuotationModel | null>(null);
-  public linkedGuia = signal<ShippingGuideModel | null>(null);
+  public linkedGuia = signal<GetShippingGuideModel | null>(null);
   public isClientReadonly = computed(() => !!(this.linkedCotizacion() || this.linkedGuia()));
 
   public isLoadingList = signal(false);
@@ -112,20 +122,20 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     { id: 3, nombre: 'Anulados', color: 'danger' },
   ];
 
-  #formBuilder = inject(FormBuilder);
-  #saleService = inject(SaleService);
-  #currencyService = inject(CurrencyService);
-  #documentService = inject(DocumentService);
-  #customerService = inject(CustomerService);
-  #sucursalService = inject(SucursalService);
-  #productService = inject(ProductService);
-  #paymentMethod = inject(PaymentMethodService);
-  #documentTypeService = inject(DocumentTypeService);
-  #organizationService = inject(OrganizationService);
-  #almacenService = inject(AlmacenService);
-  #globalNotification = inject(GlobalNotification);
-  #confirmService = inject(ConfirmService);
-  #route = inject(ActivatedRoute);
+  readonly #formBuilder = inject(FormBuilder);
+  readonly #saleService = inject(SaleService);
+  readonly #currencyService = inject(CurrencyService);
+  readonly #documentService = inject(DocumentService);
+  readonly #customerService = inject(CustomerService);
+  readonly #sucursalService = inject(SucursalService);
+  readonly #productService = inject(ProductService);
+  readonly #paymentMethod = inject(PaymentMethodService);
+  readonly #documentTypeService = inject(DocumentTypeService);
+  readonly #organizationService = inject(OrganizationService);
+  readonly #almacenService = inject(AlmacenService);
+  readonly #globalNotification = inject(GlobalNotification);
+  readonly #confirmService = inject(ConfirmService);
+  readonly #route = inject(ActivatedRoute);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.SALES, viewContainerRef);
@@ -195,13 +205,13 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   openDocumentSearch(type: SearchDocumentType) {
-    this.searchDocumentModal.openModal(type, (doc) => {
+    /* this.searchDocumentModal.openModal(type, (doc) => {
       if (type === 'cotizacion') {
         this.onSelectCotizacion(doc as QuotationModel);
       } else {
-        this.onSelectGuia(doc as ShippingGuideModel);
+        this.onSelectGuia(doc as GetShippingGuideModel);
       }
-    });
+    }); */
   }
 
   onSelectCotizacion(cotizacion: QuotationModel) {
@@ -213,7 +223,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     }
   }
 
-  onSelectGuia(guia: ShippingGuideModel) {
+  onSelectGuia(guia: GetShippingGuideModel) {
     this.linkedGuia.set(guia);
     this.form.patchValue({ guia_id: guia.guia_id });
     if (guia.cliente) {
@@ -333,7 +343,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
     this.#documentService.getAll().subscribe({
       next: (response) => {
-        response.data.map((item) => {
+        response.data.forEach((item) => {
           documents.push({ value: item.doc_id, label: item.doc_nom });
         });
       },
@@ -341,7 +351,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
-        response.data.map((item) => {
+        response.data.forEach((item) => {
           documentTypes.push({ value: item.tip_id, label: item.tip_nom });
         });
       },
@@ -349,7 +359,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
-        response.data.map((item) => {
+        response.data.forEach((item) => {
           sucursalOptions.push({ value: item.suc_id, label: item.suc_nom });
         });
       },
@@ -357,7 +367,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
     this.#paymentMethod.getAll().subscribe({
       next: (response) => {
-        response.data.map((item) => {
+        response.data.forEach((item) => {
           paymentType.push({ value: item.mp_id, label: item.mp_nom });
         });
       },
@@ -365,7 +375,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
     this.#organizationService.getAll().subscribe({
       next: (response) => {
-        response.data.map((item) => {
+        response.data.forEach((item) => {
           companyOptions.push({ value: item.emp_id, label: item.emp_nom });
         });
       },
@@ -548,7 +558,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     }
 
     const sort = filterSort(this.formList.value) as { property: string; direction: string }[];
-    const filterToUse = filter || mapParams(this.formList.value);
+    const filterToUse = filter ?? mapParams(this.formList.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
 

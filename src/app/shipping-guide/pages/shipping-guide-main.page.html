@@ -42,126 +42,508 @@
                 <c-spinner></c-spinner>
               </div>
             } @else {
-              <c-row>
-                @for (item of structure(); track $index) {
-                  <c-col [md]="item.col">
-                    <c-card class="mb-4">
-                      <c-card-body>
+              <!--Datos Guia-->
+              <c-row class="mb-4">
+                <c-col>
+                  <c-card>
+                    <c-card-body>
+                      <c-row>
+                        <c-col>
+                          <h5>Datos de la Guia</h5>
+                        </c-col>
+                      </c-row>
+                      <c-row>
+                        <c-col lg="3" md="6" sm="12">
+                          <label for="fecha_emision">Fecha de Emision</label>
+                          <input
+                            class="form-control"
+                            type="date"
+                            name="fecha_emision"
+                            id="fecha_emision"
+                            formControlName="fecha_emision"
+                          />
+                        </c-col>
+                        <c-col lg="3" md="6" sm="12">
+                          <label>Cotización</label>
+                          @if (selectedCotizacion()) {
+                            <div class="d-flex align-items-center gap-2">
+                              <input
+                                class="form-control bg-light"
+                                [value]="selectedCotizacion()!.numero_completo"
+                                disabled
+                              />
+                              <button
+                                cButton
+                                color="secondary"
+                                variant="ghost"
+                                size="sm"
+                                (click)="clearCotizacion()"
+                                title="Desvincular"
+                              >
+                                <svg cIcon name="cilX"></svg>
+                              </button>
+                            </div>
+                          } @else {
+                            <button
+                              cButton
+                              color="primary"
+                              variant="outline"
+                              class="w-100"
+                              (click)="openCotizacionSearch()"
+                            >
+                              <svg cIcon name="cilSearch" class="me-2"></svg>
+                              Buscar cotización
+                            </button>
+                          }
+                        </c-col>
+                        <c-col lg="3" md="6" sm="12">
+                          <label for="nro_oc">N° OC</label>
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="nro_oc"
+                            id="nro_oc"
+                            placeholder="OC-001"
+                            formControlName="nro_oc"
+                          />
+                        </c-col>
+                        <c-col lg="3" md="6" sm="12">
+                          <label for="nro_factura">N° Factura</label>
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="nro_factura"
+                            id="nro_factura"
+                            placeholder="FC01-001"
+                            formControlName="nro_factura"
+                          />
+                        </c-col>
+                        <c-col lg="12">
+                          <label for="observaciones">Observaciones</label>
+                          <textarea
+                            class="form-control"
+                            name="observaciones"
+                            id="observaciones"
+                            placeholder="Observaciones Adicionales"
+                            formControlName="observaciones"
+                          ></textarea>
+                        </c-col>
+                      </c-row>
+                    </c-card-body>
+                  </c-card>
+                </c-col>
+              </c-row>
+              <!--Datos Cliente-->
+              <c-row class="mb-4">
+                <c-col>
+                  <c-card>
+                    <c-card-body>
+                      <c-row>
+                        <c-col>
+                          <h5>Datos del Cliente</h5>
+                        </c-col>
+                      </c-row>
+                      <c-row>
+                        <c-col lg="6" md="6" sm="12">
+                          <label for="nombre_cliente">Cliente</label>
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="nombre_cliente"
+                            id="nombre_cliente"
+                            formControlName="nombre_cliente"
+                          />
+                        </c-col>
+                        <c-col lg="6" md="6" sm="12">
+                          <label for="doc_cliente">Nro Documento</label>
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="doc_cliente"
+                            id="doc_cliente"
+                            formControlName="doc_cliente"
+                          />
+                        </c-col>
+                        <c-col lg="12" md="12" sm="12">
+                          <label for="direccion_cliente">Direccion</label>
+                          <input
+                            class="form-control"
+                            type="text"
+                            name="direccion_cliente"
+                            id="direccion_cliente"
+                            formControlName="direccion_cliente"
+                          />
+                        </c-col>
+                      </c-row>
+                    </c-card-body>
+                  </c-card>
+                </c-col>
+              </c-row>
+              <!--Datos Ubigeo-->
+              <c-row class="mb-4">
+                <c-col>
+                  <c-card>
+                    <c-card-body>
+                      <c-row>
+                        <c-col>
+                          <h5>Punto de Partida</h5>
+                        </c-col>
                         <c-row>
-                          <c-col [md]="12">
-                            <h5>{{ item.title }}</h5>
+                          <c-col lg="6" md="6" sm="12">
+                            <label for="partida_ubigeo">Ubigeo Partida</label>
+                            <input
+                              class="form-control"
+                              type="text"
+                              id="partida_ubigeo"
+                              name="partida_ubigeo"
+                              formControlName="partida_ubigeo"
+                            />
+                          </c-col>
+                          <c-col lg="6" md="6" sm="12">
+                            <label for="partida_direccion">Dirección Partida</label>
+                            <input
+                              class="form-control"
+                              type="text"
+                              id="partida_direccion"
+                              name="partida_direccion"
+                              formControlName="partida_direccion"
+                            />
                           </c-col>
                         </c-row>
+                      </c-row>
+                    </c-card-body>
+                  </c-card>
+                </c-col>
+                <c-col>
+                  <c-card>
+                    <c-card-body>
+                      <c-row>
+                        <c-col>
+                          <h5>Punto de Destino</h5>
+                        </c-col>
                         <c-row>
-                          @for (control of item.controls; track $index) {
-                            <c-col [md]="control.col" class="mb-2">
-                              <label>{{ control.label }}</label>
-                              @switch (control.type) {
-                                @case ('search-select') {
-                                  <app-search-select
-                                    [placeholder]="control.label"
-                                    [bindLabel]="control.bindLabel || ''"
-                                    [bindValue]="control.bindValue || ''"
-                                    [serviceFn]="getServiceFn(control.serviceFnName)"
-                                    (itemSelected)="onSelectItem(control.formControlName, $event)"
-                                  ></app-search-select>
-                                }
-                                @case ('select') {
-                                  <select
-                                    class="form-control form-select"
-                                    [formControlName]="control.formControlName"
-                                  >
-                                    <option [ngValue]="null">Seleccione</option>
-                                    @for (option of control.options; track $index) {
-                                      <option [ngValue]="option.value">{{ option.label }}</option>
-                                    }
-                                  </select>
-                                }
-                                @case ('textarea') {
-                                  <textarea
-                                    [formControlName]="control.formControlName"
-                                    [placeholder]="control.placeholder"
-                                    class="form-control"
-                                    rows="3"
-                                  ></textarea>
-                                }
-                                @default {
-                                  <input
-                                    [formControlName]="control.formControlName"
-                                    [placeholder]="control.placeholder"
-                                    [type]="control.type"
-                                    class="form-control"
-                                  />
-                                }
-                              }
-                            </c-col>
-                          }
-                          @if (item.title === 'Agregar Producto') {
-                            <c-col [md]="3" class="mt-4">
-                              <label for="" class="d-none"></label>
-                              <button
-                                type="button"
-                                cButton
-                                color="primary"
-                                (click)="addProductToDetail()"
-                                [disabled]="!form.value.prod_id || !selectedProduct"
-                              >
-                                <svg cIcon name="cilPlus" class="me-2"></svg>
-                                Agregar
-                              </button>
-                            </c-col>
-                            <c-col md="12" sm="12" class="mt-4">
-                              <table cTable [responsive]="true" striped="true">
-                                <thead>
-                                  <tr>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Peso Unitario</th>
-                                    <th>Descripción</th>
-                                    <th class="text-end">Acciones</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  @for (
-                                    detail of detailsArray.controls;
-                                    track $index;
-                                    let i = $index
-                                  ) {
-                                    <tr>
-                                      <td>{{ detail.get('prod_nom')?.value }}</td>
-                                      <td>{{ detail.get('cantidad')?.value }}</td>
-                                      <td>{{ detail.get('peso_unitario')?.value }}</td>
-                                      <td>{{ detail.get('descripcion')?.value }}</td>
-                                      <td class="text-end">
-                                        <button
-                                          cButton
-                                          color="danger"
-                                          size="sm"
-                                          (click)="onDetailRemoved(i)"
-                                        >
-                                          <svg cIcon name="cilTrash"></svg>
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  }
-                                  @if (detailsArray.length === 0) {
-                                    <tr>
-                                      <td colspan="5" class="text-center text-muted">
-                                        No hay productos agregados
-                                      </td>
-                                    </tr>
-                                  }
-                                </tbody>
-                              </table>
-                            </c-col>
-                          }
+                          <c-col lg="6" md="6" sm="12">
+                            <label for="destino_ubigeo">Ubigeo Destino</label>
+                            <input
+                              class="form-control"
+                              type="text"
+                              id="destino_ubigeo"
+                              name="destino_ubigeo"
+                              formControlName="destino_ubigeo"
+                            />
+                          </c-col>
+                          <c-col lg="6" md="6" sm="12">
+                            <label for="destino_direccion">Dirección Destino</label>
+                            <input
+                              class="form-control"
+                              type="text"
+                              id="destino_direccion"
+                              name="destino_direccion"
+                              formControlName="destino_direccion"
+                            />
+                          </c-col>
                         </c-row>
-                      </c-card-body>
-                    </c-card>
-                  </c-col>
-                }
+                      </c-row>
+                    </c-card-body>
+                  </c-card>
+                </c-col>
               </c-row>
+              <!--Datos Translado-->
+              <c-row class="mb-4">
+                <c-col>
+                  <c-card>
+                    <c-card-body>
+                      <c-row>
+                        <c-col>
+                          <h5>Motivo de Traslado</h5>
+                        </c-col>
+                        <c-row>
+                          <c-col>
+                            <label for="fecha_inicio_traslado">Fecha Traslado</label>
+                            <input
+                              type="date"
+                              id="fecha_inicio_traslado"
+                              name="fecha_inicio_traslado"
+                              class="form-control"
+                              formControlName="fecha_inicio_traslado"
+                            />
+                          </c-col>
+                          <c-col>
+                            <label for="tipo_traslado">Tipo Traslado</label>
+                            <select
+                              id="tipo_traslado"
+                              name="tipo_traslado"
+                              class="form-select"
+                              formControlName="tipo_traslado"
+                            >
+                              <option value="PUBLICO">Público</option>
+                              <option value="PRIVADO">Privado</option>
+                            </select>
+                          </c-col>
+                          <c-col>
+                            <label for="motivo_traslado">Motivo Traslado</label>
+                            <select
+                              id="motivo_traslado"
+                              name="motivo_traslado"
+                              class="form-select"
+                              formControlName="motivo_traslado"
+                            >
+                              <option [ngValue]="null">Seleccione</option>
+                              @for (motivo of motivoOptions; track $index) {
+                                <option [ngValue]="motivo.value">{{ motivo.label }}</option>
+                              }
+                            </select>
+                          </c-col>
+                        </c-row>
+                      </c-row>
+                    </c-card-body>
+                  </c-card>
+                </c-col>
+              </c-row>
+              <!--Datos Transportista-->
+              <c-row class="mb-4">
+                <c-col>
+                  <c-card>
+                    <c-card-body>
+                      <c-row>
+                        <c-col>
+                          <h5>Datos del Transportista / Conductor</h5>
+                        </c-col>
+                        @if (form.value.tipo_traslado == 'PUBLICO') {
+                          <c-row>
+                            <c-col>
+                              <label for="empresa_transporte_tipo_doc">Tipo Documento</label>
+                              <select
+                                class="form-select"
+                                formControlName="empresa_transporte_tipo_doc"
+                                name="empresa_transporte_tipo_doc"
+                                id="empresa_transporte_tipo_doc"
+                              >
+                                <option value="RUC">RUC</option>
+                              </select>
+                            </c-col>
+                            <c-col>
+                              <label for="empresa_transporte_nro_doc">N° Documento</label>
+                              <input
+                                type="text"
+                                id="empresa_transporte_nro_doc"
+                                name="empresa_transporte_nro_doc"
+                                class="form-control"
+                                formControlName="empresa_transporte_nro_doc"
+                              />
+                            </c-col>
+                            <c-col>
+                              <label for="empresa_transporte_razon_social">Razón Social</label>
+                              <input
+                                type="text"
+                                id="empresa_transporte_razon_social"
+                                name="empresa_transporte_razon_social"
+                                class="form-control"
+                                formControlName="empresa_transporte_razon_social"
+                              />
+                            </c-col>
+                          </c-row>
+                        } @else {
+                          <c-row>
+                            <c-col>
+                              <label for="transportista_tipo_doc">Tipo Documento</label>
+                              <select
+                                class="form-select"
+                                formControlName="transportista_tipo_doc"
+                                name="transportista_tipo_doc"
+                                id="transportista_tipo_doc"
+                              >
+                                <option [ngValue]="null">Seleccione</option>
+                                @for (tipo of tiposDocumento; track tipo.value) {
+                                  <option [value]="tipo.label">{{ tipo.label }}</option>
+                                }
+                              </select>
+                            </c-col>
+                            <c-col>
+                              <label for="transportista_nro_doc">N° Documento</label>
+                              <input
+                                type="text"
+                                id="transportista_nro_doc"
+                                name="transportista_nro_doc"
+                                class="form-control"
+                                formControlName="transportista_nro_doc"
+                              />
+                            </c-col>
+                            <c-col>
+                              <label for="transportista_licencia">Licencia</label>
+                              <input
+                                type="text"
+                                id="transportista_licencia"
+                                name="transportista_licencia"
+                                class="form-control"
+                                formControlName="transportista_licencia"
+                              />
+                            </c-col>
+                            <c-col>
+                              <label for="transportista_vehiculo">Vehículo</label>
+                              <input
+                                type="text"
+                                id="transportista_vehiculo"
+                                name="transportista_vehiculo"
+                                class="form-control"
+                                formControlName="transportista_vehiculo"
+                              />
+                            </c-col>
+                            <c-col>
+                              <label for="transportista_placa">Placa del Vehículo</label>
+                              <input
+                                type="text"
+                                id="transportista_placa"
+                                name="transportista_placa"
+                                class="form-control"
+                                formControlName="transportista_placa"
+                              />
+                            </c-col>
+                            <c-col lg="12" md="12" sm="12">
+                              <label for="transportista_direccion">Dirección</label>
+                              <input
+                                type="text"
+                                id="transportista_direccion"
+                                name="transportista_direccion"
+                                class="form-control"
+                                formControlName="transportista_direccion"
+                              />
+                            </c-col>
+                          </c-row>
+                        }
+                      </c-row>
+                    </c-card-body>
+                  </c-card>
+                </c-col>
+              </c-row>
+              <!--Sección Productos-->
+              <c-row class="mb-4">
+                <c-col>
+                  <c-card>
+                    <c-card-body>
+                      <c-row class="mb-3">
+                        <c-col>
+                          <h5>Bienes Transportados</h5>
+                        </c-col>
+                      </c-row>
 
+                      <!-- Búsqueda y agregar producto -->
+                      <c-row class="mb-3">
+                        <c-col lg="5" md="12">
+                          <label class="form-label">Producto</label>
+                          <div class="d-flex gap-2 align-items-center">
+                            <app-search-select
+                              class="flex-grow-1"
+                              [serviceFn]="getServiceFn('productSearch')"
+                              bindLabel="prod_nom"
+                              bindValue="prod_id"
+                              placeholder="Buscar producto..."
+                              (itemSelected)="onSelectItem('prod_id', $event)"
+                            ></app-search-select>
+                            <button
+                              type="button"
+                              cButton
+                              color="primary"
+                              (click)="addProductToDetail()"
+                              [disabled]="!selectedProduct"
+                              class="flex-shrink-0"
+                            >
+                              <svg cIcon name="cilPlus" class="me-2"></svg>
+                              Agregar
+                            </button>
+                          </div>
+                        </c-col>
+
+                        <c-col lg="3" md="6" class="d-flex align-items-end"> </c-col>
+                        <c-col lg="2">
+                          <label for="peso_bruto" class="form-label">Peso Bruto Total:</label>
+                          <input
+                            class="form-control"
+                            type="number"
+                            min="0"
+                            formControlName="peso_bruto"
+                          />
+                        </c-col>
+                      </c-row>
+
+                      <!-- Tabla de productos agregados -->
+                      @if (detailsArray.length > 0) {
+                        <c-row>
+                          <c-col sm="12">
+                            <table cTable [responsive]="true" striped="true" class="mb-3">
+                              <thead>
+                                <tr>
+                                  <th>Código</th>
+                                  <th>Producto</th>
+                                  <th>Cantidad</th>
+                                  <th>U.M.</th>
+                                  <th>Acción</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @for (
+                                  detail of detailsArray.controls;
+                                  track $index;
+                                  let i = $index
+                                ) {
+                                  <tr [formGroup]="$any(detail)">
+                                    <td>
+                                      <span>{{ detail.value.prod_cod }}</span>
+                                    </td>
+                                    <td>
+                                      <span>{{ detail.value.prod_nom }}</span>
+                                    </td>
+                                    <td>
+                                      <input
+                                        type="number"
+                                        class="form-control form-control-sm"
+                                        min="1"
+                                        formControlName="cantidad"
+                                        (change)="updateDetailTotal(i)"
+                                      />
+                                    </td>
+                                    <td>
+                                      <select
+                                        class="form-select form-select-sm"
+                                        formControlName="und_id"
+                                      >
+                                        <option [ngValue]="null">Seleccione</option>
+                                        @for (um of unidadesMedida; track um.value) {
+                                          <option [value]="um.value">{{ um.label }}</option>
+                                        }
+                                      </select>
+                                    </td>
+                                    <td>
+                                      <button
+                                        type="button"
+                                        size="sm"
+                                        cButton
+                                        color="danger"
+                                        (click)="onDetailRemoved(i)"
+                                      >
+                                        <svg cIcon name="cilTrash"></svg>
+                                      </button>
+                                    </td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </c-col>
+                        </c-row>
+                      } @else {
+                        <c-row>
+                          <c-col sm="12">
+                            <div class="alert alert-info mb-0">
+                              <strong>Sin productos agregados</strong> — Busca y agrega al menos un
+                              producto
+                            </div>
+                          </c-col>
+                        </c-row>
+                      }
+                    </c-card-body>
+                  </c-card>
+                </c-col>
+              </c-row>
               <c-row class="align-items-end mb-4">
                 <c-col md="12" sm="12" class="gap-2 text-end">
                   <button
@@ -266,8 +648,8 @@
                             <th>Acciones</th>
                             <th>Nro. Guía</th>
                             <th>Fecha Emisión</th>
-                            <th>Tipo Traslado</th>
                             <th>Destinatario</th>
+                            <th>Tipo Traslado</th>
                             <th>Estado</th>
                           </tr>
                         </thead>
@@ -298,8 +680,8 @@
                                 </td>
                                 <td>{{ guide.numero_completo }}</td>
                                 <td>{{ guide.fecha_emision | date: 'dd/MM/yyyy' }}</td>
+                                <td>{{ guide.nombre_cliente }}</td>
                                 <td>{{ guide.tipo_traslado }}</td>
-                                <td>{{ guide.destinatario_nombre }}</td>
                                 <td>
                                   <span
                                     class="badge"
@@ -335,3 +717,11 @@
     </c-card>
   </c-col>
 </c-row>
+
+<!-- Modal de búsqueda de cotizaciones -->
+<app-search-document-modal
+  [isVisible]="isSearchModalVisible()"
+  [documentType]="searchDocumentType()"
+  (itemSelected)="onSelectDocument($event)"
+  (modalClosed)="isSearchModalVisible.set(false)"
+></app-search-document-modal>

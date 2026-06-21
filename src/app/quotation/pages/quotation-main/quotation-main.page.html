@@ -29,15 +29,15 @@
 
         @if (activeTab() === 'create') {
           <c-container [formGroup]="form" class="mt-3">
-            @if(form.get('numero_completo')?.value) {
+            @if (form.get('numero_completo')?.value) {
               <c-row>
                 <c-col md="12">
                   <h5>Cotización {{ form.get('numero_completo')?.value }}</h5>
                 </c-col>
               </c-row>
             }
-            
-            @if(isLoadingForm()) {
+
+            @if (isLoadingForm()) {
               <div class="text-center py-5">
                 <c-spinner></c-spinner>
               </div>
@@ -52,91 +52,113 @@
                     </c-row>
                     <c-row>
                       @for (control of item.controls; track $index) {
-                      <c-col [md]="control.col" class="mb-2">
-                        <label [for]="control.formControlName">{{ control.label }}</label>
-                        @switch (control.type) { 
-                          @case('search-select') {
-                            <app-search-select
-                              [placeholder]="control.label"
-                              [bindLabel]="control.bindLabel || ''"
-                              [bindValue]="control.bindValue || ''"
-                              [serviceFn]="control.serviceFnName ? serviceMap[control.serviceFnName] : undefined"
-                              (itemSelected)="onSelectItem(control.formControlName, $event)"
-                              [initialValue]="control.formControlName ? searchSelectLabels[control.formControlName] : ''"
-                            ></app-search-select>
-                          } 
-                          @case('select') {
-                            <select class="form-control form-select" [formControlName]="control.formControlName"
-                             [class.is-invalid]="
-                                form.get(control.formControlName)?.invalid &&
-                                form.get(control.formControlName)?.touched
-                              "
-                            >
-                              <option [ngValue]="null">Seleccione</option>
-                              @for (option of control.options; track $index) {
-                              <option [ngValue]="option.value">{{ option.label }}</option>
-                              }
-                            </select>
-                            <app-validation-messages [controlName]="control.formControlName" [form]="form" [messages]="errorMessages"></app-validation-messages>
-                          } 
-                          @case('textarea') {
-                            <textarea
-                              [formControlName]="control.formControlName"
-                              [placeholder]="control.placeholder"
-                              class="form-control"
-                               [class.is-invalid]="
-                                form.get(control.formControlName)?.invalid &&
-                                form.get(control.formControlName)?.touched
-                              "
-                            ></textarea>
-                            <app-validation-messages [controlName]="control.formControlName" [form]="form" [messages]="errorMessages"></app-validation-messages>
+                        <c-col [md]="control.col" class="mb-2">
+                          <label [for]="control.formControlName">{{ control.label }}</label>
+                          @switch (control.type) {
+                            @case ('search-select') {
+                              <app-search-select
+                                [placeholder]="control.label"
+                                [bindLabel]="control.bindLabel || ''"
+                                [bindValue]="control.bindValue || ''"
+                                [serviceFn]="
+                                  control.serviceFnName
+                                    ? serviceMap[control.serviceFnName]
+                                    : undefined
+                                "
+                                (itemSelected)="onSelectItem(control.formControlName, $event)"
+                                [initialValue]="
+                                  control.formControlName
+                                    ? searchSelectLabels[control.formControlName]
+                                    : ''
+                                "
+                              ></app-search-select>
+                            }
+                            @case ('select') {
+                              <select
+                                class="form-control form-select"
+                                [formControlName]="control.formControlName"
+                                [class.is-invalid]="
+                                  form.get(control.formControlName)?.invalid &&
+                                  form.get(control.formControlName)?.touched
+                                "
+                              >
+                                <option [ngValue]="null">Seleccione</option>
+                                @for (option of control.options; track $index) {
+                                  <option [ngValue]="option.value">{{ option.label }}</option>
+                                }
+                              </select>
+                              <app-validation-messages
+                                [controlName]="control.formControlName"
+                                [form]="form"
+                                [messages]="errorMessages"
+                              ></app-validation-messages>
+                            }
+                            @case ('textarea') {
+                              <textarea
+                                [formControlName]="control.formControlName"
+                                [placeholder]="control.placeholder"
+                                class="form-control"
+                                [class.is-invalid]="
+                                  form.get(control.formControlName)?.invalid &&
+                                  form.get(control.formControlName)?.touched
+                                "
+                              ></textarea>
+                              <app-validation-messages
+                                [controlName]="control.formControlName"
+                                [form]="form"
+                                [messages]="errorMessages"
+                              ></app-validation-messages>
+                            }
+                            @default {
+                              <input
+                                [formControlName]="control.formControlName"
+                                [placeholder]="control.placeholder"
+                                [type]="control.type"
+                                class="form-control"
+                                [class.is-invalid]="
+                                  form.get(control.formControlName)?.invalid &&
+                                  form.get(control.formControlName)?.touched
+                                "
+                              />
+                              <app-validation-messages
+                                [controlName]="control.formControlName"
+                                [form]="form"
+                                [messages]="errorMessages"
+                              ></app-validation-messages>
+                            }
                           }
-                          @default {
-                            <input
-                              [formControlName]="control.formControlName"
-                              [placeholder]="control.placeholder"
-                              [type]="control.type"
-                              class="form-control"
-                               [class.is-invalid]="
-                                form.get(control.formControlName)?.invalid &&
-                                form.get(control.formControlName)?.touched
-                              "
-                            />
-                            <app-validation-messages [controlName]="control.formControlName" [form]="form" [messages]="errorMessages"></app-validation-messages>
-                          } 
-                        }
-                        @if (control.showControlName) {
-                          <div class="mt-1 d-flex gap-2 align-items-center">
-                            <span class="text-muted small">¿Mostrar?</span>
-                            <input
-                              class="form-check-input mt-0"
-                              type="checkbox"
-                              [formControlName]="control.showControlName"
-                            />
-                          </div>
-                        }
-                      </c-col>
+                          @if (control.showControlName) {
+                            <div class="mt-1 d-flex gap-2 align-items-center">
+                              <span class="text-muted small">¿Mostrar?</span>
+                              <input
+                                class="form-check-input mt-0"
+                                type="checkbox"
+                                [formControlName]="control.showControlName"
+                              />
+                            </div>
+                          }
+                        </c-col>
                       }
                       @if (item.title === 'Agregar Producto') {
-                      <c-col [md]="4" class="mt-4">
-                        <button
-                          type="button"
-                          cButton
-                          color="primary"
-                          (click)="addProductToDetail()"
-                          [disabled]="!form.value.prod_id || !selectedProduct"
-                        >
-                          <svg cIcon name="cilPlus" class="me-2"></svg>
-                          Agregar Producto
-                        </button>
-                      </c-col>
-                      <c-col md="12" sm="12" class="mt-4">
-                        <app-quotation-detail-table
-                          [detailsArray]="detailsArray"
-                          [igvRequerido]="form.get('igv_requerido')?.value ?? false"
-                          (detailRemoved)="onDetailRemoved($event)"
-                        ></app-quotation-detail-table>
-                      </c-col>
+                        <c-col [md]="4" class="mt-4">
+                          <button
+                            type="button"
+                            cButton
+                            color="primary"
+                            (click)="addProductToDetail()"
+                            [disabled]="!form.value.prod_id || !selectedProduct"
+                          >
+                            <svg cIcon name="cilPlus" class="me-2"></svg>
+                            Agregar Producto
+                          </button>
+                        </c-col>
+                        <c-col md="12" sm="12" class="mt-4">
+                          <app-quotation-detail-table
+                            [detailsArray]="detailsArray"
+                            [igvRequerido]="form.get('igv_requerido')?.value ?? false"
+                            (detailRemoved)="onDetailRemoved($event)"
+                          ></app-quotation-detail-table>
+                        </c-col>
                       }
                     </c-row>
                   </c-card-body>
@@ -145,15 +167,16 @@
 
               <c-row class="align-items-end mb-4">
                 <c-col md="12" sm="12" class="gap-2 text-end">
-                  <button class="me-2" type="button" cButton color="secondary" (click)="resetForm()">
-                    Cancelar
-                  </button>
                   <button
+                    class="me-2"
                     type="button"
                     cButton
-                    color="success"
-                    (click)="save()"
+                    color="secondary"
+                    (click)="resetForm()"
                   >
+                    Cancelar
+                  </button>
+                  <button type="button" cButton color="success" (click)="save()">
                     <svg cIcon name="cilSave" class="me-2"></svg>
                     Guardar Cotización
                   </button>
@@ -173,7 +196,7 @@
 
             <c-card class="mt-3">
               <c-card-body>
-                <c-row class="g-3 align-items-end" [formGroup]="formList">
+                <c-row class="g-3 align-items-start" [formGroup]="formList">
                   <c-col sm="12" md="6" lg="3">
                     <app-date-range-picker
                       [startDate]="formList.get('fecha_desde')?.value"
@@ -206,7 +229,7 @@
                   <c-col sm="12" md="6" lg="3">
                     <label class="form-label">Filtro de Estados</label>
                     <div class="form-control fs-7">
-                      <div class="d-flex gap-3 align-items-center">
+                      <div class="d-flex flex-wrap gap-1 align-items-center">
                         @for (state of availableStates; track state.codigo) {
                           <c-form-check>
                             <input
@@ -216,7 +239,11 @@
                               (change)="toggleEstado(state.codigo)"
                               [id]="'state_' + state.codigo"
                             />
-                            <label cFormCheckLabel [for]="'state_' + state.codigo" [cTextColor]="state.color">
+                            <label
+                              cFormCheckLabel
+                              [for]="'state_' + state.codigo"
+                              [cTextColor]="state.color"
+                            >
                               {{ state.nombre }}
                             </label>
                           </c-form-check>
@@ -240,7 +267,7 @@
 
             <c-card class="mt-3">
               <c-card-body>
-                @if(isLoadingList()) {
+                @if (isLoadingList()) {
                   <div class="text-center py-3">
                     <c-spinner></c-spinner>
                   </div>
@@ -259,22 +286,39 @@
                           </tr>
                         </thead>
                         <tbody>
-                          @if(quotations.length > 0){
+                          @if (quotations.length > 0) {
                             @for (quotation of quotations; track quotation.cot_id) {
                               <tr>
                                 <td>
-                                  @if(quotation.estado_cotizacion?.codigo !== '03'){
-                                    <button size="sm" class="me-2" cButton color="secondary" (click)="onPrint(quotation.cot_id)">
+                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                    <button
+                                      size="sm"
+                                      class="me-2"
+                                      cButton
+                                      color="secondary"
+                                      (click)="onPrint(quotation.cot_id)"
+                                    >
                                       <svg cIcon name="cilPrint"></svg>
                                     </button>
                                   }
-                                  @if(quotation.estado_cotizacion?.codigo !== '03'){
-                                    <button size="sm" class="me-2" cButton color="info" (click)="onEdit(quotation.cot_id)">
+                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                    <button
+                                      size="sm"
+                                      class="me-2"
+                                      cButton
+                                      color="info"
+                                      (click)="onEdit(quotation.cot_id)"
+                                    >
                                       <svg cIcon name="cilPencil"></svg>
                                     </button>
                                   }
-                                  @if(quotation.estado_cotizacion?.codigo !== '03'){
-                                    <button (click)="onDelete(quotation.cot_id)" size="sm" cButton color="danger">
+                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                    <button
+                                      (click)="onDelete(quotation.cot_id)"
+                                      size="sm"
+                                      cButton
+                                      color="danger"
+                                    >
                                       <svg cIcon name="cilTrash"></svg>
                                     </button>
                                   }
@@ -284,7 +328,21 @@
                                 <td>{{ quotation.cliente?.cli_nom }}</td>
                                 <td>{{ quotation.cot_total | currency: 'S/. ' }}</td>
                                 <td>
-                                  <span class="badge" [class.bg-warning]="quotation.estado_cotizacion?.color === 'warning'" [class.bg-success]="quotation.estado_cotizacion?.color === 'success'" [class.bg-danger]="quotation.estado_cotizacion?.color === 'danger'">
+                                  <span
+                                    class="badge"
+                                    [class.bg-warning]="
+                                      quotation.estado_cotizacion?.color === 'warning'
+                                    "
+                                    [class.bg-success]="
+                                      quotation.estado_cotizacion?.color === 'success'
+                                    "
+                                    [class.bg-danger]="
+                                      quotation.estado_cotizacion?.color === 'danger'
+                                    "
+                                   [class.bg-info]="
+                                      quotation.estado_cotizacion?.color === 'info'
+                                    "
+                                  >
                                     {{ quotation.estado_cotizacion?.nombre }}
                                   </span>
                                 </td>

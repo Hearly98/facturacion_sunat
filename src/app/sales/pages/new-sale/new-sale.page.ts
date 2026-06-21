@@ -1,4 +1,4 @@
-import { Component, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
+import { Component, inject, Inject, OnInit, signal, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import {
@@ -40,6 +40,8 @@ import { QuotationService } from 'src/app/quotation/core/services/quotation.serv
 import { ShippingGuideService } from 'src/app/shipping-guide/core/services/shipping-guide.service';
 import { Observable } from 'rxjs';
 import { ResponseDto } from '@shared/models/api/response.dto';
+import { SearchDocumentModalComponent } from '@shared/components/search-document-modal/search-document-modal.component';
+import { QuotationModel } from 'src/app/quotation/core/models/quotation.model';
 
 @Component({
   selector: 'app-new-sale',
@@ -59,6 +61,7 @@ import { ResponseDto } from '@shared/models/api/response.dto';
     FormCheckComponent,
     FormCheckInputDirective,
     FormCheckLabelDirective,
+    SearchDocumentModalComponent,
   ],
   template: `
     <c-container [formGroup]="form">
@@ -74,48 +77,81 @@ import { ResponseDto } from '@shared/models/api/response.dto';
               @for (control of item.controls; track $index) {
                 <c-col [md]="control.col">
                   <label [for]="control.formControlName">{{ control.label }}</label>
-                  @switch (control.type) {
-                    @case ('search-select') {
-                      <app-search-select
-                        [placeholder]="control.label"
-                        [bindLabel]="control.bindLabel"
-                        [bindValue]="control.bindValue"
-                        [serviceFn]="serviceMap[control.serviceFnName]"
-                        [disabled]="isControlDisabled(control.formControlName)"
-                        (itemSelected)="onSelectItem(control.formControlName, $event)"
-                      ></app-search-select>
-                    }
-                    @case ('select') {
-                      <select
-                        class="form-control form-select"
-                        [formControlName]="control.formControlName"
-                      >
-                        <option [ngValue]="null">Seleccione</option>
-                        @for (option of control.options; track $index) {
-                          <option [ngValue]="option.value">{{ option.label }}</option>
-                        }
-                      </select>
-                    }
-                    @case ('checkbox') {
-                      <c-form-check class="mt-2">
+                  @if (control.formControlName === 'cot_id') {
+                    @if (selectedCotizacion()) {
+                      <div class="d-flex align-items-center gap-2">
                         <input
-                          cFormCheckInput
-                          type="checkbox"
-                          [formControlName]="control.formControlName"
-                          [id]="control.formControlName"
+                          class="form-control bg-light"
+                          [value]="selectedCotizacion()!.numero_completo"
+                          disabled
                         />
-                        <label cFormCheckLabel [for]="control.formControlName">{{
-                          control.label
-                        }}</label>
-                      </c-form-check>
+                        <button
+                          cButton
+                          color="secondary"
+                          variant="ghost"
+                          size="sm"
+                          (click)="clearCotizacion()"
+                          title="Desvincular"
+                        >
+                          <svg cIcon name="cilX"></svg>
+                        </button>
+                      </div>
+                    } @else {
+                      <button
+                        cButton
+                        color="primary"
+                        variant="outline"
+                        class="w-100 justify-content-start"
+                        (click)="openCotizacionSearch()"
+                      >
+                        <svg cIcon name="cilSearch" class="me-2"></svg>
+                        Buscar cotización
+                      </button>
                     }
-                    @default {
-                      <input
-                        [formControlName]="control.formControlName"
-                        [placeholder]="control.placeholder"
-                        [type]="control.type"
-                        class="form-control"
-                      />
+                  } @else {
+                    @switch (control.type) {
+                      @case ('search-select') {
+                        <app-search-select
+                          [placeholder]="control.label"
+                          [bindLabel]="control.bindLabel"
+                          [bindValue]="control.bindValue"
+                          [serviceFn]="serviceMap[control.serviceFnName]"
+                          [disabled]="isControlDisabled(control.formControlName)"
+                          (itemSelected)="onSelectItem(control.formControlName, $event)"
+                        ></app-search-select>
+                      }
+                      @case ('select') {
+                        <select
+                          class="form-control form-select"
+                          [formControlName]="control.formControlName"
+                        >
+                          <option [ngValue]="null">Seleccione</option>
+                          @for (option of control.options; track $index) {
+                            <option [ngValue]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      }
+                      @case ('checkbox') {
+                        <c-form-check class="mt-2">
+                          <input
+                            cFormCheckInput
+                            type="checkbox"
+                            [formControlName]="control.formControlName"
+                            [id]="control.formControlName"
+                          />
+                          <label cFormCheckLabel [for]="control.formControlName">{{
+                            control.label
+                          }}</label>
+                        </c-form-check>
+                      }
+                      @default {
+                        <input
+                          [formControlName]="control.formControlName"
+                          [placeholder]="control.placeholder"
+                          [type]="control.type"
+                          class="form-control"
+                        />
+                      }
                     }
                   }
                 </c-col>
@@ -174,6 +210,9 @@ import { ResponseDto } from '@shared/models/api/response.dto';
         </c-card-body>
       </c-card>
     </c-container>
+
+    <!-- Modal de búsqueda de cotizaciones -->
+    <app-search-document-modal #searchDocumentModal></app-search-document-modal>
   `,
   styles: `
     .gap-2 {
@@ -189,8 +228,10 @@ export class NewSalePage extends BaseComponent implements OnInit {
   sucursalOptions = signal<SelectOption[]>([]);
   almacenOptions = signal<SelectOption[]>([]);
 
+  @ViewChild('searchDocumentModal') searchDocumentModal!: SearchDocumentModalComponent;
+
   // State for document source (cotización/guía)
-  selectedCotizacion = signal<any>(null);
+  selectedCotizacion = signal<QuotationModel | null>(null);
   selectedGuia = signal<any>(null);
   isCotizacionAttached = signal(false);
   isGuiaAttached = signal(false);
@@ -277,55 +318,6 @@ export class NewSalePage extends BaseComponent implements OnInit {
         prod_id: item.prod_id,
       });
       this.selectedProduct = item;
-      return;
-    }
-
-    // Handle cotización selection
-    if (formControlName === 'cot_id') {
-      this.selectedCotizacion.set(item);
-      this.isCotizacionAttached.set(true);
-      this.isGuiaAttached.set(false);
-      this.isGuiaWithCotizacion.set(false);
-      this.form.patchValue({ guia_id: null });
-      this.selectedGuia.set(null);
-
-      // Auto-fill cliente
-      if (item.cliente) {
-        this.form.patchValue({
-          cli_id: item.cliente.cli_id,
-          cli_documento: item.cliente.cli_documento,
-          tip_id: item.cliente.tip_id,
-          cli_direcc: item.cliente.cli_direcc,
-          cli_correo: item.cliente.cli_correo,
-          cli_telf: item.cliente.cli_telf,
-        });
-      }
-
-      // Auto-fill moneda
-      if (item.mon_id) {
-        this.form.patchValue({ mon_id: item.mon_id });
-      }
-
-      // Populate details from cotización
-      if (item.detalles && item.detalles.length > 0) {
-        this.detailsArray.clear();
-        item.detalles.forEach((detalle: any) => {
-          const detailForm = this.#formBuilder.group({
-            prod_id: [detalle.prod_id],
-            cantidad: [detalle.cantidad],
-            prod_nom: [{ value: detalle.producto?.prod_nom ?? '', disabled: true }],
-            prod_cod_interno: [{ value: detalle.producto?.prod_cod_interno ?? '', disabled: true }],
-            unidad: [{ value: detalle.producto?.unidad?.uni_nom ?? '', disabled: true }],
-            precio_unitario: [{ value: detalle.precio_unitario, disabled: true }],
-            precio_venta: [{ value: null, disabled: true }],
-            dscto: [{ value: detalle.descuento ?? 0, disabled: true }],
-          });
-          this.detailsArray.push(detailForm as any);
-        });
-      }
-
-      // Disable product search control
-      this.form.get('prod_id')?.disable();
       return;
     }
 
@@ -611,12 +603,64 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.form.get('prod_id')?.enable();
   }
 
+  openCotizacionSearch() {
+    /*
+    this.searchDocumentModal.openModal('cotizacion', (doc) => {
+      this.onSelectCotizacion(doc as QuotationModel);
+    });
+    */
+  }
+
+  onSelectCotizacion(cotizacion: QuotationModel) {
+    this.selectedCotizacion.set(cotizacion);
+    this.isCotizacionAttached.set(true);
+    this.form.patchValue({ cot_id: cotizacion.cot_id });
+
+    if (cotizacion.cliente) {
+      this.form.patchValue({
+        cli_id: cotizacion.cliente.cli_id,
+        cli_documento: (cotizacion.cliente as any).cli_documento,
+        tip_id: (cotizacion.cliente as any).tip_id,
+        cli_direcc: (cotizacion.cliente as any).cli_direcc,
+        cli_correo: (cotizacion.cliente as any).cli_correo,
+        cli_telf: (cotizacion.cliente as any).cli_telf,
+      });
+    }
+
+    if (cotizacion.detalles && cotizacion.detalles.length > 0) {
+      this.detailsArray.clear();
+      cotizacion.detalles.forEach((detalle: any) => {
+        const detailForm = this.#formBuilder.group({
+          prod_id: [detalle.prod_id],
+          cantidad: [detalle.cantidad],
+          prod_nom: [{ value: detalle.producto?.prod_nom ?? '', disabled: true }],
+          prod_cod_interno: [{ value: detalle.producto?.prod_cod_interno ?? '', disabled: true }],
+          unidad: [{ value: detalle.producto?.unidad?.uni_nom ?? '', disabled: true }],
+          precio_unitario: [{ value: detalle.precio_unitario, disabled: true }],
+          precio_venta: [{ value: null, disabled: true }],
+          dscto: [{ value: detalle.descuento ?? 0, disabled: true }],
+        });
+        this.detailsArray.push(detailForm as any);
+      });
+    }
+
+    this.form.get('prod_id')?.disable();
+  }
+
   clearCotizacion() {
     this.selectedCotizacion.set(null);
     this.isCotizacionAttached.set(false);
     this.detailsArray.clear();
     this.form.get('prod_id')?.enable();
     this.form.patchValue({ cot_id: null });
+    this.form.patchValue({
+      cli_id: null,
+      cli_documento: null,
+      tip_id: null,
+      cli_direcc: null,
+      cli_correo: null,
+      cli_telf: null,
+    });
   }
 
   clearGuia() {
