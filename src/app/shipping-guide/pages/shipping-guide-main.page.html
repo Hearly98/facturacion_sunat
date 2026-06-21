@@ -42,6 +42,16 @@
                 <c-spinner></c-spinner>
               </div>
             } @else {
+              @if (isCotizacionAttached()) {
+                <c-row class="mb-3">
+                  <c-col xs="12">
+                    <c-alert color="warning" closeButton>
+                      <strong>Aviso:</strong> Esta guía está vinculada a una cotización y no puede editarse.
+                    </c-alert>
+                  </c-col>
+                </c-row>
+              }
+
               <!--Datos Guia-->
               <c-row class="mb-4">
                 <c-col>
