@@ -20,7 +20,7 @@ export function mapSaleCreateDto(formValue: SaleForm) {
     detalles: (formValue.detalles || []).map((d: any) => ({
       prod_id: d.prod_id,
       detv_cant: d.cantidad,
-      prod_pventa: d.precio_venta,
+      prod_pventa: d.precio_unitario ?? d.precio_venta,
       detv_descuento: d.dscto,
       detv_total: 0,
     } as SaleDetailModel)),
