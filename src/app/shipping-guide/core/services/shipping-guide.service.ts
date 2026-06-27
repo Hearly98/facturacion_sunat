@@ -45,7 +45,7 @@ export class ShippingGuideService extends BaseService {
   }
 
   print(id: number): Observable<HttpResponse<Blob>> {
-    return this.http.get(`${environment.apiUrl}/guias-remision/${id}/print`, {
+    return this.http.get(`${environment.apiUrl}/guias-remision/${id}/pdf`, {
       responseType: 'blob',
       observe: 'response',
     });

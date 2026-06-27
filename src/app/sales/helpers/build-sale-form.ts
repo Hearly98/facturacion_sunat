@@ -20,7 +20,7 @@ export const buildSaleForm = (): {
         mon_id: new FormControl(null),
         monto_acuenta: new FormControl(null),
         monto_pendiente: new FormControl(null),
-        mp_id: new FormControl(null),
+        mp_cod: new FormControl(null),
         serie_id: new FormControl(null),
         suc_id: new FormControl(null),
         almacen_id: new FormControl(null),

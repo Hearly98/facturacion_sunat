@@ -1,5 +1,4 @@
 import { SaleDetailModel } from "src/app/sale-detail/core/models";
-import { SaleDetailForm } from "src/app/sale-detail/core/types/sale-detail.form";
 
 export interface SaleForm {
     venta_id: number | null;
@@ -13,7 +12,7 @@ export interface SaleForm {
     vendedor_id: number | null;
     doc_id: number | null;
     mon_id: number | null;
-    mp_id: number | null;
+    mp_cod: string | null;
     guia_id: number | null;
     cot_id: number | null;
     venta_subtotal: number | null;

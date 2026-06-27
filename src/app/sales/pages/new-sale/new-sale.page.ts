@@ -512,7 +512,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
               case 'mon_id':
                 currencies.push(...control.options);
                 break;
-              case 'mp_id':
+              case 'mp_cod':
                 paymentType.push(...control.options);
                 break;
               case 'doc_id':

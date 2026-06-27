@@ -39,7 +39,7 @@ export const buildShippingGuideForm = (isCotizacionAttached: boolean = false): T
     detalles: new FormArray<any>([]),
     prod_id: new FormControl<number | null>(null),
     cot_id: new FormControl<number | null>(null),
-    peso_bruto: new FormControl<number | null>(null),
+    total_peso_bruto: new FormControl<number | null>(null),
     id_cotizacion: new FormControl<number | null>(null),
   };
 };

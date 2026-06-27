@@ -12,6 +12,7 @@ import {
   TextColorDirective,
   SpinnerComponent,
   InputGroupComponent,
+  AlertComponent,
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
@@ -68,6 +69,7 @@ import { DocumentTypeService } from 'src/app/document-type/core/services/documen
     PaginatorComponent,
     DatePipe,
     SearchDocumentModalComponent,
+    AlertComponent
   ],
   templateUrl: './shipping-guide-main.page.html',
 })
@@ -547,7 +549,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
             nro_oc: guia.nro_oc,
             nro_factura: guia.nro_factura,
             fecha_factura: guia.fecha_factura,
-            peso_bruto: guia.peso_bruto,
+            total_peso_bruto: guia.total_peso_bruto,
             observaciones: guia.observaciones,
             cot_id: guia.cot_id,
           });

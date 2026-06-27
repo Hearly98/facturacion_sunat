@@ -8,7 +8,7 @@ export function mapSaleCreateDto(formValue: SaleForm) {
     doc_id: formValue.doc_id!,
     emp_id: formValue.emp_id!,
     cli_id: formValue.cli_id!,
-    mp_id: formValue.mp_id!,
+    mp_cod: formValue.mp_cod!,
     mon_id: formValue.mon_id!,
     vendedor_id: formValue.vendedor_id!,
     fecha_emision: formValue.fecha_emision!,

@@ -36,7 +36,7 @@
                 <div class="d-flex align-items-center gap-2 mb-3">
                   <svg cIcon name="cilLink" class="text-primary"></svg>
                   <h6 class="mb-0 fw-semibold">Vincular Documentos</h6>
-                  <span class="text-muted small ms-1">— opcional. Auto-completa los datos del cliente.</span>
+                  <span class="text-muted small ms-1">— Opcional. Auto-completa los datos del cliente.</span>
                 </div>
 
                 <c-row class="g-3">
@@ -149,15 +149,106 @@
                 <c-spinner></c-spinner>
               </div>
             } @else {
-              @for (item of structure(); track $index) {
-              @if (item.title !== 'Documento Origen') {
+              <!-- Información de la Venta -->
               <c-card class="mb-4">
                 <c-card-body>
                   <c-row>
-                    <c-col [md]="12">
+                    <c-col md="12">
+                      <h6 class="mb-3">Información de la Venta</h6>
+                    </c-col>
+                  </c-row>
+                  <c-row class="g-3">
+                    <c-col md="3">
+                      <label for="emp_id" class="form-label">Empresa</label>
+                      <select id="emp_id" class="form-select" formControlName="emp_id">
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of companyOptions(); track option.value) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </c-col>
+                    <c-col md="3">
+                      <label for="doc_id" class="form-label">Tipo Documento</label>
+                      <select id="doc_id" class="form-select" formControlName="doc_id">
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of documentOptions(); track option.value) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </c-col>
+                    <c-col md="3">
+                      <label for="suc_id" class="form-label">Sucursal</label>
+                      <select id="suc_id" class="form-select" formControlName="suc_id">
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of sucursalOptions(); track option.value) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </c-col>
+                    <c-col md="3">
+                      <label for="almacen_id" class="form-label">Almacén</label>
+                      <select id="almacen_id" class="form-select" formControlName="almacen_id">
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of almacenOptions(); track option.value) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </c-col>
+                    <c-col md="3">
+                      <label for="fecha_emision" class="form-label">Fecha Emisión</label>
+                      <input type="date" id="fecha_emision" class="form-control" formControlName="fecha_emision" />
+                    </c-col>
+                    <c-col md="3">
+                      <label for="mp_cod" class="form-label">Tipo de Pago</label>
+                      <select id="mp_cod" class="form-select" formControlName="mp_cod">
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of paymentMethodOptions(); track option.value) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </c-col>
+                    <c-col md="3">
+                      <label for="mon_id" class="form-label">Moneda</label>
+                      <select id="mon_id" class="form-select" formControlName="mon_id">
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of currencyOptions(); track option.value) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </c-col>
+                    <c-col md="3">
+                      <label for="vendedor_id" class="form-label">Vendedor</label>
+                      <input type="number" id="vendedor_id" class="form-control" formControlName="vendedor_id" placeholder="ID Vendedor" />
+                    </c-col>
+                    @if (showFechaVencimiento()) {
+                      <c-col md="3">
+                        <label for="fecha_vencimiento" class="form-label">Fecha Vencimiento</label>
+                        <input type="date" id="fecha_vencimiento" class="form-control" formControlName="fecha_vencimiento" />
+                      </c-col>
+                    }
+                    <c-col md="12">
+                      <c-form-check class="mt-2">
+                        <input
+                          cFormCheckInput
+                          type="checkbox"
+                          id="afecta_stock"
+                          formControlName="afecta_stock"
+                        />
+                        <label cFormCheckLabel for="afecta_stock">Afecta Stock</label>
+                      </c-form-check>
+                    </c-col>
+                  </c-row>
+                </c-card-body>
+              </c-card>
+
+              <!-- Cliente -->
+              <c-card class="mb-4">
+                <c-card-body>
+                  <c-row>
+                    <c-col md="12">
                       <div class="d-flex align-items-center gap-2 mb-3">
-                        <h6 class="mb-0">{{ item.title }}</h6>
-                        @if (item.title === 'Cliente' && isClientReadonly()) {
+                        <h6 class="mb-0">Cliente</h6>
+                        @if (isClientReadonly()) {
                           <span class="badge bg-secondary-subtle text-secondary small">
                             <svg cIcon name="cilLockLocked" style="width:10px;height:10px;" class="me-1"></svg>
                             Desde documento
@@ -166,57 +257,69 @@
                       </div>
                     </c-col>
                   </c-row>
-                  <c-row>
-                    @for (control of item.controls; track $index) {
-                    <c-col [md]="control.col">
-                      <label [for]="control.formControlName">{{ control.label }}</label>
-                      @switch (control.type) { @case('search-select') {
-                      @if (item.title !== 'Documento Origen') {
-                        <app-search-select
-                          [placeholder]="control.label"
-                          [bindLabel]="control.bindLabel"
-                          [bindValue]="control.bindValue"
-                          [serviceFn]="serviceMap[control.serviceFnName]"
-                          [disabled]="isControlDisabled(control.formControlName) || (item.title === 'Cliente' && isClientReadonly())"
-                          [initialValue]="getClientInitialValue(control.formControlName)"
-                          (itemSelected)="onSelectItem(control.formControlName, $event)"
-                        ></app-search-select>
-                      }
-                      } @case('select'){
-                      <select class="form-control form-select" [formControlName]="control.formControlName"
-                        [attr.disabled]="(item.title === 'Cliente' && isClientReadonly()) ? true : null"
-                      >
+                  <c-row class="g-3">
+                    <c-col md="4">
+                      <label for="cli_id" class="form-label">Buscar Cliente</label>
+                      <app-search-select
+                        [placeholder]="'Buscar cliente...'"
+                        [bindLabel]="'cli_nom'"
+                        [bindValue]="'cli_id'"
+                        [serviceFn]="serviceMap['customerSearch']"
+                        [disabled]="isClientReadonly()"
+                        [initialValue]="getClientInitialValue('cli_id')"
+                        (itemSelected)="onSelectItem('cli_id', $event)"
+                      ></app-search-select>
+                    </c-col>
+                    <c-col md="4">
+                      <label for="tip_id" class="form-label">Tipo Documento</label>
+                      <select id="tip_id" class="form-select" formControlName="tip_id" [disabled]="isClientReadonly()">
                         <option [ngValue]="null">Seleccione</option>
-                        @for (option of control.options; track $index) {
-                        <option [ngValue]="option.value">{{ option.label }}</option>
+                        @for (option of documentTypeOptions(); track option.value) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
                         }
                       </select>
-                      }
-                      @case('checkbox') {
-                      <c-form-check class="mt-2">
-                        <input
-                          cFormCheckInput
-                          type="checkbox"
-                          [formControlName]="control.formControlName"
-                          [id]="control.formControlName"
-                        />
-                        <label cFormCheckLabel [for]="control.formControlName">{{ control.label }}</label>
-                      </c-form-check>
-                      } @default {
-                      <input
-                        [formControlName]="control.formControlName"
-                        [placeholder]="control.placeholder"
-                        [type]="control.type"
-                        class="form-control"
-                        [class.bg-light]="item.title === 'Cliente' && isClientReadonly()"
-                        [attr.readonly]="(item.title === 'Cliente' && isClientReadonly()) ? true : null"
-                      />
-                      } }
                     </c-col>
-                    }
-                    @if (item.title === 'Agregar Producto') {
-                    <c-col [md]="4" class="mt-4">
-                      <label for="" class="d-none"></label>
+                    <c-col md="4">
+                      <label for="cli_documento" class="form-label">Documento</label>
+                      <input type="text" id="cli_documento" class="form-control" formControlName="cli_documento" placeholder="Documento" [readonly]="isClientReadonly()" />
+                    </c-col>
+                    <c-col md="5">
+                      <label for="cli_direcc" class="form-label">Dirección</label>
+                      <input type="text" id="cli_direcc" class="form-control" formControlName="cli_direcc" placeholder="Dirección" [readonly]="isClientReadonly()" />
+                    </c-col>
+                    <c-col md="4">
+                      <label for="cli_correo" class="form-label">Correo</label>
+                      <input type="text" id="cli_correo" class="form-control" formControlName="cli_correo" placeholder="Correo electrónico" [readonly]="isClientReadonly()" />
+                    </c-col>
+                    <c-col md="3">
+                      <label for="cli_telf" class="form-label">Teléfono</label>
+                      <input type="text" id="cli_telf" class="form-control" formControlName="cli_telf" placeholder="Teléfono" [readonly]="isClientReadonly()" />
+                    </c-col>
+                  </c-row>
+                </c-card-body>
+              </c-card>
+
+              <!-- Agregar Producto -->
+              <c-card class="mb-4">
+                <c-card-body>
+                  <c-row>
+                    <c-col md="12">
+                      <h6 class="mb-3">Agregar Producto</h6>
+                    </c-col>
+                  </c-row>
+                  <c-row class="g-3 align-items-end">
+                    <c-col md="8">
+                      <label for="prod_id" class="form-label">Producto</label>
+                      <app-search-select
+                        [placeholder]="'Buscar producto...'"
+                        [bindLabel]="'prod_nom'"
+                        [bindValue]="'prod_id'"
+                        [serviceFn]="serviceMap['productSearch']"
+                        [disabled]="!form.get('suc_id')?.value"
+                        (itemSelected)="onSelectItem('prod_id', $event)"
+                      ></app-search-select>
+                    </c-col>
+                    <c-col md="4">
                       <button
                         type="button"
                         cButton
@@ -225,15 +328,12 @@
                         [disabled]="!form.value.prod_id || !selectedProduct"
                       >
                         <svg cIcon name="cilPlus" class="me-2"></svg>
-                        Agregar Producto
+                        Agregar
                       </button>
                     </c-col>
-                    }
                   </c-row>
                 </c-card-body>
               </c-card>
-              }
-              }
 
               <!-- Tabla de detalles -->
               <app-sale-detail-table
@@ -246,8 +346,8 @@
                 <c-card-body>
                   <c-row class="align-items-end">
                     <c-col md="8" sm="12" class="mb-2">
-                      <label for="">Observaciones</label>
-                      <textarea class="form-control" formControlName="venta_coment" rows="3"></textarea>
+                      <label for="venta_coment">Observaciones</label>
+                      <textarea id="venta_coment" class="form-control" formControlName="venta_coment" rows="3"></textarea>
                     </c-col>
                     <c-col md="4" sm="12" class="gap-2 text-end">
                       <button class="me-2" type="button" cButton color="secondary" (click)="resetForm()">
@@ -417,4 +517,9 @@
 </c-row>
 
 <!-- Modal de búsqueda de documentos -->
-<app-search-document-modal #searchDocumentModal></app-search-document-modal>
+<app-search-document-modal
+  [isVisible]="isSearchModalVisible()"
+  [documentType]="searchDocumentType()"
+  (itemSelected)="onSelectDocument($event)"
+  (modalClosed)="isSearchModalVisible.set(false)"
+></app-search-document-modal>
