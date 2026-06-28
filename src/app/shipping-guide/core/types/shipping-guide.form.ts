@@ -30,7 +30,7 @@ export interface ShippingGuideForm {
   empresa_transporte_tipo_doc: string | null;
   empresa_transporte_nro_doc: string | null;
   empresa_transporte_razon_social: string | null;
-  peso_bruto: number | null;
+  total_peso_bruto: number | null;
   motivo_traslado: string | null;
   est: boolean | null;
   detalles: ShippingGuideDetailModel[] | null;

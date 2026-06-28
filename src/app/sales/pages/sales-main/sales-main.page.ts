@@ -39,7 +39,6 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
 import { SaleService } from '../../core/services/sale.service';
 import { SaleModel } from '../../core/models/sale.model';
 import { SaleForm } from '../../core/types';
-import { saleStructure } from '../../helpers/sale-structure';
 import { buildSaleForm } from '../../helpers/build-sale-form';
 import { buildFilterForm, filterSort, mapParams } from '../../helpers';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
@@ -99,6 +98,10 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   public linkedGuia = signal<GetShippingGuideModel | null>(null);
   public isClientReadonly = computed(() => !!(this.linkedCotizacion() || this.linkedGuia()));
 
+  // Modal state
+  isSearchModalVisible = signal(false);
+  searchDocumentType = signal<SearchDocumentType>('cotizacion');
+
   public isLoadingList = signal(false);
   public sales: SaleModel[] = [];
   public totalList = 0;
@@ -110,11 +113,16 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   public saleId = signal<number | null>(null);
   public showFechaVencimiento = signal(false);
 
-  public structure = signal(saleStructure());
   public title = signal<string>('Historial de Ventas');
+
+  // Opciones de combos
+  public currencyOptions = signal<SelectOption[]>([]);
+  public documentOptions = signal<SelectOption[]>([]);
+  public paymentMethodOptions = signal<SelectOption[]>([]);
+  public documentTypeOptions = signal<SelectOption[]>([]);
   public sucursalOptions = signal<SelectOption[]>([]);
+  public companyOptions = signal<SelectOption[]>([]);
   public almacenOptions = signal<SelectOption[]>([]);
-  public almacenError = signal(false);
 
   availableStates = [
     { id: 2, nombre: 'Pagados', color: 'success' },
@@ -157,7 +165,10 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   loadForm() {
     this.form = this.#formBuilder.group(buildSaleForm());
     this.loadSelectCombos();
-    this.setupPaymentMethodListener();
+
+    this.form.get('mp_cod')?.valueChanges.subscribe((value) => {
+      this.showFechaVencimiento.set(value === 'CRDT');
+    });
 
     this.form.get('suc_id')?.valueChanges.subscribe((value) => {
       if (value) {
@@ -205,13 +216,16 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   openDocumentSearch(type: SearchDocumentType) {
-    /* this.searchDocumentModal.openModal(type, (doc) => {
-      if (type === 'cotizacion') {
-        this.onSelectCotizacion(doc as QuotationModel);
-      } else {
-        this.onSelectGuia(doc as GetShippingGuideModel);
-      }
-    }); */
+    this.searchDocumentType.set(type);
+    this.isSearchModalVisible.set(true);
+  }
+
+  onSelectDocument(doc: QuotationModel | GetShippingGuideModel | any) {
+    if (this.searchDocumentType() === 'cotizacion') {
+      this.onSelectCotizacion(doc as QuotationModel);
+    } else {
+      this.onSelectGuia(doc as GetShippingGuideModel);
+    }
   }
 
   onSelectCotizacion(cotizacion: QuotationModel) {
@@ -327,146 +341,53 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   loadSelectCombos() {
-    const currencies: SelectOption[] = [];
-    const documents: SelectOption[] = [];
-    const paymentType: SelectOption[] = [];
-    const documentTypes: SelectOption[] = [];
-    const sucursalOptions: SelectOption[] = [];
-    const companyOptions: SelectOption[] = [];
-
     this.#currencyService.getAll().subscribe({
-      next: (response) =>
-        response.data.map((item) => {
-          currencies.push({ value: item.mon_id, label: item.mon_nom });
-        }),
+      next: (response) => {
+        this.currencyOptions.set(
+          response.data.map((item) => ({ value: item.mon_id, label: item.mon_nom }))
+        );
+      },
     });
 
     this.#documentService.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          documents.push({ value: item.doc_id, label: item.doc_nom });
-        });
+        this.documentOptions.set(
+          response.data.map((item) => ({ value: item.doc_id, label: item.doc_nom }))
+        );
       },
     });
 
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          documentTypes.push({ value: item.tip_id, label: item.tip_nom });
-        });
+        this.documentTypeOptions.set(
+          response.data.map((item) => ({ value: item.tip_id, label: item.tip_nom }))
+        );
       },
     });
 
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          sucursalOptions.push({ value: item.suc_id, label: item.suc_nom });
-        });
+        this.sucursalOptions.set(
+          response.data.map((item) => ({ value: item.suc_id, label: item.suc_nom }))
+        );
       },
     });
 
     this.#paymentMethod.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          paymentType.push({ value: item.mp_id, label: item.mp_nom });
-        });
+        this.paymentMethodOptions.set(
+          response.data.map((item) => ({ value: item.mp_cod, label: item.mp_nom }))
+        );
       },
     });
 
     this.#organizationService.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          companyOptions.push({ value: item.emp_id, label: item.emp_nom });
-        });
+        this.companyOptions.set(
+          response.data.map((item) => ({ value: item.emp_id, label: item.emp_nom }))
+        );
       },
     });
-
-    this.updateStructure(
-      currencies,
-      paymentType,
-      documents,
-      documentTypes,
-      sucursalOptions,
-      companyOptions,
-      this.almacenOptions(),
-    );
-  }
-
-  setupPaymentMethodListener() {
-    this.form.get('mp_id')?.valueChanges.subscribe((mpId) => {
-      const isCredito = mpId === 2;
-      this.showFechaVencimiento.set(isCredito);
-
-      const currencies: SelectOption[] = [];
-      const documents: SelectOption[] = [];
-      const paymentType: SelectOption[] = [];
-      const documentTypes: SelectOption[] = [];
-      const sucursalOptions: SelectOption[] = [];
-      const companyOptions: SelectOption[] = [];
-
-      const currentStructure = this.structure();
-      currentStructure.forEach((section) => {
-        section.controls.forEach((control) => {
-          if (control.type === 'select' && 'options' in control) {
-            switch (control.formControlName) {
-              case 'mon_id':
-                currencies.push(...control.options);
-                break;
-              case 'mp_id':
-                paymentType.push(...control.options);
-                break;
-              case 'doc_id':
-                documents.push(...control.options);
-                break;
-              case 'tip_id':
-                documentTypes.push(...control.options);
-                break;
-              case 'suc_id':
-                sucursalOptions.push(...control.options);
-                break;
-              case 'emp_id':
-                companyOptions.push(...control.options);
-                break;
-              case 'almacen_id':
-                break;
-            }
-          }
-        });
-      });
-
-      this.updateStructure(
-        currencies,
-        paymentType,
-        documents,
-        documentTypes,
-        sucursalOptions,
-        companyOptions,
-        this.almacenOptions(),
-      );
-    });
-  }
-
-  updateStructure(
-    currencies: SelectOption[],
-    paymentType: SelectOption[],
-    documents: SelectOption[],
-    documentTypes: SelectOption[],
-    sucursalOptions: SelectOption[],
-    companyOptions: SelectOption[],
-    almacenOptions: SelectOption[],
-  ) {
-    this.structure.set(
-      saleStructure(
-        currencies,
-        paymentType,
-        documents,
-        documentTypes,
-        sucursalOptions,
-        companyOptions,
-        almacenOptions,
-        this.showFechaVencimiento(),
-      ),
-    );
   }
 
   loadAlmacenesBySucursal(sucId: number) {
@@ -494,6 +415,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   save() {
+    debugger
     if (this.form.invalid || this.detailsArray.length === 0) {
       this.#globalNotification.openToastAlert(
         'Validación',

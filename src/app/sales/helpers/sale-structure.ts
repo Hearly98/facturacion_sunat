@@ -94,7 +94,7 @@ export const saleStructure = (
           label: 'Tipo de Pago',
           type: 'select',
           col: '3',
-          formControlName: 'mp_id',
+          formControlName: 'mp_cod',
           options: PaymentTypeOptions,
         },
         {

@@ -12,6 +12,7 @@ import {
   TextColorDirective,
   SpinnerComponent,
   InputGroupComponent,
+  AlertComponent,
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
@@ -68,6 +69,7 @@ import { DocumentTypeService } from 'src/app/document-type/core/services/documen
     PaginatorComponent,
     DatePipe,
     SearchDocumentModalComponent,
+    AlertComponent
   ],
   templateUrl: './shipping-guide-main.page.html',
 })
@@ -518,6 +520,11 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
       next: (response) => {
         if (response.isValid) {
           const guia = response.data;
+          const hasCotizacion = !!guia.cot_id;
+
+          this.isCotizacionAttached.set(hasCotizacion);
+          this.form = this.#formBuilder.group(buildShippingGuideForm(hasCotizacion));
+
           this.form.patchValue({
             serie_id: guia.serie_id,
             fecha_emision: guia.fecha_emision,
@@ -542,15 +549,16 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
             nro_oc: guia.nro_oc,
             nro_factura: guia.nro_factura,
             fecha_factura: guia.fecha_factura,
-            peso_bruto: guia.peso_bruto,
+            total_peso_bruto: guia.total_peso_bruto,
             observaciones: guia.observaciones,
+            cot_id: guia.cot_id,
           });
 
           this.detailsArray.clear();
           guia.detalles?.forEach((detalle: any) => {
             const detailForm = this.#formBuilder.group(
               buildShippingGuideDetail({
-                guia_det_id: detalle.guia_det_id,
+                detg_id: detalle.detg_id,
                 prod_id: detalle.prod_id,
                 prod_nom: detalle.producto?.prod_nom || '',
                 prod_cod: detalle.producto?.prod_cod || '',
@@ -559,6 +567,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
                 peso_unitario: detalle.peso_unitario,
                 peso_total: detalle.peso_total,
                 descripcion: detalle.descripcion,
+                precio_unitario: detalle.precio_unitario,
               }),
             );
             this.detailsArray.push(detailForm);
