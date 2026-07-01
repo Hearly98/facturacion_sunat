@@ -1,7 +1,6 @@
 export class CategoryModel {
-    emp_id: number = 0;
-    cat_nom: string = '';
-    est: boolean = true;
+    empresaId: number = 0;
+    nombre: string = '';
     empresa?: {
         emp_id: number;
         emp_nom: string;

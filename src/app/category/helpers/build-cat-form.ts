@@ -6,8 +6,7 @@ export const buildCategoryForm = (): {
 } =>
 {
   return {
-    cat_id: new FormControl(null),
-    cat_nom: new FormControl(null, Validators.required),
-    est: new FormControl(true)
+    id: new FormControl(null),
+    nombre: new FormControl(null, Validators.required)
   };
 }

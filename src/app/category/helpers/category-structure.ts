@@ -1,7 +1,7 @@
 export const categoryStructure = [
   {
     label: 'Nombre',
-    formControlName: 'cat_nom',
+    formControlName: 'nombre',
     type: 'text',
     col: '12',
   },

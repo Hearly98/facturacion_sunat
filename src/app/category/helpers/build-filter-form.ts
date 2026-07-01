@@ -5,8 +5,7 @@ export const buildFilterForm = (): {
   [K in keyof FilterForm]: FormControl<FilterForm[K]>;
 } => {
   return {
-    cat_nom: new FormControl(null),
-    est: new FormControl(true),
+    nombre: new FormControl(null),
     order: new FormControl('desc')
   };
 };
