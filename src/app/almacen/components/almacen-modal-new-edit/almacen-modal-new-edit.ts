@@ -103,7 +103,7 @@ export class AlmacenModalNewEdit extends BaseComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.almacen_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -114,7 +114,7 @@ export class AlmacenModalNewEdit extends BaseComponent implements OnInit {
   }
 
   create() {
-    const { almacen_id, ...body } = this.form.value;
+    const { id, ...body } = this.form.value;
     const subscription = this.#almacenService.create(body as CreateAlmacenModel).subscribe({
       next: (response) => {
         if (response.isValid) {
@@ -137,7 +137,7 @@ export class AlmacenModalNewEdit extends BaseComponent implements OnInit {
 
   update() {
     const subscription = this.#almacenService
-      .update(this.form.value as UpdateAlmacenModel, this.form.value.almacen_id as number)
+      .update(this.form.value as UpdateAlmacenModel, this.form.value.id as number)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

@@ -4,23 +4,7 @@ import { BaseService } from '../../../shared/services/base.service';
 import { Observable } from 'rxjs';
 import { ResponseDto } from '../../../shared/models/api/response.dto';
 import { environment } from '../../../../environments/environment';
-import { GetAlmacenModel } from '../models';
-
-export interface ProductoAlmacenModel {
-  id: number;
-  prod_id: number;
-  almacen_id: number;
-  stock_actual: number;
-  precio_compra_base: number | null;
-  precio_venta_base: number | null;
-  activo: boolean;
-  producto?: {
-    prod_id: number;
-    prod_cod_interno: string;
-    prod_nom: string;
-  };
-  almacen?: GetAlmacenModel
-}
+import { ProductoAlmacenModel } from '../models/producto-almacen.model';
 
 @Injectable({
     providedIn: 'root',

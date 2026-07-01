@@ -13,11 +13,12 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { BaseComponent } from '../../../shared/base/base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { AlmacenService } from '../../core/services/almacen.service';
-import { ProductoAlmacenService, ProductoAlmacenModel } from '../../core/services/producto-almacen.service';
+import { ProductoAlmacenService } from '../../core/services/producto-almacen.service';
 import { GetAlmacenModel } from '../../core/models';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
+import { ProductoAlmacenModel } from '../../core/models/producto-almacen.model';
 
 @Component({
     selector: 'app-almacen-stock',
@@ -51,7 +52,7 @@ export class AlmacenStockComponent extends BaseComponent implements OnInit {
     #formBuilder = inject(FormBuilder);
 
     public filterForm = this.#formBuilder.group({
-        prod_nom: ['']
+        nombre: ['']
     });
 
     constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
@@ -93,13 +94,13 @@ export class AlmacenStockComponent extends BaseComponent implements OnInit {
     }
 
     onSearch() {
-        const term = this.filterForm.value.prod_nom?.toLowerCase() || '';
+        const term = this.filterForm.value.nombre?.toLowerCase() || '';
         if (!term) {
             this.filteredProductos = this.productos;
         } else {
             this.filteredProductos = this.productos.filter(p => 
-                p.producto?.prod_nom?.toLowerCase().includes(term) ||
-                p.producto?.prod_cod_interno?.toLowerCase().includes(term)
+                p.producto?.nombre?.toLowerCase().includes(term) ||
+                p.producto?.codigoInterno?.toLowerCase().includes(term)
             );
         }
     }

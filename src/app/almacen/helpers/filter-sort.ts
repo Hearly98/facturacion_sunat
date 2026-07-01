@@ -3,7 +3,7 @@ import { FilterForm } from '../core/types';
 export function filterSort(formValue: Partial<FilterForm>) {
     return [
         {
-            property: "almacen_id",
+            property: "createdAt",
             direction: formValue.order || 'desc',
         },
     ];

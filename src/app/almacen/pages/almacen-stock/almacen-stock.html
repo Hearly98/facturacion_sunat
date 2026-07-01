@@ -13,7 +13,7 @@
                 <div class="row g-3 mb-4" [formGroup]="filterForm">
                     <c-col md="6">
                         <label cLabel>Buscar Producto</label>
-                        <input cFormControl type="text" formControlName="prod_nom"
+                        <input cFormControl type="text" formControlName="nombre"
                             placeholder="Nombre o código del producto..." (input)="onSearch()" />
                     </c-col>
                     <c-col md="4" class="d-flex align-items-end gap-2">
@@ -44,15 +44,15 @@
                         <tbody>
                             <tr *ngFor="let item of filteredProductos; let i = index">
                                 <td>{{ i + 1 }}</td>
-                                <td>{{ item.producto?.prod_cod_interno || 'N/A' }}</td>
-                                <td>{{ item.producto?.prod_nom || 'N/A' }}</td>
+                                <td>{{ item.producto?.codigoInterno || 'N/A' }}</td>
+                                <td>{{ item.producto?.nombre || 'N/A' }}</td>
                                 <td class="text-center">
-                                    <span class="badge" [ngClass]="item.stock_actual <= 5 ? 'bg-danger' : 'bg-success'">
-                                        {{ item.stock_actual }}
+                                    <span class="badge" [ngClass]="item.stockActual <= 5 ? 'bg-danger' : 'bg-success'">
+                                        {{ item.stockActual }}
                                     </span>
                                 </td>
-                                <td class="text-end">{{ item.precio_compra_base | currency }}</td>
-                                <td class="text-end">{{ item.precio_venta_base | currency }}</td>
+                                <td class="text-end">{{ item.precioCompraBase | currency }}</td>
+                                <td class="text-end">{{ item.precioVentaBase | currency }}</td>
                                 <td>
                                     <span class="badge" [ngClass]="item.activo ? 'bg-success' : 'bg-danger'">
                                         {{ item.activo ? 'Activo' : 'Inactivo' }}

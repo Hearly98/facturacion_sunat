@@ -134,7 +134,7 @@ export class AlmacenComponent extends BaseSearchComponent implements OnInit{
   }
 
   viewStock(almacen: GetAlmacenModel) {
-    this.#router.navigate(['/almacen-stock', almacen.almacen_id]);
+    this.#router.navigate(['/almacen-stock', almacen.id]);
   }
 
   onActivate(id: number) {
