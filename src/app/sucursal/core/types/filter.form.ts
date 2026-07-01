@@ -1,6 +1,5 @@
 export interface FilterForm {
-  suc_nom: string | null;
-  est: boolean | null;
-  emp_id: number | null;
+  nombre: string | null;
+  empresaId: number | null;
   order: string | null;
 }

@@ -1,5 +1,4 @@
 export class SucursalModel {
-  suc_nom: string = '';
-  emp_id: number = 0;
-  est: boolean = true;
+  nombre: string = '';
+  empresaId: number = 0;
 }
