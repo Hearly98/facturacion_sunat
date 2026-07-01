@@ -1,13 +1,13 @@
 export const SucursalStructure = [
   {
     label: 'Código',
-    formControlName: 'suc_cod',
+    formControlName: 'codigo',
     type: 'text',
     col: '12',
   },
   {
     label: 'Nombre',
-    formControlName: 'suc_nom',
+    formControlName: 'nombre',
     type: 'text',
     col: '12',
   },

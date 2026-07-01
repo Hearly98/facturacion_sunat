@@ -74,7 +74,7 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
         if (response.isValid) {
           this.sucursales = response.data;
           if (this.sucursales.length > 0) {
-            this.form.patchValue({ suc_id: this.sucursales[0].suc_id });
+            this.form.patchValue({ sucursalId: this.sucursales[0].id });
             this.onSearch();
           }
         }
@@ -90,7 +90,7 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
   }
 
   onSearch() {
-    const sucId = this.form.value.suc_id;
+    const sucId = this.form.value.sucursalId;
     if (!sucId) {
       return;
     }
@@ -122,6 +122,6 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
   }
 
   getTotalStock(): number {
-    return this.filteredProductos.reduce((sum, p) => sum + p.stock_total, 0);
+    return this.filteredProductos.reduce((sum, p) => sum + p.stockTotal, 0);
   }
 }

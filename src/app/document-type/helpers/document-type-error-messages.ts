@@ -1,11 +1,11 @@
 export const documentTypeErrorMessages = () => {
   return {
-    tip_nom: {
+    nombre: {
       required: 'El nombre es obligatorio',
       minLength: 'El nombre debe tener un mínimo de 3 caracteres',
     },
-    tip_cod: {
-      required: 'El nombre es obligatorio',
+    codigo: {
+      required: 'El código es obligatorio',
     },
   };
 };

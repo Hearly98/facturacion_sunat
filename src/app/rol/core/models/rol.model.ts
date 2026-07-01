@@ -1,4 +1,4 @@
 export class RolModel {
-  rol_nom: string = '';
+  nombre: string = '';
   est: boolean = true;
 }

@@ -1,14 +1,14 @@
 export const currencyErrorMessages = () => {
   return {
-    mon_nom: {
+    nombre: {
       required: 'El nombre es obligatorio.',
       minLength: 'Debe ser mínimo de 3 caracteres.',
     },
-    mon_cod: {
+    codigo: {
       required: 'El código es obligatorio.',
       minLength: 'Debe ser mínimo de 2 caracteres.',
     },
-    mon_simbolo: {
+    simbolo: {
       required: 'El simbolo es obligatorio.',
     },
   };

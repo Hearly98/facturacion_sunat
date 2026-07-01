@@ -101,7 +101,7 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
 
   onSubmit() {
     if (this.form.valid) {
-      if (this.form.value.cli_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -113,7 +113,7 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
 
   create() {
     this.isLoading.set(true);
-    const { cli_id, ...body } = this.form.value;
+    const { id, ...body } = this.form.value;
     const subscription = this.#customerService.create(body as CreateCustomerModel).subscribe({
       next: (response) => {
         if (response.isValid) {

@@ -94,7 +94,7 @@ export class DocumentTypeNewEditModalComponent extends BaseComponent implements 
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.tip_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -105,7 +105,7 @@ export class DocumentTypeNewEditModalComponent extends BaseComponent implements 
   }
 
   create() {
-    const { tip_id, ...body } = this.form.value;
+    const { id, ...body } = this.form.value;
     const subscription = this.#documentTypeService
       .create(body as CreateDocumentTypeModel)
       .subscribe({

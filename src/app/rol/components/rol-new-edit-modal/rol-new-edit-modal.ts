@@ -90,7 +90,7 @@ export class RolNewEditModal extends BaseComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      if (this.form.value.rol_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -102,7 +102,7 @@ export class RolNewEditModal extends BaseComponent implements OnInit {
 
   create() {
     this.isLoading.set(true);
-    const { rol_id, ...body } = this.form.value;
+    const { id, ...body } = this.form.value;
     const subscription = this.#rolService.create(body as CreateRolModel).subscribe({
       next: (response) => {
         if (response.isValid) {

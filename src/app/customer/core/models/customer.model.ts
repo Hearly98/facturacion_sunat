@@ -1,9 +1,9 @@
 export class CustomerModel {
-  emp_id: number = 0;
-  cli_nom: string = '';
-  cli_documento: string = '';
-  cli_telf: string = '';
-  cli_direcc: string = '';
-  cli_correo: string = '';
+  empresaId: number = 0;
+  nombre: string = '';
+  documento: string = '';
+  telefono: string = '';
+  direccion: string = '';
+  correo: string = '';
   est: boolean = false;
 }

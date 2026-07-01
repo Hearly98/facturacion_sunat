@@ -1,7 +1,7 @@
 export const rolStructure = [
   {
     label: 'Nombre',
-    formControlName: 'rol_nom',
+    formControlName: 'nombre',
     type: 'text',
     col: '12',
   },

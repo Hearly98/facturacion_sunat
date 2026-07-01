@@ -1,11 +1,16 @@
 export interface CustomerForm {
-  cli_id: number | null;
-  tip_id: number | null;
-  cli_nom: string | null;
-  cli_documento: string | null;
-  cli_telf: string | null;
-  cli_direcc: string | null;
-  cli_correo: string | null;
-  est: boolean | null;
-  emp_id: number | null;
+  id: number | null;
+  tipoDocumentoId: number | null;
+  nombre: string | null;
+  apellido: string | null;
+  razonSocial: string | null;
+  documento: string | null;
+  telefono: string | null;
+  direccion: string | null;
+  email: string | null;
+  empresaId: number | null;
+  departamento: string | null;
+  provincia: string | null;
+  distrito: string | null;
+  codigoUbigeo: string | null;
 }

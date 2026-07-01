@@ -1,4 +1,4 @@
 export interface FilterForm {
-  cli_nom: string | null;
+  nombre: string | null;
   order: string | null;
 }

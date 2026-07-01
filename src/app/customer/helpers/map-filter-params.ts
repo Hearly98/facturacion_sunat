@@ -4,7 +4,7 @@ export function mapParams(
     form: Partial<FilterForm>
 ): Partial<FilterForm> {
     return {
-        cli_nom: form.cli_nom?.trim() ?? null,
+        nombre: form.nombre?.trim() ?? null,
         order: form.order ?? null,
     };
 }

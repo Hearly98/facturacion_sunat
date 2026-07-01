@@ -39,27 +39,28 @@
           <thead>
             <tr>
               <th>Acciones</th>
+              <th>Código</th>
               <th>Nombre</th>
             </tr>
           </thead>
           <tbody>
-            @if (roles.length > 0) {
-              @for (rol of roles; track $index) {
-                <tr>
-                  <td>
-                    <button (click)="openModal(rol.id)" size="sm" class="me-2" cButton color="info">
-                      <svg cIcon name="cilPencil"></svg>
-                    </button>
-                    <button (click)="onDelete(rol.id)" size="sm" cButton color="danger">
-                      <svg cIcon name="cilTrash"></svg>
-                    </button>
-                  </td>
-                  <td>{{ rol.nombre }}</td>
-                </tr>
-              }
-            } @else {
+            @for (item of currencies; track $index) {
               <tr>
-                <td colspan="3">No hay datos</td>
+                <td>
+                  <button (click)="openModal(item.id)" size="sm" class="me-2" cButton color="info">
+                    <svg cIcon name="cilPencil"></svg>
+                  </button>
+                  <button (click)="onDelete(item.id)" size="sm" cButton color="danger">
+                    <svg cIcon name="cilTrash"></svg>
+                  </button>
+                </td>
+                <td>{{ item.codigo }}</td>
+                <td>{{ item.nombre }}</td>
+              </tr>
+            }
+            @if (currencies.length === 0) {
+              <tr>
+                <td colspan="3">No se encontraron datos</td>
               </tr>
             }
           </tbody>
@@ -74,4 +75,5 @@
     </c-row>
   </c-card-body>
 </c-card>
-<app-rol-new-edit-modal #rolNewEditModal></app-rol-new-edit-modal>
+
+<app-currency-new-edit-modal #currencyNewEditModal></app-currency-new-edit-modal>

@@ -5,10 +5,10 @@ export const buildSucursalForm = (): {
   [K in keyof SucursalForm]: FormControl<SucursalForm[K]>;
 } => {
   return {
-    suc_id: new FormControl(null),
-    emp_id: new FormControl(null),
-    suc_cod: new FormControl(null),
-    suc_nom: new FormControl(
+    id: new FormControl(null),
+    empresaId: new FormControl(null),
+    codigo: new FormControl(null),
+    nombre: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
@@ -17,6 +17,5 @@ export const buildSucursalForm = (): {
     departamento: new FormControl(null),
     provincia: new FormControl(null),
     distrito: new FormControl(null),
-    est: new FormControl(true),
   };
 };

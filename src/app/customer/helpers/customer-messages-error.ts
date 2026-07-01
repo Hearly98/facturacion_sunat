@@ -1,19 +1,23 @@
 export const customerErrorMessages = () => {
   return {
-    cli_nom: {
+    nombre: {
       required: 'El nombre es obligatorio',
       minLength: 'El nombre debe tener un mínimo de 3 caracteres',
     },
-    tip_id: {
+    apellido: {
+      required: 'El apellido es obligatorio',
+      minLength: 'El apellido debe tener un mínimo de 3 caracteres',
+    },
+    tipoDocumentoId: {
       required: 'El tipo de documento es obligatorio',
     },
-    cli_documento: {
+    documento: {
       required: 'El documento es obligatorio',
     },
-    cli_telf: {
+    telefono: {
       required: 'El telefono es obligatorio'
     },
-    cli_correo: {
+    email: {
       required: 'El correo es obligatorio',
       email: 'No es un email válido'
     },

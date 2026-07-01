@@ -1,5 +1,4 @@
 export interface FilterForm {
-  doc_nom: string | null;
-  est: boolean | null;
+  nombre: string | null;
   order: 'asc' | 'desc' | null;
 }
