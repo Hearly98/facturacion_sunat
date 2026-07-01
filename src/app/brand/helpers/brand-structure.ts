@@ -1,14 +1,14 @@
 export const brandStructure = [
   {
     label: 'Código',
-    formControlName: 'marca_codigo',
+    formControlName: 'codigo',
     type: 'text',
     col: '12',
     placeholder: 'Ej: MRC-001',
   },
   {
     label: 'Nombre',
-    formControlName: 'marca_nom',
+    formControlName: 'nombre',
     type: 'text',
     col: '12',
     placeholder: 'Ej: Samsung',

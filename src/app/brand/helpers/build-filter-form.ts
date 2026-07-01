@@ -5,9 +5,8 @@ export const buildFilterForm = (): {
   [K in keyof FilterForm]: FormControl<FilterForm[K]>;
 } => {
   return {
-    marca_nom: new FormControl<string | null>(null),
-    marca_codigo: new FormControl<string | null>(null),
-    est: new FormControl<boolean | null>(true),
+    nombre: new FormControl<string | null>(null),
+    codigo: new FormControl<string | null>(null),
     order: new FormControl<string>('desc'),
   };
 };

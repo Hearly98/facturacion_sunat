@@ -1,8 +1,7 @@
 export class MarcaModel {
-  emp_id: number = 0;
-  marca_codigo: string = '';
-  marca_nom: string = '';
-  est: boolean = true;
+  empresaId: number = 0;
+  codigo: string = '';
+  nombre: string = '';
   empresa?: {
     emp_id: number;
     emp_nom: string;

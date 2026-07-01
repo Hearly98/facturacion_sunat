@@ -1,6 +1,5 @@
 export interface BrandForm {
-  marca_id: number | null;
-  marca_codigo: string | null;
-  marca_nom: string | null;
-  est: boolean | null;
+  id: number | null;
+  codigo: string | null;
+  nombre: string | null;
 }
