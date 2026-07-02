@@ -45,10 +45,10 @@ export class CurrencyPage extends BaseSearchComponent implements OnInit {
   public form!: TypedFormGroup<FilterForm>;
   public title = 'Monedas';
   public currencies: GetCurrencyModel[] = [];
-  #formBuilder = inject(FormBuilder);
-  #service = inject(CurrencyService);
-  #confirmService = inject(ConfirmService);
-  #globalNotification = inject(GlobalNotification);
+  readonly #formBuilder = inject(FormBuilder);
+  readonly #service = inject(CurrencyService);
+  readonly #confirmService = inject(ConfirmService);
+  readonly #globalNotification = inject(GlobalNotification);
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.COMPANY, viewContainerRef);
   }

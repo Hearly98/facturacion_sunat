@@ -52,62 +52,68 @@ import { OrganizationService } from 'src/app/organization/core/services/organiza
       <c-row class="mb-3">
         <c-col>
           <div class="d-flex justify-content-between align-items-center">
-             <h4>{{ saleTitle() }}</h4>
-             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="javascript:void(0)" (click)="goBack()">Ventas</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Ver</li>
-                </ol>
-             </nav>
+            <h4>{{ saleTitle() }}</h4>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="javascript:void(0)" (click)="goBack()">Ventas</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Ver</li>
+              </ol>
+            </nav>
           </div>
         </c-col>
       </c-row>
 
       @for (item of structure(); track $index) {
-      <c-card class="mb-4">
-        <c-card-body>
-          <c-row>
-            <c-col [md]="12">
-              <h5>{{ item.title }}</h5>
-            </c-col>
-          </c-row>
-          <c-row>
-            @for (control of item.controls; track $index) {
-            <c-col [md]="control.col">
-              <label [for]="control.formControlName">{{ control.label }}</label>
-              @switch (control.type) { @case('search-select') {
-                <input
-                  [value]="getSearchSelectValue(control.formControlName)"
-                  class="form-control"
-                  disabled
-                />
-              } @case('select'){
-              <select class="form-control form-select" [formControlName]="control.formControlName">
-                <option [ngValue]="null">Seleccione</option>
-                @for (option of control.options; track $index) {
-                <option [ngValue]="option.value">{{ option.label }}</option>
-                }
-              </select>
-              } 
-              @case('checkbox') {
-                <br>
-              <input
-                type="checkbox"
-                [formControlName]="control.formControlName"
-              />
-              } @default {
-              <input
-                [formControlName]="control.formControlName"
-                [placeholder]="control.placeholder"
-                [type]="control.type"
-                class="form-control"
-              />
-              } }
-            </c-col>
-            }
-          </c-row>
-        </c-card-body>
-      </c-card>
+        <c-card class="mb-4">
+          <c-card-body>
+            <c-row>
+              <c-col [md]="12">
+                <h5>{{ item.title }}</h5>
+              </c-col>
+            </c-row>
+            <c-row>
+              @for (control of item.controls; track $index) {
+                <c-col [md]="control.col">
+                  <label [for]="control.formControlName">{{ control.label }}</label>
+                  @switch (control.type) {
+                    @case ('search-select') {
+                      <input
+                        [value]="getSearchSelectValue(control.formControlName)"
+                        class="form-control"
+                        disabled
+                      />
+                    }
+                    @case ('select') {
+                      <select
+                        class="form-control form-select"
+                        [formControlName]="control.formControlName"
+                      >
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of control.options; track $index) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    }
+                    @case ('checkbox') {
+                      <br />
+                      <input type="checkbox" [formControlName]="control.formControlName" />
+                    }
+                    @default {
+                      <input
+                        [formControlName]="control.formControlName"
+                        [placeholder]="control.placeholder"
+                        [type]="control.type"
+                        class="form-control"
+                      />
+                    }
+                  }
+                </c-col>
+              }
+            </c-row>
+          </c-card-body>
+        </c-card>
       }
 
       <!-- Tabla de detalles -->
@@ -116,8 +122,8 @@ import { OrganizationService } from 'src/app/organization/core/services/organiza
         [showActions]="false"
       ></app-sale-detail-table>
 
-       <!-- Pagos (UI Placeholder) -->
-       <c-card class="mb-4 border-success">
+      <!-- Pagos (UI Placeholder) -->
+      <c-card class="mb-4 border-success">
         <c-card-header class="bg-success text-white">
           <strong>Datos de Pago</strong>
         </c-card-header>
@@ -137,21 +143,21 @@ import { OrganizationService } from 'src/app/organization/core/services/organiza
             </c-col>
             <c-col md="2">
               <label>Fecha</label>
-              <input type="date" class="form-control">
+              <input type="date" class="form-control" />
             </c-col>
             <c-col md="2">
               <label>Hora</label>
-              <input type="text" class="form-control" placeholder="[ Hora de Pago ]">
+              <input type="text" class="form-control" placeholder="[ Hora de Pago ]" />
             </c-col>
             <c-col md="2">
               <label>Nro de Operación</label>
-              <input type="text" class="form-control" placeholder="[ Nro. de Operación ]">
+              <input type="text" class="form-control" placeholder="[ Nro. de Operación ]" />
             </c-col>
             <c-col md="2">
               <label>Monto</label>
               <div class="input-group">
                 <span class="input-group-text">S/</span>
-                <input type="text" class="form-control">
+                <input type="text" class="form-control" />
               </div>
             </c-col>
             <c-col md="10">
@@ -218,12 +224,7 @@ import { OrganizationService } from 'src/app/organization/core/services/organiza
               <button class="me-2" type="button" cButton color="secondary" (click)="goBack()">
                 Volver
               </button>
-              <button
-                type="button"
-                cButton
-                color="info"
-                class="text-white"
-              >
+              <button type="button" cButton color="info" class="text-white">
                 <svg cIcon name="cilPrint" class="me-2"></svg>
                 Imprimir
               </button>
@@ -303,22 +304,28 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
           // Formatear fecha
           if (response.data.fecha_emision) {
             const date = new Date(response.data.fecha_emision);
-            this.saleDate.set(date.toLocaleDateString('es-ES', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            }));
+            this.saleDate.set(
+              date.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }),
+            );
           }
 
           this.form.patchValue({
             ...response.data,
-            fecha_emision: response.data.fecha_emision ? new Date(response.data.fecha_emision).toISOString().split('T')[0] : null,
-            fecha_vencimiento: response.data.fecha_vencimiento ? new Date(response.data.fecha_vencimiento).toISOString().split('T')[0] : null,
-            cli_documento: response.data.cliente?.cli_documento,
-            cli_direcc: response.data.cliente?.cli_direcc,
-            cli_correo: response.data.cliente?.cli_correo,
-            cli_telf: response.data.cliente?.cli_telf,
+            fecha_emision: response.data.fecha_emision
+              ? new Date(response.data.fecha_emision).toISOString().split('T')[0]
+              : null,
+            fecha_vencimiento: response.data.fecha_vencimiento
+              ? new Date(response.data.fecha_vencimiento).toISOString().split('T')[0]
+              : null,
+            cli_documento: response.data.cliente?.documento,
+            cli_direcc: response.data.cliente?.direccion,
+            cli_correo: response.data.cliente?.correo,
+            cli_telf: response.data.cliente?.telefono,
           });
 
           if (response.data.detalles) {
@@ -335,7 +342,7 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
                   precio_unitario: det.prod_pventa,
                   precio_venta: det.prod_pventa,
                   dscto: 0,
-                }) as any
+                }) as any,
               );
             });
           }
@@ -366,14 +373,14 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
     this.#currencyService.getAll().subscribe({
       next: (response) =>
         response.data.map((item) => {
-          currencies.push({ value: item.mon_id, label: item.mon_nom });
+          currencies.push({ value: item.id, label: item.nombre });
         }),
     });
 
     this.#documentService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          documents.push({ value: item.doc_id, label: item.doc_nom });
+          documents.push({ value: item.id, label: item.nombre });
         });
       },
     });
@@ -381,14 +388,14 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          documentTypes.push({ value: item.tip_id, label: item.tip_nom });
+          documentTypes.push({ value: item.id, label: item.nombre });
         });
       },
     });
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          sucursalOptions.push({ value: item.suc_id, label: item.suc_nom });
+          sucursalOptions.push({ value: item.id, label: item.nombre });
         });
       },
     });
@@ -407,10 +414,19 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
           companies.push({ value: item.emp_id, label: item.emp_nom });
         });
       },
-    })
+    });
 
     this.structure.set(
-      saleStructure(currencies, paymentType, documents, documentTypes, sucursalOptions, companies, [], this.showFechaVencimiento())
+      saleStructure(
+        currencies,
+        paymentType,
+        documents,
+        documentTypes,
+        sucursalOptions,
+        companies,
+        [],
+        this.showFechaVencimiento(),
+      ),
     );
   }
 
@@ -423,8 +439,8 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
     const sucursalOptions: SelectOption[] = [];
     const companies: SelectOption[] = [];
 
-    currentStructure.forEach(section => {
-      section.controls.forEach(control => {
+    currentStructure.forEach((section) => {
+      section.controls.forEach((control) => {
         if (control.type === 'select' && 'options' in control) {
           switch (control.formControlName) {
             case 'mon_id':
@@ -451,7 +467,16 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
     });
 
     this.structure.set(
-      saleStructure(currencies, paymentType, documents, documentTypes, sucursalOptions, companies, [], this.showFechaVencimiento())
+      saleStructure(
+        currencies,
+        paymentType,
+        documents,
+        documentTypes,
+        sucursalOptions,
+        companies,
+        [],
+        this.showFechaVencimiento(),
+      ),
     );
   }
 

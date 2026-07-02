@@ -91,7 +91,7 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.marca_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();

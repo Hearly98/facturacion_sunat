@@ -122,7 +122,7 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
         if (response.isValid) {
           const productData = response.data;
           this.form.patchValue(productData);
-          if (productData.prod_img) {
+          if (productData.imagen) {
             this.imagePreview.set(productData.image_url);
           }
         }

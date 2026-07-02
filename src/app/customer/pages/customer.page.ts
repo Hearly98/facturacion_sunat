@@ -89,7 +89,7 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                     <tr>
                       <td>
                         <button
-                          (click)="openModal(customer.cli_id)"
+                          (click)="openModal(customer.id)"
                           size="sm"
                           class="me-2"
                           cButton
@@ -98,7 +98,7 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                           <svg cIcon name="cilPencil"></svg>
                         </button>
                         <button
-                          (click)="onDelete(customer.cli_id)"
+                          (click)="onDelete(customer.id)"
                           size="sm"
                           cButton
                           color="danger"
@@ -106,9 +106,9 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                           <svg cIcon name="cilTrash"></svg>
                         </button>
                       </td>
-                      <td>{{ customer.cli_nom }}</td>
-                      <td>{{ customer.cli_documento }}</td>
-                      <td>{{ customer.cli_telf }}</td>
+                      <td>{{ customer.nombre }}</td>
+                      <td>{{ customer.documento }}</td>
+                      <td>{{ customer.telefono }}</td>
                     </tr>
                   }
                 } @else {

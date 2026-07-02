@@ -24,8 +24,8 @@
                     [formControlName]="item.formControlName"
                   >
                     <option [ngValue]="null">Seleccione</option>
-                    @for (item of roles; track $index) {
-                      <option [ngValue]="item.rol_id">{{ item.rol_nom }}</option>
+                    @for (rol of roles; track $index) {
+                      <option [ngValue]="rol.id">{{ rol.nombre }}</option>
                     }
                   </select>
                   <app-validation-messages

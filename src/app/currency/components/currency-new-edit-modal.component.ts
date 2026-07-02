@@ -91,7 +91,7 @@ export class CurrencyNewEditModalComponent extends BaseComponent implements OnIn
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.mon_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -102,7 +102,7 @@ export class CurrencyNewEditModalComponent extends BaseComponent implements OnIn
   }
 
   create() {
-    const { mon_id, ...body } = this.form.value;
+    const { id, ...body } = this.form.value;
     const subscription = this.#currencyService.create(body as CreateCurrencyModel).subscribe({
       next: (response) => {
         if (response.isValid) {

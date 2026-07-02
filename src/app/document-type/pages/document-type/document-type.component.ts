@@ -1,4 +1,4 @@
-import { Component, Inject, inject, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, Inject, inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import {
   ButtonDirective,
   CardBodyComponent,
@@ -40,16 +40,16 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
   templateUrl: `./document-type.component.html`,
   styles: ``,
 })
-export class DocumentTypeComponent extends BaseSearchComponent {
+export class DocumentTypeComponent extends BaseSearchComponent implements OnInit {
   @ViewChild('documentTypeNewEditModal')
   documentTypeNewEditModal!: DocumentTypeNewEditModalComponent;
   public form!: TypedFormGroup<FilterForm>;
-  #formBuilder = inject(FormBuilder);
+  readonly #formBuilder = inject(FormBuilder);
   public title = 'Tipo Documentos';
-  #documentTypeService = inject(DocumentTypeService);
+  readonly #documentTypeService = inject(DocumentTypeService);
   public documentTypes: GetDocumentTypeModel[] = [];
-  #confirmService = inject(ConfirmService);
-  #globalNotification = inject(GlobalNotification);
+  readonly #confirmService = inject(ConfirmService);
+  readonly #globalNotification = inject(GlobalNotification);
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ADMINISTRATION, viewContainerRef);
   }
@@ -65,7 +65,7 @@ export class DocumentTypeComponent extends BaseSearchComponent {
 
   onSearch(filter = null, page = 1) {
     const sort = filterSort(this.form.value);
-    const filterToUse = filter || mapParams(this.form.value);
+    const filterToUse = filter ?? mapParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);

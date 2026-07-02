@@ -29,7 +29,7 @@ export class BrandService extends BaseService {
     }
 
     update(body: UpdateMarcaModel): Observable<ResponseDto<GetMarcaModel>> {
-        return this.putRequest<UpdateMarcaModel, ResponseDto<GetMarcaModel>>(`/${body.marca_id}`, body);
+        return this.putRequest<UpdateMarcaModel, ResponseDto<GetMarcaModel>>(`/${body.id}`, body);
     }
 
     delete(id: number): Observable<ResponseDto<any>> {

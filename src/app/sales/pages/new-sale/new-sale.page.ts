@@ -427,14 +427,14 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.#currencyService.getAll().subscribe({
       next: (response) =>
         response.data.map((item) => {
-          currencies.push({ value: item.mon_id, label: item.mon_nom });
+          currencies.push({ value: item.id, label: item.nombre });
         }),
     });
 
     this.#documentService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          documents.push({ value: item.doc_id, label: item.doc_nom });
+          documents.push({ value: item.id, label: item.nombre });
         });
       },
     });
@@ -442,7 +442,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          documentTypes.push({ value: item.tip_id, label: item.tip_nom });
+          documentTypes.push({ value: item.id, label: item.nombre });
         });
       },
     });
@@ -450,7 +450,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          sucursalOptions.push({ value: item.suc_id, label: item.suc_nom });
+          sucursalOptions.push({ value: item.id, label: item.nombre });
         });
       },
     });
@@ -485,7 +485,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
   loadAlmacenesBySucursal(sucId: number) {
     this.#almacenService.getBySucursal(sucId).subscribe({
       next: (response) => {
-        this.almacenOptions.set(mapToSelectOption(response.data, 'almacen_id', 'nombre'));
+        this.almacenOptions.set(mapToSelectOption(response.data, 'id', 'nombre'));
         this.form.patchValue({ almacen_id: null });
       },
     });
@@ -618,7 +618,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
 
     if (cotizacion.cliente) {
       this.form.patchValue({
-        cli_id: cotizacion.cliente.cli_id,
+        cli_id: cotizacion.cliente.id,
         cli_documento: (cotizacion.cliente as any).cli_documento,
         tip_id: (cotizacion.cliente as any).tip_id,
         cli_direcc: (cotizacion.cliente as any).cli_direcc,

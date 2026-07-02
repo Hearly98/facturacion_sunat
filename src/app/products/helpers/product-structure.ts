@@ -14,13 +14,13 @@ export const productStructure = (
   let unitOfMeasures: { label: string; value: number }[] = [];
   let categories: { label: string; value: number }[] = [];
   let currencies: { label: string; value: number }[] = [];
-  if (brandOptions) brands = brandOptions.map((s) => ({ label: s.marca_nom, value: s.marca_id }));
+  if (brandOptions) brands = brandOptions.map((s) => ({ label: s.nombre, value: s.id }));
   if (unitOfMeasureOptions)
-    unitOfMeasures = unitOfMeasureOptions.map((s) => ({ label: s.und_nom, value: s.und_id }));
+    unitOfMeasures = unitOfMeasureOptions.map((s) => ({ label: s.nombre, value: s.id }));
   if (categoryOptions)
-    categories = categoryOptions.map((s) => ({ label: s.cat_nom, value: s.cat_id }));
+    categories = categoryOptions.map((s) => ({ label: s.nombre, value: s.id }));
   if (currencyOptions)
-    currencies = currencyOptions.map((s) => ({ label: s.mon_nom, value: s.mon_id }));
+    currencies = currencyOptions.map((s) => ({ label: s.nombre, value: s.id }));
   return [
     {
       label: 'Nombre',

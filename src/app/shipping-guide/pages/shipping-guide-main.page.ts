@@ -69,7 +69,7 @@ import { DocumentTypeService } from 'src/app/document-type/core/services/documen
     PaginatorComponent,
     DatePipe,
     SearchDocumentModalComponent,
-    AlertComponent
+    AlertComponent,
   ],
   templateUrl: './shipping-guide-main.page.html',
 })
@@ -203,11 +203,11 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
 
     if (cotizacion.cliente) {
       this.form.patchValue({
-        cli_id: cotizacion.cliente.cli_id,
-        nombre_cliente: cotizacion.cliente.cli_nom,
-        doc_cliente: cotizacion.cliente.cli_documento,
-        direccion_cliente: cotizacion.cliente.cli_direcc,
-        destino_direccion: cotizacion.cliente.cli_direcc,
+        cli_id: cotizacion.cliente.id,
+        nombre_cliente: cotizacion.cliente.nombre,
+        doc_cliente: cotizacion.cliente.documento,
+        direccion_cliente: cotizacion.cliente.direccion,
+        destino_direccion: cotizacion.cliente.direccion,
       });
     }
 
@@ -308,8 +308,8 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
         this.sucursales = response.data.map((item) => ({
-          value: item.suc_id,
-          label: item.suc_nom,
+          value: item.id,
+          label: item.nombre,
         }));
         this.updateStructure();
       },
@@ -318,8 +318,8 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
     this.#unitOfMeasureService.getAll().subscribe({
       next: (response) => {
         this.unidadesMedida = response.data.map((item) => ({
-          value: item.und_id,
-          label: item.und_nom,
+          value: item.id,
+          label: item.nombre,
         }));
       },
     });
@@ -327,8 +327,8 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
         this.tiposDocumento = response.data.map((item) => ({
-          value: item.tip_nom,
-          label: item.tip_nom,
+          value: item.nombre,
+          label: item.nombre,
         }));
       },
     });

@@ -428,7 +428,7 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
     this.#productoAlmacenService.getByProducto(productId).subscribe({
       next: (response) => {
         const stockInfo = response.data.find((s: any) => s.almacen_id === almacen_id);
-        this.selectedProductStock.set(stockInfo?.stock_actual ?? 0);
+        this.selectedProductStock.set(stockInfo?.stockActual ?? 0);
       },
       error: () => {
         this.selectedProductStock.set(null);

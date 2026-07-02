@@ -181,7 +181,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
           });
 
           if (data.cliente) {
-            this.searchSelectLabels['cli_id'] = data.cliente.cli_nom;
+            this.searchSelectLabels['cli_id'] = data.cliente.nombre;
           }
 
           this.patchCustomer(data.cliente);

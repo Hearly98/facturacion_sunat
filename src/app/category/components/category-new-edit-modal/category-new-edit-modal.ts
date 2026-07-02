@@ -90,7 +90,7 @@ export class CategoryNewEditModal extends BaseComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.cat_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -101,7 +101,7 @@ export class CategoryNewEditModal extends BaseComponent implements OnInit {
   }
 
   create() {
-    const { cat_id, ...body } = this.form.value;
+    const { id, ...body } = this.form.value;
     const subscription = this.#categoryService.create(body as CreateCategoryModel).subscribe({
       next: (response) => {
         if (response.isValid) {

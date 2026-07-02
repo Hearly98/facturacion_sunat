@@ -265,7 +265,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   getClientInitialValue(formControlName: string): string {
     if (formControlName !== 'cli_id') return '';
     const cot = this.linkedCotizacion();
-    if (cot?.cliente) return cot.cliente.cli_nom;
+    if (cot?.cliente) return cot.cliente.nombre;
     const guia = this.linkedGuia();
     if (guia?.cliente) return guia.cliente.cli_nom;
     return '';
@@ -344,7 +344,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#currencyService.getAll().subscribe({
       next: (response) => {
         this.currencyOptions.set(
-          response.data.map((item) => ({ value: item.mon_id, label: item.mon_nom }))
+          response.data.map((item) => ({ value: item.id, label: item.nombre }))
         );
       },
     });
@@ -352,7 +352,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#documentService.getAll().subscribe({
       next: (response) => {
         this.documentOptions.set(
-          response.data.map((item) => ({ value: item.doc_id, label: item.doc_nom }))
+          response.data.map((item) => ({ value: item.id, label: item.nombre }))
         );
       },
     });
@@ -360,7 +360,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
         this.documentTypeOptions.set(
-          response.data.map((item) => ({ value: item.tip_id, label: item.tip_nom }))
+          response.data.map((item) => ({ value: item.id, label: item.nombre }))
         );
       },
     });
@@ -368,7 +368,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
         this.sucursalOptions.set(
-          response.data.map((item) => ({ value: item.suc_id, label: item.suc_nom }))
+          response.data.map((item) => ({ value: item.id, label: item.nombre }))
         );
       },
     });
@@ -393,7 +393,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   loadAlmacenesBySucursal(sucId: number) {
     this.#almacenService.getBySucursal(sucId).subscribe({
       next: (response) => {
-        this.almacenOptions.set(mapToSelectOption(response.data, 'almacen_id', 'nombre'));
+        this.almacenOptions.set(mapToSelectOption(response.data, 'id', 'nombre'));
         this.form.patchValue({ almacen_id: null });
       },
     });

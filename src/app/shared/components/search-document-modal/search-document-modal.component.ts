@@ -140,7 +140,7 @@ export class SearchDocumentModalComponent {
         (this.allItems() as QuotationModel[]).filter(
           (c) =>
             c.numero_completo?.toLowerCase().includes(term) ||
-            c.cliente?.cli_nom?.toLowerCase().includes(term),
+            c.cliente?.nombre?.toLowerCase().includes(term),
         ),
       );
     } else {

@@ -179,7 +179,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   loadAlmacenesBySucursal(sucId: number) {
     this.#almacenService.getBySucursal(sucId).subscribe({
       next: (response) => {
-        const almacenOptions = mapToSelectOption(response.data, 'almacen_id', 'nombre');
+        const almacenOptions = mapToSelectOption(response.data, 'id', 'nombre');
         this.almacenOptions.set(almacenOptions);
       },
     });

@@ -120,7 +120,7 @@ export class QuotationNewEditPage extends BaseComponent implements OnInit {
 
           // Labels para search-select
           if (data.cliente) {
-            this.searchSelectLabels['cli_id'] = data.cliente.cli_nom;
+            this.searchSelectLabels['cli_id'] = data.cliente.nombre;
           }
 
           this.patchCustomer(data.cliente);

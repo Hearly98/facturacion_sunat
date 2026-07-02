@@ -22,7 +22,7 @@
         <select formControlName="cat_id" class="form-control form-select">
           <option [ngValue]="null">Todas</option>
           @for (categoria of categorias; track $index) {
-            <option [ngValue]="categoria.cat_id">{{ categoria.cat_nom }}</option>
+            <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
           }
         </select>
       </c-col>
@@ -77,9 +77,9 @@
                     </button>
                   </td>
                   <td></td>
-                  <td>{{ product.prod_cod_interno }}</td>
-                  <td>{{ product.prod_nom }}</td>
-                  <td>{{ product.categoria?.cat_nom }}</td>
+                  <td>{{ product.codigoInterno }}</td>
+                  <td>{{ product.nombre }}</td>
+                  <td>{{ product.categoria?.nombre }}</td>
                 </tr>
               }
             }

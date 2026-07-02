@@ -53,8 +53,8 @@
                               field.formControlName === 'almacen_origen_id' ||
                               field.formControlName === 'almacen_destino_id'
                             ) {
-                              @for (alm of almacenes; track $index) {
-                                <option [ngValue]="alm.almacen_id">{{ alm.nombre }}</option>
+                              @for (almacen of almacenes; track $index) {
+                                <option [ngValue]="almacen.id">{{ almacen.nombre }}</option>
                               }
                             }
                             @if (field.formControlName === 'tipoMovimiento') {

@@ -20,7 +20,7 @@
                         <label cLabel>Almacén</label>
                         <select cSelect formControlName="alm_id">
                             <option [value]="null">Todos los almacenes</option>
-                            <option *ngFor="let alm of warehouses" [value]="alm.almacen_id">
+                            <option *ngFor="let alm of warehouses" [value]="alm.id">
                                 {{ alm.nombre }}
                             </option>
                         </select>

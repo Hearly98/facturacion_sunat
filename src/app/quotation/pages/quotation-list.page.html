@@ -19,8 +19,8 @@
         <label for="suc_id" class="form-label">Sucursal</label>
         <select cSelect formControlName="suc_id" id="suc_id">
           <option [value]="null">Todas</option>
-          @for (sucursal of sucursales; track sucursal.suc_id) {
-            <option [value]="sucursal.suc_id">{{ sucursal.suc_nom }}</option>
+          @for (sucursal of sucursales; track sucursal.id) {
+            <option [value]="sucursal.id">{{ sucursal.nombre }}</option>
           }
         </select>
       </c-col>
@@ -119,7 +119,7 @@
                   </td>
                   <td>{{ quotation.numero_completo }}</td>
                   <td>{{ quotation.fecha_emision | date: 'dd/MM/yyyy' }}</td>
-                  <td>{{ quotation.cliente?.cli_nom }}</td>
+                  <td>{{ quotation.cliente?.nombre }}</td>
                   <td>{{ quotation.cot_total | currency: 'S/. ' }}</td>
                   <td>
                     <span

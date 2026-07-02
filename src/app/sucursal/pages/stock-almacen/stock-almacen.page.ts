@@ -15,10 +15,8 @@ import { BaseComponent } from '../../../shared/base/base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import {
   SucursalService,
-  StockBySucursalModel,
-  StockProductoModel,
 } from '../../core/services/sucursal.service';
-import { GetSucursalModel } from '../../core/models';
+import { GetSucursalModel, StockBySucursalModel, StockProductoModel } from '../../core/models';
 import { CommonModule } from '@angular/common';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { buildStockFilterForm } from '../../helpers';
@@ -51,9 +49,9 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
   public sucursales: GetSucursalModel[] = [];
   public loading = false;
 
-  #sucursalService = inject(SucursalService);
-  #formBuilder = inject(FormBuilder);
-  #globalNotification = inject(GlobalNotification);
+  readonly #sucursalService = inject(SucursalService);
+  readonly #formBuilder = inject(FormBuilder);
+  readonly #globalNotification = inject(GlobalNotification);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ALMACEN, viewContainerRef);

@@ -159,9 +159,9 @@ import { RouterLink } from '@angular/router';
                     </button>
                   </td>
                   <td>{{ sale.numero_completo }}</td>
-                  <td>{{ sale.documento?.doc_nom }}</td>
+                  <td>{{ sale.documento?.nombre }}</td>
                   <td>{{ sale.fecha_emision | date: 'dd/MM/yyyy' }}</td>
-                  <td>{{ sale.cliente?.cli_nom }}</td>
+                  <td>{{ sale.cliente?.nombre }}</td>
                   <td>{{ sale.venta_total | currency: 'S/. ' }}</td>
                   <td>
                     <span

@@ -30,8 +30,8 @@ export function quotationStructure(
   tipoPagosOptions: GetPaymentMethodModel[] = [],
   vendedoresOptions: GetUserModel[] = []
 ): QuotationStructureSection[] {
-  const currencies = mapToSelectOption(currenciesOptions, 'mon_id', 'mon_nom');
-  const sucursales = mapToSelectOption(sucursalesOptions, 'suc_id', 'suc_nom');
+  const currencies = mapToSelectOption(currenciesOptions, 'id', 'nombre');
+  const sucursales = mapToSelectOption(sucursalesOptions, 'id', 'nombre');
   const tipoPagos = mapToSelectOption(tipoPagosOptions, 'mp_id', 'mp_nom');
   const vendedores = mapToSelectOption(vendedoresOptions, 'usu_id', 'usu_nom');
   return [

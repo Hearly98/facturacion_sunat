@@ -79,7 +79,7 @@ export const purchaseStructure = (
           type: 'select',
           col: '4',
           formControlName: 'mon_id',
-          options: mapToSelectOption(CurrencySelectOptions, 'mon_id', 'mon_nom'),
+          options: mapToSelectOption(CurrencySelectOptions, 'id', 'nombre'),
         },
         {
           label: 'Fecha Emisión',
@@ -114,7 +114,7 @@ export const purchaseStructure = (
           col: '4',
           type: 'select',
           formControlName: 'tip_id',
-          options: mapToSelectOption(DocumentTypesOptions, 'tip_id', 'tip_nom'),
+          options: mapToSelectOption(DocumentTypesOptions, 'id', 'nombre'),
         },
         {
           label: 'Documento',

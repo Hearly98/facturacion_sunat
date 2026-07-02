@@ -90,7 +90,7 @@ export class DocumentNewEditModalComponent extends BaseComponent implements OnIn
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.doc_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -101,7 +101,7 @@ export class DocumentNewEditModalComponent extends BaseComponent implements OnIn
   }
 
   create() {
-    const { doc_id, ...body } = this.form.value;
+    const { id, ...body } = this.form.value;
     const subscription = this.#documentService.create(body as CreateDocumentModel).subscribe({
       next: (response) => {
         if (response.isValid) {

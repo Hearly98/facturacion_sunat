@@ -57,7 +57,7 @@
                             </span>
                           </div>
                           <div class="text-muted small mt-1">
-                            {{ linkedCotizacion()!.cliente?.cli_nom }}
+                            {{ linkedCotizacion()!.cliente?.nombre }}
                           </div>
                         </div>
                         <button
@@ -474,9 +474,9 @@
                           </button>
                         </td>
                         <td>{{ sale.numero_completo }}</td>
-                        <td>{{ sale.documento?.doc_nom }}</td>
+                        <td>{{ sale.documento?.nombre }}</td>
                         <td>{{ sale.fecha_emision | date: 'dd/MM/yyyy' }}</td>
-                        <td>{{ sale.cliente?.cli_nom }}</td>
+                        <td>{{ sale.cliente?.nombre }}</td>
                         <td>{{ sale.venta_total | currency: 'S/. ' }}</td>
                         <td>
                           <span

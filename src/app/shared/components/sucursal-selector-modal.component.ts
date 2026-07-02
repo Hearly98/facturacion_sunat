@@ -66,18 +66,18 @@ import { GetSucursalModel } from 'src/app/sucursal/core/models';
               </div>
             </div>
           </c-col>
-          @for (sucursal of sucursales; track sucursal.suc_id) {
+          @for (sucursal of sucursales; track sucursal.id) {
             <c-col xs="12" md="12">
               <c-form-check>
                 <input
                   cFormCheckInput
                   type="checkbox"
-                  [id]="'suc_' + sucursal.suc_id"
-                  [checked]="isSucursalSelected(sucursal.suc_id)"
-                  (change)="toggleSucursal(sucursal.suc_id)"
+                  [id]="'suc_' + sucursal.id"
+                  [checked]="isSucursalSelected(sucursal.id)"
+                  (change)="toggleSucursal(sucursal.id)"
                 />
-                <label cFormCheckLabel [for]="'suc_' + sucursal.suc_id">
-                  {{ sucursal.suc_nom }}
+                <label cFormCheckLabel [for]="'suc_' + sucursal.id">
+                  {{ sucursal.nombre }}
                 </label>
               </c-form-check>
             </c-col>
@@ -157,7 +157,7 @@ export class SucursalSelectorModalComponent {
   }
 
   selectAll() {
-    const allIds = this.sucursales.map(s => s.suc_id);
+    const allIds = this.sucursales.map(s => s.id);
     this.selectedSucursales.set(allIds);
   }
 
