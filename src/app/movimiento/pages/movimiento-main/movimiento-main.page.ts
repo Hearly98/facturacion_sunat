@@ -302,7 +302,6 @@ export class MovimientoMainPage extends BaseSearchComponent implements OnInit {
   }
 
   onSubmit() {
-    debugger
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

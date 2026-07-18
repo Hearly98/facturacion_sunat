@@ -1,0 +1,79 @@
+<table cTable hover>
+  <thead>
+    <tr>
+      <th scope="col">Documento</th>
+      <th scope="col">Serie/Correlativo</th>
+      <th scope="col">Cliente</th>
+      <th scope="col">Monto</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngIf="emissions.length === 0">
+      <td colspan="6" class="text-center text-muted">
+        No hay emisiones disponibles
+      </td>
+    </tr>
+    <tr *ngFor="let emission of emissions">
+      <td>{{ emission.documentNumber }}</td>
+      <td>{{ emission.serieNumber }}-{{ emission.correlativeNumber }}</td>
+      <td>{{ emission.customerName }}</td>
+      <td>S/. {{ emission.totalAmount }}</td>
+      <td>
+        <c-badge [color]="getStatusBadgeColor(emission.status)">
+          {{ getStatusLabel(emission.status) }}
+        </c-badge>
+      </td>
+      <td>
+        <button
+          cButton
+          size="sm"
+          color="primary"
+          variant="outline"
+          title="Imprimir PDF"
+          (click)="downloadPdf(emission)"
+          class="me-2"
+        >
+          <svg
+            cIcon
+            name="cilCloudDownload"
+            class="me-1"
+          ></svg>
+          PDF
+        </button>
+        <button
+          cButton
+          size="sm"
+          color="info"
+          variant="outline"
+          title="Descargar XML"
+          (click)="downloadXml(emission)"
+          class="me-2"
+        >
+          <svg
+            cIcon
+            name="cilCloudDownload"
+            class="me-1"
+          ></svg>
+          XML
+        </button>
+        <button
+          cButton
+          size="sm"
+          color="warning"
+          variant="outline"
+          title="Descargar CDR"
+          (click)="downloadCdr(emission)"
+        >
+          <svg
+            cIcon
+            name="cilCloudDownload"
+            class="me-1"
+          ></svg>
+          CDR
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,34 +1,31 @@
-// Import variables from CoreUI or define locally
-$primary: #1d65a8;
-$primary-dark: #265182;
-$secondary: #6b7785;
-$success: #229741;
-$warning: #f9b115;
-$danger: #e55353;
+// Import variables from global style-dictionary tokens
+@import '../../scss/tokens/hex/tokens-hex';
 
-$gray-100: #f6f7f8;
-$gray-200: #e5e9ec;
-$gray-300: #d4dce0;
-$gray-500: #8a96a0;
-$gray-700: #4b5662;
-$gray-800: #343332;
-$gray-900: #1a1a1a;
+// Aliases for easier use
+$primary: $color-primary;
+$primary-dark: $color-primary-dark;
+$secondary: $color-secondary;
+$success: $color-success;
+$warning: $color-warning;
+$danger: $color-danger;
 
-$white: #ffffff;
-$black: #000000;
-$light: $gray-100;
-$dark: $gray-800;
+$gray-100: $color-gray-100;
+$gray-200: $color-gray-200;
+$gray-300: $color-gray-300;
+$gray-500: $color-gray-500;
+$gray-700: $color-gray-700;
+$gray-800: $color-gray-800;
+$gray-900: $color-gray-900;
 
-$font-family-base: 'Roboto', 'Helvetica Neue', sans-serif;
+$white: $color-white;
+$black: $color-black;
 
-// Spacing
-$spacing-xs: 0.25rem;
-$spacing-sm: 0.5rem;
-$spacing-md: 1rem;
-$spacing-lg: 1.5rem;
-$spacing-xl: 3rem;
+$spacing-xs: $space-xs;
+$spacing-sm: $space-sm;
+$spacing-md: $space-md;
+$spacing-lg: $space-lg;
+$spacing-xl: $space-xl;
 
-// Typography
 $font-size-xs: 0.75rem;
 $font-size-sm: 0.875rem;
 $font-size-base: 1rem;
@@ -44,14 +41,10 @@ $line-height-base: 1.5rem;
 $line-height-lg: 1.75rem;
 $line-height-2xl: 2rem;
 
-// Transitions
 $transition-base: all 0.3s ease;
 
-// Breakpoints
-$breakpoint-sm: 640px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
-$breakpoint-xl: 1280px;
 
 // ============================================================
 // HERO SECTION
@@ -183,7 +176,7 @@ $breakpoint-xl: 1280px;
   }
 }
 
-.feature-card {
+.card-item {
   padding: $spacing-xl * 1.5;
   background: $white;
   border: 1px solid $gray-200;
@@ -192,35 +185,64 @@ $breakpoint-xl: 1280px;
   text-align: center;
 
   &:hover {
-    border-color: $primary;
     box-shadow: 0 8px 24px rgba(29, 101, 168, 0.1);
     transform: translateY(-4px);
   }
 }
 
-.feature-icon {
+.feature-card {
+  @extend .card-item;
+  &:hover { border-color: $primary; }
+}
+
+.integration-item {
+  @extend .card-item;
+}
+
+.card-icon {
   margin-bottom: $spacing-lg;
   display: flex;
   justify-content: center;
-
-  svg {
-    width: 48px;
-    height: 48px;
-  }
 }
 
-.feature-title {
+.feature-icon {
+  @extend .card-icon;
+  svg { width: 48px; height: 48px; }
+}
+
+.integration-icon {
+  @extend .card-icon;
+  svg { width: 64px; height: 64px; }
+}
+
+.card-title {
   font-size: $font-size-xl;
   font-weight: 600;
   color: $gray-900;
   margin: 0 0 $spacing-md 0;
 }
 
-.feature-description {
+.feature-title {
+  @extend .card-title;
+}
+
+.integration-title {
+  @extend .card-title;
+}
+
+.card-description {
   font-size: $font-size-base;
   color: $secondary;
   margin: 0;
   line-height: $line-height-base;
+}
+
+.feature-description {
+  @extend .card-description;
+}
+
+.integration-description {
+  @extend .card-description;
 }
 
 // ============================================================
@@ -244,45 +266,6 @@ $breakpoint-xl: 1280px;
   @media (max-width: $breakpoint-md) {
     grid-template-columns: 1fr;
   }
-}
-
-.integration-item {
-  padding: $spacing-xl * 1.5;
-  background: $white;
-  border-radius: 12px;
-  text-align: center;
-  border: 1px solid $gray-200;
-  transition: $transition-base;
-
-  &:hover {
-    box-shadow: 0 8px 24px rgba(29, 101, 168, 0.1);
-    transform: translateY(-4px);
-  }
-}
-
-.integration-icon {
-  margin-bottom: $spacing-lg;
-  display: flex;
-  justify-content: center;
-
-  svg {
-    width: 64px;
-    height: 64px;
-  }
-}
-
-.integration-title {
-  font-size: $font-size-xl;
-  font-weight: 600;
-  color: $gray-900;
-  margin: 0 0 $spacing-md 0;
-}
-
-.integration-description {
-  font-size: $font-size-base;
-  color: $secondary;
-  margin: 0;
-  line-height: $line-height-base;
 }
 
 // ============================================================

@@ -254,7 +254,6 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
   }
 
   addProductToDetail() {
-    debugger;
     if (!this.selectedProduct) return;
     const detailForm = this.#formBuilder.group(
       buildShippingGuideDetail({

@@ -1,78 +1,72 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, tap, catchError, throwError, map, switchMap, of } from 'rxjs';
+import { Observable, tap, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AuthResponse, User } from '../models/auth.models';
+import { LoginForm } from 'src/app/login/core/types/login-form';
+import { BaseService } from '../../../shared/services/base.service';
+import { ResponseDto } from '@shared/models/api/response.dto';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
-  private apiUrl = `${environment.apiUrl}/auth`;
+export class AuthService extends BaseService {
+  private readonly router = inject(Router);
   private readonly TOKEN_KEY = 'factu_token';
   private readonly USER_KEY = 'factu_user';
 
   // State
-  private _user = signal<User | null>(null);
+  private readonly _user = signal<User | null>(null);
   public user = this._user.asReadonly();
   public isAuthenticated = computed(() => !!this._user() || !!this.getToken());
 
-  constructor() {
-    // Try to load user if token and stored user exist
+  constructor(http: HttpClient) {
+    super(http, `${environment.apiUrl}/auth`);
+
     const token = this.getToken();
     const storedUser = localStorage.getItem(this.USER_KEY);
 
     if (token && storedUser) {
       try {
         this._user.set(JSON.parse(storedUser));
-        // NO cargar permisos aquí para evitar dependencia circular
       } catch (e) {
-        // Solo limpiar si hay error al parsear el usuario
         localStorage.removeItem(this.USER_KEY);
+        console.error(e);
       }
     }
-
-    // NO verificar el usuario al inicializar para evitar borrar el localStorage
-    // La verificación se hará cuando sea necesario (en guards o al navegar)
   }
 
-  login(credentials: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+  login(body: LoginForm): Observable<ResponseDto<AuthResponse>> {
+    return this.postRequest<LoginForm, ResponseDto<AuthResponse>>('/login', body).pipe(
       tap((res) => {
-        this.setToken(res.access_token);
-        this.setUser(res.user);
-      })
-      // NO cargar permisos aquí - se cargarán después del login en el componente
+        this.setToken(res.data.access_token);
+        this.setUser(res.data.user);
+      }),
     );
   }
 
   register(data: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data).pipe(
+    return this.postRequest<any, AuthResponse>('/register', data).pipe(
       tap((res) => {
         this.setToken(res.access_token);
         this.setUser(res.user);
-      })
-      // NO cargar permisos aquí - se cargarán después del registro en el componente
+      }),
     );
   }
 
   logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
+    return this.postRequest<{}, any>('/logout', {}).pipe(
       tap(() => this.logoutLocal()),
       catchError((err) => {
         this.logoutLocal();
         return throwError(() => err);
-      })
+      }),
     );
   }
 
   getUser(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/me`).pipe(
-      tap((user) => this.setUser(user))
-    );
+    return this.getRequest<User>('/me').pipe(tap((user) => this.setUser(user)));
   }
 
   getToken(): string | null {

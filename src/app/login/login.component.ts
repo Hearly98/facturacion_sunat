@@ -32,10 +32,10 @@ export class LoginComponent {
   public form!: FormGroup;
   public globalNotification = inject(GlobalNotification);
   public isLoading = signal(false);
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private menuOptionsNavService = inject(MenuOptionsNavService);
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly menuOptionsNavService = inject(MenuOptionsNavService);
 
   constructor() {
     this.createForm();
@@ -60,7 +60,6 @@ export class LoginComponent {
     this.isLoading.set(true);
     this.authService.login(this.form.value).pipe(
       switchMap(() => {
-        // Cargar permisos después del login exitoso
         return this.menuOptionsNavService.loadUserPermissions();
       })
     ).subscribe({

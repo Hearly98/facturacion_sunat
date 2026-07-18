@@ -415,7 +415,6 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   save() {
-    debugger
     if (this.form.invalid || this.detailsArray.length === 0) {
       this.#globalNotification.openToastAlert(
         'Validación',
