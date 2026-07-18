@@ -1,6 +1,6 @@
 export interface CurrencyForm {
   id: number | null;
-  nombre: string | null;
-  codigo: string | null;
-  simbolo: string | null;
+  name: string | null;
+  code: string | null;
+  symbol: string | null;
 }

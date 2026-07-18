@@ -1,5 +1,3 @@
-import { SucursalModel } from './sucursal.model';
+import { Sucursal } from './sucursal.model';
 
-export class GetSucursalModel extends SucursalModel {
-  id: number = 0;
-}
+export type GetSucursal = Sucursal;

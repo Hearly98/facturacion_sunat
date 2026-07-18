@@ -1,6 +1,5 @@
-import { OrganizationModel } from './organization.model';
+import { Organization } from './organization.model';
 
-export class GetOrganizationModel extends OrganizationModel {
-  emp_id: number = 0;
-  logo_url: string = '';
-}
+export type GetOrganization = Organization & {
+  logoUrl: string;
+};

@@ -15,7 +15,7 @@ import { buildUserForm } from '../../helpers';
 import { UserService } from '../../core/services/user.service';
 import { GlobalNotification } from '../../../shared/alerts/global-notification/global-notification';
 import { ImageCompressionService } from '../../../shared/services/image-compression.service';
-import { GetUserModel } from '../../core/models/get-user-model';
+import { User } from '../../core/models';
 import { ButtonDirective } from '@coreui/angular';
 
 @Component({
@@ -104,7 +104,7 @@ import { ButtonDirective } from '@coreui/angular';
                 <input
                   class="form-control"
                   type="text"
-                  formControlName="usu_nom"
+                  formControlName="firstName"
                   placeholder="Ingrese nombres"
                 />
               </c-col>
@@ -113,7 +113,7 @@ import { ButtonDirective } from '@coreui/angular';
                 <input
                   class="form-control"
                   type="text"
-                  formControlName="usu_ape"
+                  formControlName="lastName"
                   placeholder="Ingrese apellidos"
                 />
               </c-col>
@@ -122,7 +122,7 @@ import { ButtonDirective } from '@coreui/angular';
                 <input
                   class="form-control"
                   type="text"
-                  formControlName="usu_dni"
+                  formControlName="dni"
                   placeholder="Ingrese DNI"
                   maxlength="8"
                 />
@@ -132,7 +132,7 @@ import { ButtonDirective } from '@coreui/angular';
                 <input
                   class="form-control"
                   type="text"
-                  formControlName="usu_telf"
+                  formControlName="phone"
                   placeholder="Ingrese teléfono"
                 />
               </c-col>
@@ -176,7 +176,7 @@ export class UserProfileComponent extends BaseComponent implements OnInit {
   #userService = inject(UserService);
   #globalNotification = inject(GlobalNotification);
   #imageCompressionService = inject(ImageCompressionService);
-  originalData: GetUserModel | null = null;
+  originalData: User | null = null;
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.USERS, viewContainerRef);
@@ -198,9 +198,9 @@ export class UserProfileComponent extends BaseComponent implements OnInit {
         if (response.isValid) {
           this.originalData = response.data;
           this.form.patchValue(response.data);
-          this.form.patchValue({ usu_id: response.data.usu_id });
-          if (response.data.usu_img) {
-            this.imagePreview.set(response.data.usu_img);
+          this.form.patchValue({ id: response.data.id });
+          if (response.data.image) {
+            this.imagePreview.set(response.data.image);
           }
         } else {
           this.#globalNotification.openAlert(response);
@@ -223,7 +223,7 @@ export class UserProfileComponent extends BaseComponent implements OnInit {
   resetForm() {
     if (this.originalData) {
       this.form.patchValue(this.originalData);
-      this.imagePreview.set(this.originalData.usu_img || null);
+      this.imagePreview.set(this.originalData.image || null);
       this.selectedFile = null;
     }
   }
@@ -303,8 +303,8 @@ export class UserProfileComponent extends BaseComponent implements OnInit {
   removeImage() {
     if (this.isCompressing()) return;
     this.selectedFile = null;
-    this.imagePreview.set(this.originalData?.usu_img || null);
-    this.form.patchValue({ usu_img: null });
+    this.imagePreview.set(this.originalData?.image || null);
+    this.form.patchValue({ image: null });
   }
 
   onSubmit() {
@@ -323,8 +323,8 @@ export class UserProfileComponent extends BaseComponent implements OnInit {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
           this.originalData = response.data;
-          if (response.data.usu_img) {
-            this.imagePreview.set(response.data.usu_img);
+          if (response.data.image) {
+            this.imagePreview.set(response.data.image);
           }
           this.selectedFile = null;
         } else {

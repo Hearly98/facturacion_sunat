@@ -17,7 +17,7 @@ import { PaginatorComponent } from '../../../shared/components/paginator/paginat
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { PaymentMethodService } from '../../core/services/payment-method.service';
-import { GetPaymentMethodModel } from '../../core/models';
+import { PaymentMethod } from '../../core/models';
 import { buildFilterForm, filterSort, mapParams } from '../../helpers';
 import { FilterForm } from '../../core/types/filter-form';
 import { PaymentMethodNewEditModalComponent } from '../../components/payment-method-new-edit-modal/payment-method-new-edit-modal.component';
@@ -54,7 +54,7 @@ import { PaymentMethodNewEditModalComponent } from '../../components/payment-met
         <c-row class="g-3 align-items-end" [formGroup]="form">
           <c-col sm="12" md="6" lg="4">
             <label for="">Nombre</label>
-            <input formControlName="mp_nom" type="text" class="form-control" />
+            <input formControlName="name" type="text" class="form-control" />
           </c-col>
           <c-col>
             <button cButton color="primary" (click)="onSearch()" class="me-2">
@@ -78,7 +78,6 @@ import { PaymentMethodNewEditModalComponent } from '../../components/payment-met
               <thead>
                 <tr>
                   <th>Acciones</th>
-                  <th>Código</th>
                   <th>Nombre</th>
                 </tr>
               </thead>
@@ -87,7 +86,7 @@ import { PaymentMethodNewEditModalComponent } from '../../components/payment-met
                   <tr>
                     <td>
                       <button
-                        (click)="openModal(paymentMethod.mp_id)"
+                        (click)="openModal(paymentMethod.id)"
                         size="sm"
                         class="me-2"
                         cButton
@@ -96,7 +95,7 @@ import { PaymentMethodNewEditModalComponent } from '../../components/payment-met
                         <svg cIcon name="cilPencil"></svg>
                       </button>
                       <button
-                        (click)="onDelete(paymentMethod.mp_id)"
+                        (click)="onDelete(paymentMethod.id)"
                         size="sm"
                         cButton
                         color="danger"
@@ -104,13 +103,12 @@ import { PaymentMethodNewEditModalComponent } from '../../components/payment-met
                         <svg cIcon name="cilTrash"></svg>
                       </button>
                     </td>
-                    <td>{{ paymentMethod.mp_cod }}</td>
-                    <td>{{ paymentMethod.mp_nom }}</td>
+                    <td>{{ paymentMethod.name }}</td>
                   </tr>
                 }
                 @if (paymentMethods.length === 0) {
                   <tr>
-                    <td colspan="3">No se encontraron datos</td>
+                    <td colspan="2">No se encontraron datos</td>
                   </tr>
                 }
               </tbody>
@@ -140,7 +138,7 @@ export class PaymentMethodComponent extends BaseSearchComponent {
   public title = 'Metodos de Pago';
   #paymentMethodService = inject(PaymentMethodService);
   #globalNotification = inject(GlobalNotification);
-  public paymentMethods: GetPaymentMethodModel[] = [];
+  public paymentMethods: PaymentMethod[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.PAYMENT_METHOD, viewContainerRef);

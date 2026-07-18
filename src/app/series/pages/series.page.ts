@@ -17,7 +17,7 @@ import { PaginatorComponent } from 'src/app/shared/components/paginator/paginato
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { SerieService } from '../core/services/serie.service';
-import { SerieModel } from '../core/models/serie.model';
+import { Serie } from '../core/models';
 import { SerieModalComponent } from '../components/serie-modal.component';
 
 @Component({
@@ -66,11 +66,11 @@ import { SerieModalComponent } from '../components/serie-modal.component';
               </thead>
               <tbody>
                 @if(series.length > 0){
-@for (serie of series; track serie.ser_id) {
+@for (serie of series; track serie.id) {
                 <tr>
                   <td>
                     <button
-                      (click)="openModal(serie.ser_id)"
+                      (click)="openModal(serie.id!)"
                       size="sm"
                       class="me-2"
                       cButton
@@ -78,17 +78,17 @@ import { SerieModalComponent } from '../components/serie-modal.component';
                     >
                       <svg cIcon name="cilPencil"></svg>
                     </button>
-                    <button (click)="onDelete(serie.ser_id)" size="sm" cButton color="danger">
+                    <button (click)="onDelete(serie.id!)" size="sm" cButton color="danger">
                       <svg cIcon name="cilTrash"></svg>
                     </button>
                   </td>
-                  <td>{{ serie.doc_cod }}</td>
-                  <td>{{ getDocumentTypeName(serie.doc_cod) }}</td>
-                  <td>{{ serie.ser_num }}</td>
-                  <td>{{ serie.ser_corr }}</td>
+                  <td>{{ serie.code }}</td>
+                  <td>{{ getDocumentTypeName(serie.code) }}</td>
+                  <td>{{ serie.number }}</td>
+                  <td>{{ serie.counter }}</td>
                   <td>
-                    <span class="badge" [class.bg-success]="serie.est" [class.bg-danger]="!serie.est">
-                      {{ serie.est ? 'Activo' : 'Inactivo' }}
+                    <span class="badge" [class.bg-success]="serie.active" [class.bg-danger]="!serie.active">
+                      {{ serie.active ? 'Activo' : 'Inactivo' }}
                     </span>
                   </td>
                 </tr>
@@ -96,9 +96,9 @@ import { SerieModalComponent } from '../components/serie-modal.component';
                 }@else {
                 <tr>
                   <td colspan="6">No hay series registradas</td>
-                </tr>  
+                </tr>
                 }
-                
+
               </tbody>
             </table>
             <app-paginator
@@ -117,7 +117,7 @@ import { SerieModalComponent } from '../components/serie-modal.component';
 export class SeriesPage extends BaseSearchComponent {
   @ViewChild('serieModal') serieModal!: SerieModalComponent;
   title = 'Series';
-  series: SerieModel[] = [];
+  series: Serie[] = [];
 
   #serieService = inject(SerieService);
   #confirmService = inject(ConfirmService);

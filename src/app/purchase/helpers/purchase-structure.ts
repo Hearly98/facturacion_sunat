@@ -2,8 +2,8 @@ import { mapToSelectOption } from '@shared/functions';
 import { SelectOption } from '@shared/types';
 import { NewPurchaseComponent } from '../pages/new-purchase/new-purchase.component';
 import { PurchaseForm } from '../core/purchase.form';
-import { GetCurrencyModel } from 'src/app/currency/core/models/get-currency.model';
-import { GetPaymentMethodModel } from 'src/app/payment-method/core/models';
+import { Currency } from 'src/app/currency/core/models';
+import { PaymentMethod } from 'src/app/payment-method/core/models';
 import { DocumentType } from 'src/app/document-type/core/models';
 
 export type Control<SM extends Record<string, any>> =
@@ -45,8 +45,8 @@ export interface PurchaseStructure<SM extends Record<string, any>> {
   controls: Control<SM>[];
 }
 export const purchaseStructure = (
-  CurrencySelectOptions: GetCurrencyModel[] = [],
-  PaymentTypeOptions: GetPaymentMethodModel[] = [],
+  CurrencySelectOptions: Currency[] = [],
+  PaymentTypeOptions: PaymentMethod[] = [],
   DocumentTypesOptions: DocumentType[] = [],
 ): PurchaseStructure<NewPurchaseComponent['serviceMap']>[] => {
   return [
@@ -78,7 +78,7 @@ export const purchaseStructure = (
           type: 'select',
           col: '4',
           formControlName: 'mon_id',
-          options: mapToSelectOption(CurrencySelectOptions, 'id', 'nombre'),
+          options: mapToSelectOption(CurrencySelectOptions, 'id', 'name'),
         },
         {
           label: 'Fecha Emisión',

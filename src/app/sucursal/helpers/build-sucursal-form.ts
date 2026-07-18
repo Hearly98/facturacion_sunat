@@ -6,16 +6,16 @@ export const buildSucursalForm = (): {
 } => {
   return {
     id: new FormControl(null),
-    empresaId: new FormControl(null),
-    codigo: new FormControl(null),
-    nombre: new FormControl(
+    companyId: new FormControl(null),
+    code: new FormControl(null),
+    name: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    ubigeo: new FormControl(null),
-    direccion: new FormControl(null),
-    departamento: new FormControl(null),
-    provincia: new FormControl(null),
-    distrito: new FormControl(null),
+    zip: new FormControl(null),
+    address: new FormControl(null),
+    department: new FormControl(null),
+    province: new FormControl(null),
+    district: new FormControl(null),
   };
 };

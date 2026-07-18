@@ -21,7 +21,12 @@ import { BadgeModule } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 import { AlmacenService } from 'src/app/almacen/core/services/almacen.service';
 import { GetAlmacenModel } from 'src/app/almacen/core/models';
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
+
+interface SucursalView {
+  id: number;
+  name: string;
+}
 
 interface SelectedAlmacen {
   suc_id: number;
@@ -99,7 +104,7 @@ interface SelectedAlmacen {
                     <div class="d-flex justify-content-between align-items-center mb-3">
                       <h6 class="mb-0">
                         <svg cIcon name="cil-building" class="me-2 text-primary"></svg>
-                        {{ sucursal.nombre }}
+                        {{ sucursal.name }}
                       </h6>
                       @if (getAlmacenesBySucursal(sucursal.id).length > 0) {
                         <c-badge color="secondary">
@@ -190,7 +195,7 @@ export class AlmacenSelectorModalComponent implements OnChanges {
   visible = signal(false);
   selectedAlmacenes = signal<SelectedAlmacen[]>([]);
   loading = signal(false);
-  sucursales: GetSucursalModel[] = [];
+  sucursales: SucursalView[] = [];
   callback: ((almacenes: SelectedAlmacen[]) => void) | null = null;
 
   #almacenService = inject(AlmacenService);
@@ -201,8 +206,8 @@ export class AlmacenSelectorModalComponent implements OnChanges {
         const almacen = this.almacenesPorSucursal[Number(sucId)][0];
         return {
           id: Number(sucId),
-          nombre: almacen?.sucursal?.nombre || `Sucursal ${sucId}`,
-        } as GetSucursalModel;
+          name: almacen?.sucursal?.name || `Sucursal ${sucId}`,
+        };
       });
     }
   }

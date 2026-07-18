@@ -6,7 +6,7 @@ import { CurrencyService } from '../core/services/currency.service';
 import { CurrencyNewEditModalComponent } from '../components/currency-new-edit-modal.component';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
-import { GetCurrencyModel } from '../core/models/get-currency.model';
+import { Currency } from '../core/models';
 import { ResponseDto } from '../../shared/models/api/response.dto';
 import { QueryResultsModel } from '../../shared/models/query/query-results.model';
 
@@ -17,17 +17,17 @@ describe('CurrencyPage', () => {
   let confirmServiceMock: jasmine.SpyObj<ConfirmService>;
   let globalNotificationMock: jasmine.SpyObj<GlobalNotification>;
 
-  const mockCurrencies: GetCurrencyModel[] = [
-    { id: 1, nombre: 'Dólar', codigo: 'USD', simbolo: '$', est: true } as GetCurrencyModel,
-    { id: 2, nombre: 'Sol', codigo: 'PEN', simbolo: 'S/', est: true } as GetCurrencyModel,
+  const mockCurrencies: Currency[] = [
+    { id: 1, name: 'Dólar', code: 'USD', symbol: '$', active: true },
+    { id: 2, name: 'Sol', code: 'PEN', symbol: 'S/', active: true },
   ];
 
-  const mockSearchResponse: ResponseDto<QueryResultsModel<GetCurrencyModel>> = {
+  const mockSearchResponse: ResponseDto<QueryResultsModel<Currency>> = {
     isValid: true,
     data: {
       items: mockCurrencies,
       total: 2,
-    } as QueryResultsModel<GetCurrencyModel>,
+    } as QueryResultsModel<Currency>,
     messages: [],
   } as any;
 
@@ -80,7 +80,7 @@ describe('CurrencyPage', () => {
       component.createForm();
 
       expect(component.form).toBeDefined();
-      expect(component.form.get('order')).toBeDefined();
+      expect(component.form.get('name')).toBeDefined();
     });
   });
 
@@ -95,7 +95,7 @@ describe('CurrencyPage', () => {
         expect(currencyServiceMock.search).toHaveBeenCalled();
         expect(component.currencies.length).toBe(2);
         expect(component.total).toBe(2);
-        expect(component.currencies[0].codigo).toBe('USD');
+        expect(component.currencies[0].code).toBe('USD');
         done();
       }, 100);
     });
@@ -117,7 +117,7 @@ describe('CurrencyPage', () => {
 
     it('should update pagination and filter values', () => {
       fixture.detectChanges();
-      const filter = { nombre: 'Dólar' };
+      const filter = { name: 'Dólar' };
 
       component.onSearch(filter, 2);
 
@@ -141,11 +141,11 @@ describe('CurrencyPage', () => {
     it('should reset form and call onSearch', () => {
       fixture.detectChanges();
       spyOn(component, 'onSearch');
-      component.form.patchValue({ nombre: 'Test' });
+      component.form.patchValue({ name: 'Test' });
 
       component.onClean();
 
-      expect(component.form.value.order).toBe('desc');
+      expect(component.form.value.name).toBeNull();
       expect(component.onSearch).toHaveBeenCalled();
     });
   });
@@ -190,9 +190,9 @@ describe('CurrencyPage', () => {
     it('should delete currency on confirmation', (done) => {
       fixture.detectChanges();
       confirmServiceMock.open.and.returnValue(Promise.resolve(true));
-      const deleteResponse: ResponseDto<GetCurrencyModel> = {
+      const deleteResponse: ResponseDto<Currency | null> = {
         isValid: true,
-        data: {} as GetCurrencyModel,
+        data: null,
         messages: ['Moneda eliminada exitosamente'],
       } as any;
       currencyServiceMock.delete.and.returnValue(of(deleteResponse));
@@ -238,9 +238,9 @@ describe('CurrencyPage', () => {
     it('should handle invalid response on delete', (done) => {
       fixture.detectChanges();
       confirmServiceMock.open.and.returnValue(Promise.resolve(true));
-      const invalidResponse: ResponseDto<GetCurrencyModel> = {
+      const invalidResponse: ResponseDto<Currency | null> = {
         isValid: false,
-        data: {} as GetCurrencyModel,
+        data: null,
         messages: ['Error al eliminar'],
       } as any;
       currencyServiceMock.delete.and.returnValue(of(invalidResponse));

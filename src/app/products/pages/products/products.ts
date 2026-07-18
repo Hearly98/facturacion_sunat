@@ -20,9 +20,9 @@ import { ProductNewEditModal } from '../../components/product-new-edit-modal/pro
 import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { Product } from '../../core/models';
 import { CategoryService } from '../../../category/core/services/category.service';
-import { GetCategoryModel } from '../../../category/core/models';
+import { Category } from '../../../category/core/models';
 import { SucursalService } from '../../../sucursal/core/services/sucursal.service';
-import { GetSucursalModel } from '../../../sucursal/core/models';
+import { Sucursal } from '../../../sucursal/core/models';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 
@@ -54,8 +54,8 @@ export class Products extends BaseSearchComponent implements OnInit {
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
   public products: Product[] = [];
-  public categorias: GetCategoryModel[] = [];
-  public sucursales: GetSucursalModel[] = [];
+  public categorias: Category[] = [];
+  public sucursales: Sucursal[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.PRODUCT, viewContainerRef);

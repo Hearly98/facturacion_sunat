@@ -119,7 +119,7 @@
                   </td>
                   <td>{{ quotation.numero_completo }}</td>
                   <td>{{ quotation.fecha_emision | date: 'dd/MM/yyyy' }}</td>
-                  <td>{{ quotation.cliente?.nombre }}</td>
+                  <td>{{ quotation.cliente?.businessName }}</td>
                   <td>{{ quotation.cot_total | currency: 'S/. ' }}</td>
                   <td>
                     <span

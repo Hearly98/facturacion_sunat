@@ -265,7 +265,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   getClientInitialValue(formControlName: string): string {
     if (formControlName !== 'cli_id') return '';
     const cot = this.linkedCotizacion();
-    if (cot?.cliente) return cot.cliente.nombre;
+    if (cot?.cliente) return cot.cliente.businessName;
     const guia = this.linkedGuia();
     if (guia?.cliente) return guia.cliente.cli_nom;
     return '';
@@ -344,7 +344,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#currencyService.getAll().subscribe({
       next: (response) => {
         this.currencyOptions.set(
-          response.data.map((item) => ({ value: item.id, label: item.nombre }))
+          response.data.map((item) => ({ value: item.id, label: item.name }))
         );
       },
     });
@@ -352,7 +352,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#documentService.getAll().subscribe({
       next: (response) => {
         this.documentOptions.set(
-          response.data.map((item) => ({ value: item.id, label: item.nombre }))
+          response.data.map((item) => ({ value: item.id, label: item.name }))
         );
       },
     });
@@ -368,7 +368,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
         this.sucursalOptions.set(
-          response.data.map((item) => ({ value: item.id, label: item.nombre }))
+          response.data.map((item) => ({ value: item.id, label: item.name }))
         );
       },
     });

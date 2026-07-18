@@ -22,7 +22,7 @@ import {
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { PaymentMethodService } from '../../core/services/payment-method.service';
 import { MODULES } from 'src/app/core/config/permissions/modules';
-import { CreatePaymentMethodModel, UpdatePaymentMethodModel } from '../../core/models';
+import { CreatePaymentMethod, UpdatePaymentMethod } from '../../core/models';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
 @Component({
@@ -95,7 +95,7 @@ export class PaymentMethodNewEditModalComponent extends BaseComponent {
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.mp_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -106,9 +106,9 @@ export class PaymentMethodNewEditModalComponent extends BaseComponent {
   }
 
   create() {
-    const { mp_id, ...body } = this.form.value;
+    const { id, ...body } = this.form.value;
     const subscription = this.#paymentMethodService
-      .create(body as CreatePaymentMethodModel)
+      .create(body as CreatePaymentMethod)
       .subscribe({
         next: (response) => {
           if (response.isValid) {
@@ -131,7 +131,7 @@ export class PaymentMethodNewEditModalComponent extends BaseComponent {
 
   update() {
     const subscription = this.#paymentMethodService
-      .update(this.form.value as UpdatePaymentMethodModel)
+      .update(this.form.value as UpdatePaymentMethod)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

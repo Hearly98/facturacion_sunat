@@ -15,11 +15,10 @@ import { TypedFormGroup } from '../../shared/types/types-form';
 import { FilterForm } from '../core/types/filter-form';
 import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { OrganizationService } from '../core/services/organization.service';
-import { OrganizationModel } from '../core/models/organization.model';
 import { PageParamsModel } from '../../shared/models/query/page-params.model';
 import { PaginatorComponent } from '../../shared/components/paginator/paginator.component';
 import { OrganizationNewEditModalComponent } from '../components/organization-new-edit-modal.component';
-import { GetOrganizationModel } from '../core/models/get-organization.model';
+import { GetOrganization } from '../core/models/get-organization.model';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 
@@ -56,7 +55,7 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
         <c-row class="g-3 align-items-end" [formGroup]="form">
           <c-col sm="12" md="6" lg="4">
             <label for="">Nombre</label>
-            <input formControlName="emp_nom" type="text" class="form-control" />
+            <input formControlName="name" type="text" class="form-control" />
           </c-col>
           <c-col>
             <button cButton color="primary" (click)="onSearch()" class="me-2">
@@ -89,7 +88,7 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
                 <tr>
                   <td>
                     <button
-                      (click)="openModal(item.emp_id)"
+                      (click)="openModal(item.id)"
                       size="sm"
                       class="me-2"
                       cButton
@@ -97,12 +96,12 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
                     >
                       <svg cIcon name="cilPencil"></svg>
                     </button>
-                    <button (click)="onDelete(item.emp_id)" size="sm" cButton color="danger">
+                    <button (click)="onDelete(item.id)" size="sm" cButton color="danger">
                       <svg cIcon name="cilTrash"></svg>
                     </button>
                   </td>
-                  <td>{{ item.emp_nom }}</td>
-                  <td>{{ item.emp_ruc }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.ruc }}</td>
                 </tr>
                 }
               </tbody>
@@ -127,7 +126,7 @@ export class OrganizationPage extends BaseSearchComponent implements OnInit {
   organizationNewEditModal!: OrganizationNewEditModalComponent;
   public form!: TypedFormGroup<FilterForm>;
   public title = 'Empresas';
-  public organizations: GetOrganizationModel[] = [];
+  public organizations: GetOrganization[] = [];
   #formBuilder = inject(FormBuilder);
   #service = inject(OrganizationService);
   #confirmService = inject(ConfirmService);
@@ -146,7 +145,7 @@ export class OrganizationPage extends BaseSearchComponent implements OnInit {
   }
 
   onSearch(filter: any = null, page = 1) {
-    const sort = filterSort(this.form.value);
+    const sort = filterSort();
     const filterToUse = filter || mapParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);

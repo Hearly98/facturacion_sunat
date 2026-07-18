@@ -20,7 +20,7 @@ import { buildAlmacenForm, AlmacenStructure, almacenErrorMessages } from '../../
 import { CreateAlmacenModel, UpdateAlmacenModel } from '../../core/models';
 import { GlobalNotification } from '../../../shared/alerts/global-notification/global-notification';
 import { SucursalService } from '../../../sucursal/core/services/sucursal.service';
-import { GetSucursalModel } from '../../../sucursal/core/models';
+import { Sucursal } from '../../../sucursal/core/models';
 import { CommonModule } from '@angular/common';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 import { forkJoin } from 'rxjs';
@@ -56,7 +56,7 @@ export class AlmacenModalNewEdit extends BaseComponent implements OnInit {
   title = signal('');
   isLoading = signal(false);
   callback: any;
-  sucursales: GetSucursalModel[] = [];
+  sucursales: Sucursal[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ALMACEN, viewContainerRef);

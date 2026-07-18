@@ -40,7 +40,7 @@ import { ProductService } from 'src/app/products/core/services/product.service';
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
 import { CurrencyService } from 'src/app/currency/core/services/currency.service';
 import { PaymentMethodService } from 'src/app/payment-method/core/services/payment-method.service';
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UserService } from 'src/app/user/core/services/user.service';
@@ -92,7 +92,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
   public errorMessages = messages;
   public structure = signal(quotationStructure());
 
-  public sucursales: GetSucursalModel[] = [];
+  public sucursales: Sucursal[] = [];
 
   availableStates = [
     { codigo: '01', nombre: 'Pendientes', color: 'warning' },
@@ -181,7 +181,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
           });
 
           if (data.cliente) {
-            this.searchSelectLabels['cli_id'] = data.cliente.nombre;
+            this.searchSelectLabels['cli_id'] = data.cliente.businessName;
           }
 
           this.patchCustomer(data.cliente);

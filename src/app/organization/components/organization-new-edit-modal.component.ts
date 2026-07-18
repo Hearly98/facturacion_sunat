@@ -172,7 +172,7 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
     this.title.set(id ? 'Editar Empresa' : 'Nueva Empresa');
     if (id) {
       this.loadData(id);
-      this.form.patchValue({ emp_id: id });
+      this.form.patchValue({ id: id });
     }
     this.callback = callback;
   }
@@ -190,8 +190,8 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
       next: (response) => {
         if (response.isValid) {
           this.form.patchValue(response.data);
-          if (response.data.emp_logo) {
-            this.imagePreview.set(response.data.logo_url);
+          if (response.data.logo) {
+            this.imagePreview.set(response.data.logoUrl);
           }
         }
       },
@@ -294,7 +294,7 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
 
     this.selectedFile = null;
     this.imagePreview.set(null);
-    this.form.patchValue({ emp_logo: null });
+    this.form.patchValue({ logo: null });
   }
 
   private buildFormData(): FormData {
@@ -302,13 +302,13 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
     const formValues = this.form.value as any;
 
     Object.keys(formValues).forEach((key) => {
-      if (key !== 'emp_logo' && formValues[key] !== null && formValues[key] !== undefined) {
+      if (key !== 'logo' && formValues[key] !== null && formValues[key] !== undefined) {
         formData.append(key, formValues[key]);
       }
     });
 
     if (this.selectedFile) {
-      formData.append('emp_logo', this.selectedFile);
+      formData.append('logo', this.selectedFile);
     }
 
     return formData;
@@ -316,7 +316,7 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      if (this.form.value.emp_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();

@@ -7,7 +7,7 @@ import { ResponseDto } from '../../../shared/models/api/response.dto';
 import { GetShippingGuideModel } from '../models/get-shipping-guide.model';
 import { QueryParamsModel } from '../../../shared/models/query/query-params.model';
 import { QueryResultsModel } from '../../../shared/models/query/query-results.model';
-import { SerieModel } from 'src/app/series/core/models/serie.model';
+import { Serie } from 'src/app/series/core/models/serie.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,8 +24,8 @@ export class ShippingGuideService extends BaseService {
     );
   }
 
-  getSeries(): Observable<ResponseDto<SerieModel[]>> {
-    return this.getRequest<ResponseDto<SerieModel[]>>(`/series`);
+  getSeries(): Observable<ResponseDto<Serie[]>> {
+    return this.getRequest<ResponseDto<Serie[]>>(`/series`);
   }
 
   getById(id: number): Observable<ResponseDto<GetShippingGuideModel>> {

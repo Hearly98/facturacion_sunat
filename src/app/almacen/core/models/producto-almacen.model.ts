@@ -1,4 +1,4 @@
-import { ProductModel } from "src/app/products/core/models";
+import { Product } from "src/app/products/core/models";
 import { GetAlmacenModel } from "./get-almacen.model";
 
 export class ProductoAlmacenModel {
@@ -9,6 +9,6 @@ export class ProductoAlmacenModel {
   precioCompraBase: number | null = null;
   precioVentaBase: number | null = null;
   activo: boolean = true;
-  producto?: ProductModel;
+  producto?: Product;
   almacen?: GetAlmacenModel;
 }

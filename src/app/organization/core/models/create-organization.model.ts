@@ -1,3 +1,5 @@
-import { OrganizationModel } from './organization.model';
+import { Organization } from './organization.model';
 
-export class CreateOrganizationModel extends OrganizationModel {}
+export type CreateOrganization = Omit<Organization, 'id'> & {
+  comId?: number;
+};

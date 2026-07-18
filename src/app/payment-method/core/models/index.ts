@@ -1,4 +1,3 @@
-export * from './create-payment-method.model';
-export * from './update-payment-method.model';
-export * from './get-payment-method.model';
-export * from './payment-method.model';
+export type { PaymentMethod } from './payment-method.model';
+export type { CreatePaymentMethod } from './create-payment-method.model';
+export type { UpdatePaymentMethod } from './update-payment-method.model';

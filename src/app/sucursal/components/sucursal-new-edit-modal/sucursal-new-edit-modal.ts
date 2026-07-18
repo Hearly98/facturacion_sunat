@@ -17,7 +17,7 @@ import { MODULES } from '../../../core/config/permissions/modules';
 import { SucursalForm } from '../../core/types';
 import { SucursalService } from '../../core/services/sucursal.service';
 import { buildSucursalForm, sucursalErrorMessages, SucursalStructure } from '../../helpers';
-import { CreateSucursalModel, UpdateSucursalModel } from '../../core/models';
+import { CreateSucursal, UpdateSucursal } from '../../core/models';
 import { GlobalNotification } from '../../../shared/alerts/global-notification/global-notification';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
@@ -101,8 +101,8 @@ export class SucursalNewEditModal extends BaseComponent implements OnInit {
   }
 
   create() {
-    const { id, ...body } = this.form.value;
-    const subscription = this.#sucursalService.create(body as CreateSucursalModel).subscribe({
+    const { id, companyId, ...body } = this.form.value;
+    const subscription = this.#sucursalService.create(body as CreateSucursal).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -123,8 +123,9 @@ export class SucursalNewEditModal extends BaseComponent implements OnInit {
   }
 
   update() {
+    const { id, companyId, ...body } = this.form.value;
     const subscription = this.#sucursalService
-      .update(this.form.value as UpdateSucursalModel)
+      .update(id!, { id: id!, ...body } as UpdateSucursal)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

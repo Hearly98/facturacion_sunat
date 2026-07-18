@@ -26,7 +26,7 @@ import { QuotationModel } from '../core/models/quotation.model';
 import { Router } from '@angular/router';
 import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 
 @Component({
   selector: 'app-quotation-list',
@@ -56,7 +56,7 @@ export class QuotationListPage extends BaseSearchComponent implements OnInit {
   title = 'Cotizaciones';
   quotations: QuotationModel[] = [];
   form!: FormGroup;
-  sucursales: GetSucursalModel[] = [];
+  sucursales: Sucursal[] = [];
 
   availableStates = [
     { codigo: '01', nombre: 'Pendientes', color: 'warning' },

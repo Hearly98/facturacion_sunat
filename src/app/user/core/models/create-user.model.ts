@@ -1,3 +1,10 @@
-import { UserModel } from './user.model';
-
-export class CreateUserModel extends UserModel {}
+export interface CreateUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  dni: string;
+  phone: string;
+  roleId: number;
+  image?: string;
+}

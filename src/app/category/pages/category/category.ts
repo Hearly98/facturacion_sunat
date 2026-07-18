@@ -39,7 +39,7 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
   templateUrl: './category.html',
   styleUrl: './category.scss',
 })
-export class Category extends BaseSearchComponent implements OnInit {
+export class CategoryPage extends BaseSearchComponent implements OnInit {
   @ViewChild('categoryNewEditModal') categoryNewEditModal!: CategoryNewEditModal;
   public form!: TypedFormGroup<CategoryFilterForm>;
   readonly #confirmService = inject(ConfirmService);

@@ -17,7 +17,7 @@ import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { SucursalNewEditModal } from '../../components/sucursal-new-edit-modal/sucursal-new-edit-modal';
 import { FilterForm } from '../../core/types';
-import { GetSucursalModel } from '../../core/models';
+import { Sucursal } from '../../core/models';
 import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
@@ -39,13 +39,13 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
   templateUrl: './sucursal.html',
   styleUrl: './sucursal.scss',
 })
-export class Sucursal extends BaseSearchComponent {
+export class SucursalPage extends BaseSearchComponent {
   @ViewChild('sucursalNewEditModal') sucursalNewEditModal!: SucursalNewEditModal;
   public form!: TypedFormGroup<FilterForm>;
   #formBuilder = inject(FormBuilder);
   public title = 'Sucursales';
   #sucursalService = inject(SucursalService);
-  public sucursals: GetSucursalModel[] = [];
+  public sucursals: Sucursal[] = [];
   #confirmService = inject(ConfirmService);
   #globalNotification = inject(GlobalNotification);
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
@@ -62,7 +62,7 @@ export class Sucursal extends BaseSearchComponent {
   }
 
   onSearch(filter = null, page = 1) {
-    const sort = filterSort(this.form.value);
+    const sort = filterSort();
     const filterToUse = filter || mapParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);

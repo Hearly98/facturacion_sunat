@@ -15,7 +15,7 @@
     <c-row class="g-3 align-items-end" [formGroup]="form">
       <c-col sm="12" md="6" lg="4">
         <label for="">Nombre</label>
-        <input formControlName="nombre" type="text" class="form-control" />
+        <input formControlName="name" type="text" class="form-control" />
       </c-col>
       <c-col>
         <button cButton color="primary" (click)="onSearch()" class="me-2">
@@ -47,15 +47,15 @@
             @for (item of currencies; track $index) {
               <tr>
                 <td>
-                  <button (click)="openModal(item.id)" size="sm" class="me-2" cButton color="info">
+                  <button (click)="openModal(item.id!)" size="sm" class="me-2" cButton color="info">
                     <svg cIcon name="cilPencil"></svg>
                   </button>
-                  <button (click)="onDelete(item.id)" size="sm" cButton color="danger">
+                  <button (click)="onDelete(item.id!)" size="sm" cButton color="danger">
                     <svg cIcon name="cilTrash"></svg>
                   </button>
                 </td>
-                <td>{{ item.codigo }}</td>
-                <td>{{ item.nombre }}</td>
+                <td>{{ item.code }}</td>
+                <td>{{ item.name }}</td>
               </tr>
             }
             @if (currencies.length === 0) {

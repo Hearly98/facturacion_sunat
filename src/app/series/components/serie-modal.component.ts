@@ -15,7 +15,7 @@ import {
 } from '@coreui/angular';
 import { buildSerieForm } from '../helpers/build-serie-form';
 import { SerieService } from '../core/services/serie.service';
-import { SerieModel } from '../core/models/serie.model';
+import { CreateSerie, UpdateSerie } from '../core/models';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { GetDocumentModel } from 'src/app/document/core/models/get-document.model';
 import { BaseComponent } from '@shared/base/base.component';
@@ -49,31 +49,31 @@ import { DocumentService } from 'src/app/document/core/services/document.service
           <c-card-body>
             <c-row [formGroup]="form">
               <c-col md="12" class="mb-3">
-                <label for="codigo" class="form-label">Código de Documento SUNAT</label>
-                <select formControlName="codigo" class="form-control form-select" id="codigo">
+                <label for="code" class="form-label">Código de Documento SUNAT</label>
+                <select formControlName="code" class="form-control form-select" id="code">
                   <option [ngValue]="null">Seleccione</option>
                   @for (item of documentos; track $index) {
-                    <option [ngValue]="item.codigo">{{ item.nombre }}</option>
+                    <option [ngValue]="item.codigo">{{ item.name }}</option>
                   }
                 </select>
               </c-col>
               <c-col md="12" class="mb-3">
-                <label for="ser_num" class="form-label">Número de Serie</label>
+                <label for="number" class="form-label">Número de Serie</label>
                 <input
-                  formControlName="ser_num"
+                  formControlName="number"
                   type="text"
                   class="form-control"
-                  id="ser_num"
+                  id="number"
                   placeholder="Ej: F001, B001, GR01, COT"
                 />
               </c-col>
               <c-col md="12" class="mb-3">
-                <label for="ser_corr" class="form-label">Correlativo Inicial</label>
+                <label for="counter" class="form-label">Correlativo Inicial</label>
                 <input
-                  formControlName="ser_corr"
+                  formControlName="counter"
                   type="text"
                   class="form-control"
-                  id="ser_corr"
+                  id="counter"
                   min="1"
                 />
               </c-col>
@@ -121,7 +121,7 @@ export class SerieModalComponent extends BaseComponent implements OnInit {
       this.loadSerie(id);
     } else {
       this.form.reset();
-      this.form.patchValue({ ser_corr: 1, est: true });
+      this.form.patchValue({ counter: 1 });
     }
 
     this.visible = true;
@@ -140,10 +140,10 @@ export class SerieModalComponent extends BaseComponent implements OnInit {
   save() {
     if (this.form.invalid) return;
 
-    const data = this.form.value as Partial<SerieModel>;
+    const data = this.form.value as CreateSerie | UpdateSerie;
     const request = this.isEdit
-      ? this.#serieService.update(this.serieId!, data)
-      : this.#serieService.create(data);
+      ? this.#serieService.update(this.serieId!, data as UpdateSerie)
+      : this.#serieService.create(data as CreateSerie);
 
     request.subscribe({
       next: (response) => {
@@ -171,6 +171,6 @@ export class SerieModalComponent extends BaseComponent implements OnInit {
   }
 
   loadSelectCombos() {
-    this.fetchData(this.#documentService.getAll(), this.documentos);
+    this.fetchData(this.#documentService.getAll(), this.documents);
   }
 }

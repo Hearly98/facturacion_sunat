@@ -27,7 +27,7 @@ export const routes: Routes = [
       },
       {
         path: 'categorias',
-        loadComponent: () => import('./category/pages/category/category').then((m) => m.Category),
+        loadComponent: () => import('./category/pages/category/category').then((m) => m.CategoryPage),
         data: {
           title: 'Categoria',
         },
@@ -80,7 +80,7 @@ export const routes: Routes = [
       },
       {
         path: 'sucursales',
-        loadComponent: () => import('./sucursal/pages/sucursal/sucursal').then((m) => m.Sucursal),
+        loadComponent: () => import('./sucursal/pages/sucursal/sucursal').then((m) => m.SucursalPage),
         data: {
           title: 'Sucursal',
         },
@@ -112,7 +112,7 @@ export const routes: Routes = [
       },
       {
         path: 'rol',
-        loadComponent: () => import('./rol/pages/rol/rol').then((m) => m.Rol),
+        loadComponent: () => import('./rol/pages/rol/rol').then((m) => m.RolPage),
         data: {
           title: 'Rol',
         },

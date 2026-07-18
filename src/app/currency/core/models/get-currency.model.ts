@@ -1,6 +1,7 @@
-import { CurrencyModel } from './currency.model';
-
-export class GetCurrencyModel extends CurrencyModel {
-  id: number = 0;
-  est: boolean = true;
+export interface GetCurrency {
+  id: number;
+  name: string;
+  code: string;
+  symbol: string;
+  active: boolean;
 }

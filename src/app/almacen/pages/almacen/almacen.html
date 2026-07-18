@@ -51,7 +51,7 @@
             <select cSelect formControlName="sucursalId" (change)="onSearch()">
               <option [value]="null">Todas</option>
               <option *ngFor="let sucursal of sucursales" [value]="sucursal.id">
-                {{ sucursal.nombre }}
+                {{ sucursal.name }}
               </option>
             </select>
           </c-col>
@@ -83,7 +83,7 @@
                 <c-card-body>
                   <div class="mb-2">
                     <svg cIcon name="cil-building" class="me-2"></svg>
-                    {{ item.sucursal?.nombre }}
+                    {{ item.sucursal?.name }}
                   </div>
                   <div class="d-flex gap-2 mt-3">
                     <button
@@ -195,7 +195,7 @@
                     }
                   </td>
                   <td>{{ item.nombre }}</td>
-                  <td>{{ item.sucursal?.nombre }}</td>
+                  <td>{{ item.sucursal?.name }}</td>
                   <td>
                     <c-badge [color]="item.activo ? 'success' : 'danger'">
                       {{ item.activo ? 'Activo' : 'Inactivo' }}

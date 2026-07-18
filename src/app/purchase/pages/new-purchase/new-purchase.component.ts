@@ -370,7 +370,7 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
       next: (response) => {
         const filteredAlmacenes = response.data
           .filter((a: any) => a.suc_id === sucId)
-          .map((item: any) => ({ value: item.almacen_id, label: item.nombre }));
+          .map((item: any) => ({ value: item.almacen_id, label: item.name }));
         this.almacenOptions.set(filteredAlmacenes);
       },
     });

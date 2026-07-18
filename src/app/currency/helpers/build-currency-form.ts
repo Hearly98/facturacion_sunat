@@ -5,15 +5,16 @@ export const buildCurrencyForm = (): {
   [K in keyof CurrencyForm]: FormControl<CurrencyForm[K]>;
 } => ({
   id: new FormControl(null),
-  nombre: new FormControl(
+  name: new FormControl(
     null,
     Validators.compose([Validators.required, Validators.minLength(3)]),
   ),
-  codigo: new FormControl(
+  code: new FormControl(
     null,
     Validators.compose([Validators.required, Validators.minLength(2)]),
   ),
-  simbolo: new FormControl(
-    null, Validators.compose([Validators.required])
+  symbol: new FormControl(
+    null,
+    Validators.compose([Validators.required]),
   ),
 });

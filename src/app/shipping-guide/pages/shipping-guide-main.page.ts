@@ -204,10 +204,10 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
     if (cotizacion.cliente) {
       this.form.patchValue({
         cli_id: cotizacion.cliente.id,
-        nombre_cliente: cotizacion.cliente.nombre,
-        doc_cliente: cotizacion.cliente.documento,
-        direccion_cliente: cotizacion.cliente.direccion,
-        destino_direccion: cotizacion.cliente.direccion,
+        nombre_cliente: cotizacion.cliente.businessName,
+        doc_cliente: cotizacion.cliente.document,
+        direccion_cliente: cotizacion.cliente.address,
+        destino_direccion: cotizacion.cliente.address,
       });
     }
 
@@ -297,8 +297,8 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
     this.#shippingGuideService.getSeries().subscribe({
       next: (response) => {
         this.series = response.data.map((item) => ({
-          value: item.ser_id,
-          label: item.ser_num,
+          value: item.id,
+          label: item.number,
         }));
         this.updateStructure();
       },
@@ -308,7 +308,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
       next: (response) => {
         this.sucursales = response.data.map((item) => ({
           value: item.id,
-          label: item.nombre,
+          label: item.name,
         }));
         this.updateStructure();
       },

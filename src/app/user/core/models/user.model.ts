@@ -1,11 +1,11 @@
-export class UserModel {
-  usu_nom: string = '';
-  usu_ape: string = '';
-  usu_dni: string = '';
-  usu_telf: string = '';
-  rol_id: number = 0;
-  est: boolean = true;
-  email: string = '';
-  password: string = '';
-  usu_img: string = '';
+export interface User {
+  id: number | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  dni: string;
+  phone: string;
+  roleId: number;
+  active: boolean;
+  image?: string;
 }

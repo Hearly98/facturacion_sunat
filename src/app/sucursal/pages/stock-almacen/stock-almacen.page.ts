@@ -16,7 +16,7 @@ import { MODULES } from '../../../core/config/permissions/modules';
 import {
   SucursalService,
 } from '../../core/services/sucursal.service';
-import { GetSucursalModel, StockBySucursalModel, StockProductoModel } from '../../core/models';
+import { Sucursal, StockBySucursalModel, StockProductoModel } from '../../core/models';
 import { CommonModule } from '@angular/common';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { buildStockFilterForm } from '../../helpers';
@@ -46,7 +46,7 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
   public title = 'Stock por Almacén';
   public stockData?: StockBySucursalModel;
   public filteredProductos: StockProductoModel[] = [];
-  public sucursales: GetSucursalModel[] = [];
+  public sucursales: Sucursal[] = [];
   public loading = false;
 
   readonly #sucursalService = inject(SucursalService);

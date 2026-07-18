@@ -427,14 +427,14 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.#currencyService.getAll().subscribe({
       next: (response) =>
         response.data.map((item) => {
-          currencies.push({ value: item.id, label: item.nombre });
+          currencies.push({ value: item.id, label: item.name });
         }),
     });
 
     this.#documentService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          documents.push({ value: item.id, label: item.nombre });
+          documents.push({ value: item.id, label: item.name });
         });
       },
     });
@@ -450,7 +450,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          sucursalOptions.push({ value: item.id, label: item.nombre });
+          sucursalOptions.push({ value: item.id, label: item.name });
         });
       },
     });

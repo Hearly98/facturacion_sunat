@@ -15,10 +15,10 @@ import { TypedFormGroup } from '../../shared/types/types-form';
 import { FilterForm } from '../core/types/filter-form';
 import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { CurrencyService } from '../core/services/currency.service';
+import { Currency } from '../core/models';
 import { PageParamsModel } from '../../shared/models/query/page-params.model';
 import { PaginatorComponent } from '../../shared/components/paginator/paginator.component';
 import { CurrencyNewEditModalComponent } from '../components/currency-new-edit-modal.component';
-import { GetCurrencyModel } from '../core/models/get-currency.model';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 
@@ -44,7 +44,7 @@ export class CurrencyPage extends BaseSearchComponent implements OnInit {
   @ViewChild('currencyNewEditModal') currencyNewEditModal!: CurrencyNewEditModalComponent;
   public form!: TypedFormGroup<FilterForm>;
   public title = 'Monedas';
-  public currencies: GetCurrencyModel[] = [];
+  public currencies: Currency[] = [];
   readonly #formBuilder = inject(FormBuilder);
   readonly #service = inject(CurrencyService);
   readonly #confirmService = inject(ConfirmService);
@@ -92,9 +92,7 @@ export class CurrencyPage extends BaseSearchComponent implements OnInit {
   }
 
   onClean() {
-    this.form.reset({
-      order: 'desc',
-    });
+    this.form.reset();
     this.onSearch();
   }
 

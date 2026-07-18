@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ResponseDto } from '@shared/models/api/response.dto';
 import { SaleModel } from '../models/sale.model';
-import { SerieModel } from 'src/app/series/core/models/serie.model';
+import { Serie } from 'src/app/series/core/models/serie.model';
 import { QueryParamsModel } from '@shared/models/query/query-params.model';
 import { BaseService } from '@shared/services/base.service';
 import { QueryResultsModel } from '@shared/models/query/query-results.model';
@@ -24,8 +24,8 @@ export class SaleService extends BaseService {
     );
   }
 
-  getSeriesByDocType(docId: number): Observable<ResponseDto<SerieModel[]>> {
-    return this.getRequest<ResponseDto<SerieModel[]>>(`/series/${docId}`);
+  getSeriesByDocType(docId: number): Observable<ResponseDto<Serie[]>> {
+    return this.getRequest<ResponseDto<Serie[]>>(`/series/${docId}`);
   }
 
   getById(id: number): Observable<ResponseDto<SaleModel>> {

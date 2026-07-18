@@ -11,7 +11,7 @@
         <label for="sucursalId">Sucursal</label>
         <select formControlName="sucursalId" cSelect class="form-select" (change)="onSearch()">
           @for (sucursal of sucursales; track sucursal.id) {
-            <option [value]="sucursal.id">{{ sucursal.nombre }}</option>
+            <option [value]="sucursal.id">{{ sucursal.name }}</option>
           }
         </select>
       </c-col>

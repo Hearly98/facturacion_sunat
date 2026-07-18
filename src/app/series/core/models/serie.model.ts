@@ -1,9 +1,9 @@
-export interface SerieModel {
-  ser_id: number;
-  doc_cod: string;
-  ser_num: string;
-  ser_corr: number;
-  est: boolean;
-  created_at?: string;
-  updated_at?: string;
+export interface Serie {
+  id: number | null;
+  code: string;
+  number: string;
+  counter: number;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

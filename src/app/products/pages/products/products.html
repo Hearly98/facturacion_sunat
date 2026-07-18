@@ -22,7 +22,7 @@
         <select formControlName="categoryId" class="form-control form-select">
           <option [ngValue]="null">Todas</option>
           @for (categoria of categorias; track $index) {
-            <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
+            <option [ngValue]="categoria.id">{{ categoria.name }}</option>
           }
         </select>
       </c-col>
@@ -64,7 +64,7 @@
                 <tr>
                   <td>
                     <button
-                      (click)="openModal(product.id)"
+                      (click)="openModal(product.id!)"
                       size="sm"
                       class="me-2"
                       cButton
@@ -72,14 +72,14 @@
                     >
                       <svg cIcon name="cilPencil"></svg>
                     </button>
-                    <button (click)="onDelete(product.id)" size="sm" cButton color="danger">
+                    <button (click)="onDelete(product.id!)" size="sm" cButton color="danger">
                       <svg cIcon name="cilTrash"></svg>
                     </button>
                   </td>
                   <td></td>
                   <td>{{ product.internalCode }}</td>
                   <td>{{ product.name }}</td>
-                  <td>{{ product.category?.nombre }}</td>
+                  <td>--</td>
                 </tr>
               }
             }

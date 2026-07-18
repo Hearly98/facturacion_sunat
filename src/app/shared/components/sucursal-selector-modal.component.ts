@@ -18,7 +18,7 @@ import {
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 
 @Component({
   selector: 'app-sucursal-selector-modal',
@@ -73,11 +73,11 @@ import { GetSucursalModel } from 'src/app/sucursal/core/models';
                   cFormCheckInput
                   type="checkbox"
                   [id]="'suc_' + sucursal.id"
-                  [checked]="isSucursalSelected(sucursal.id)"
-                  (change)="toggleSucursal(sucursal.id)"
+                  [checked]="isSucursalSelected(sucursal.id!)"
+                  (change)="toggleSucursal(sucursal.id!)"
                 />
                 <label cFormCheckLabel [for]="'suc_' + sucursal.id">
-                  {{ sucursal.nombre }}
+                  {{ sucursal.name }}
                 </label>
               </c-form-check>
             </c-col>
@@ -114,7 +114,7 @@ import { GetSucursalModel } from 'src/app/sucursal/core/models';
 export class SucursalSelectorModalComponent {
   visible = signal(false);
   selectedSucursales = signal<number[]>([]);
-  sucursales: GetSucursalModel[] = [];
+  sucursales: Sucursal[] = [];
   callback: ((sucursales: number[]) => void) | null = null;
 
   #sucursalService = inject(SucursalService);
@@ -157,7 +157,7 @@ export class SucursalSelectorModalComponent {
   }
 
   selectAll() {
-    const allIds = this.sucursales.map(s => s.id);
+    const allIds = this.sucursales.filter(s => s.id !== null).map(s => s.id as number);
     this.selectedSucursales.set(allIds);
   }
 

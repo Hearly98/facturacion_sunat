@@ -5,7 +5,7 @@ import { environment } from 'src/environments/environment';
 import { ResponseDto } from '@shared/models/api/response.dto';
 import { QuotationModel } from '../models/quotation.model';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
-import { SerieModel } from 'src/app/series/core/models/serie.model';
+import { Serie } from 'src/app/series/core/models/serie.model';
 import { BaseService } from '@shared/services/base.service';
 import { QueryParamsModel } from '@shared/models/query/query-params.model';
 import { QueryResultsModel } from '@shared/models/query/query-results.model';
@@ -26,8 +26,8 @@ export class QuotationService extends BaseService {
     );
   }
 
-  getSeries(): Observable<ResponseDto<SerieModel[]>> {
-    return this.getRequest<ResponseDto<SerieModel[]>>(`/series`);
+  getSeries(): Observable<ResponseDto<Serie[]>> {
+    return this.getRequest<ResponseDto<Serie[]>>(`/series`);
   }
 
   getById(id: number): Observable<ResponseDto<QuotationModel>> {

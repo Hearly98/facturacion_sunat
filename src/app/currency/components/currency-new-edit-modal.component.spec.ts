@@ -4,7 +4,7 @@ import { of, throwError } from 'rxjs';
 import { CurrencyNewEditModalComponent } from './currency-new-edit-modal.component';
 import { CurrencyService } from '../core/services/currency.service';
 import { GlobalNotification } from '../../shared/alerts/global-notification/global-notification';
-import { GetCurrencyModel } from '../core/models/get-currency.model';
+import { Currency } from '../core/models';
 import { ResponseDto } from '../../shared/models/api/response.dto';
 
 describe('CurrencyNewEditModalComponent', () => {
@@ -13,13 +13,13 @@ describe('CurrencyNewEditModalComponent', () => {
   let currencyServiceMock: jasmine.SpyObj<CurrencyService>;
   let globalNotificationMock: jasmine.SpyObj<GlobalNotification>;
 
-  const mockCurrency: GetCurrencyModel = {
+  const mockCurrency: Currency = {
     id: 1,
-    nombre: 'Dólar',
-    codigo: 'USD',
-    simbolo: '$',
-    est: true,
-  } as GetCurrencyModel;
+    name: 'Dólar',
+    code: 'USD',
+    symbol: '$',
+    active: true,
+  };
 
   beforeEach(async () => {
     currencyServiceMock = jasmine.createSpyObj('CurrencyService', [
@@ -49,9 +49,9 @@ describe('CurrencyNewEditModalComponent', () => {
   describe('ngOnInit', () => {
     it('should create form on init', () => {
       expect(component.form).toBeDefined();
-      expect(component.form.get('nombre')).toBeDefined();
-      expect(component.form.get('codigo')).toBeDefined();
-      expect(component.form.get('simbolo')).toBeDefined();
+      expect(component.form.get('name')).toBeDefined();
+      expect(component.form.get('code')).toBeDefined();
+      expect(component.form.get('symbol')).toBeDefined();
     });
   });
 
@@ -75,9 +75,9 @@ describe('CurrencyNewEditModalComponent', () => {
     it('should reset form when opening new', () => {
       component.form.patchValue({
         id: 1,
-        nombre: 'Dólar',
-        codigo: 'USD',
-        simbolo: '$',
+        name: 'Dólar',
+        code: 'USD',
+        symbol: '$',
       });
 
       component.openModal();
@@ -109,8 +109,8 @@ describe('CurrencyNewEditModalComponent', () => {
       component.loadData(1);
 
       expect(currencyServiceMock.getById).toHaveBeenCalledWith(1);
-      expect(component.form.get('nombre')?.value).toBe('Dólar');
-      expect(component.form.get('codigo')?.value).toBe('USD');
+      expect(component.form.get('name')?.value).toBe('Dólar');
+      expect(component.form.get('code')?.value).toBe('USD');
     });
 
     it('should handle error when loading data', () => {
@@ -120,7 +120,7 @@ describe('CurrencyNewEditModalComponent', () => {
 
       component.loadData(1);
 
-      expect(component.form.get('nombre')?.value).toBeNull();
+      expect(component.form.get('name')?.value).toBeNull();
     });
   });
 
@@ -158,9 +158,9 @@ describe('CurrencyNewEditModalComponent', () => {
     it('should call create when form is valid and no id', () => {
       spyOn(component, 'create');
       component.form.patchValue({
-        nombre: 'Euro',
-        codigo: 'EUR',
-        simbolo: '€',
+        name: 'Euro',
+        code: 'EUR',
+        symbol: '€',
       });
 
       component.onSubmit();
@@ -172,9 +172,9 @@ describe('CurrencyNewEditModalComponent', () => {
       spyOn(component, 'update');
       component.form.patchValue({
         id: 1,
-        nombre: 'Dólar Actualizado',
-        codigo: 'USD',
-        simbolo: '$',
+        name: 'Dólar Actualizado',
+        code: 'USD',
+        symbol: '$',
       });
 
       component.onSubmit();
@@ -185,18 +185,18 @@ describe('CurrencyNewEditModalComponent', () => {
 
   describe('create', () => {
     it('should create currency successfully', (done) => {
-      const createResponse: ResponseDto<GetCurrencyModel> = {
+      const createResponse: ResponseDto<Currency> = {
         isValid: true,
-        data: { id: 3, nombre: 'Euro', codigo: 'EUR', simbolo: '€', est: true } as GetCurrencyModel,
+        data: { id: 3, name: 'Euro', code: 'EUR', symbol: '€', active: true },
         messages: ['Moneda creada exitosamente'],
       } as any;
       currencyServiceMock.create.and.returnValue(of(createResponse));
       const callback = jasmine.createSpy('callback');
 
       component.form.patchValue({
-        nombre: 'Euro',
-        codigo: 'EUR',
-        simbolo: '€',
+        name: 'Euro',
+        code: 'EUR',
+        symbol: '€',
       });
       component.callback = callback;
       component.create();
@@ -217,9 +217,9 @@ describe('CurrencyNewEditModalComponent', () => {
       const callback = jasmine.createSpy('callback');
 
       component.form.patchValue({
-        nombre: 'Euro',
-        codigo: 'EUR',
-        simbolo: '€',
+        name: 'Euro',
+        code: 'EUR',
+        symbol: '€',
       });
       component.callback = callback;
       component.create();
@@ -233,18 +233,18 @@ describe('CurrencyNewEditModalComponent', () => {
     });
 
     it('should handle invalid response on create', (done) => {
-      const invalidResponse: ResponseDto<GetCurrencyModel> = {
+      const invalidResponse: ResponseDto<Currency> = {
         isValid: false,
-        data: {} as GetCurrencyModel,
+        data: {} as Currency,
         messages: ['Código duplicado'],
       } as any;
       currencyServiceMock.create.and.returnValue(of(invalidResponse));
       const callback = jasmine.createSpy('callback');
 
       component.form.patchValue({
-        nombre: 'Euro',
-        codigo: 'EUR',
-        simbolo: '€',
+        name: 'Euro',
+        code: 'EUR',
+        symbol: '€',
       });
       component.callback = callback;
       component.create();
@@ -259,9 +259,9 @@ describe('CurrencyNewEditModalComponent', () => {
 
   describe('update', () => {
     it('should update currency successfully', (done) => {
-      const updateResponse: ResponseDto<GetCurrencyModel> = {
+      const updateResponse: ResponseDto<Currency> = {
         isValid: true,
-        data: { id: 1, nombre: 'Dólar Actualizado', codigo: 'USD', simbolo: 'USD$', est: true } as GetCurrencyModel,
+        data: { id: 1, name: 'Dólar Actualizado', code: 'USD', symbol: 'USD$', active: true },
         messages: ['Moneda actualizada exitosamente'],
       } as any;
       currencyServiceMock.update.and.returnValue(of(updateResponse));
@@ -269,9 +269,9 @@ describe('CurrencyNewEditModalComponent', () => {
 
       component.form.patchValue({
         id: 1,
-        nombre: 'Dólar Actualizado',
-        codigo: 'USD',
-        simbolo: 'USD$',
+        name: 'Dólar Actualizado',
+        code: 'USD',
+        symbol: 'USD$',
       });
       component.callback = callback;
       component.update();
@@ -293,9 +293,9 @@ describe('CurrencyNewEditModalComponent', () => {
 
       component.form.patchValue({
         id: 1,
-        nombre: 'Dólar',
-        codigo: 'USD',
-        simbolo: '$',
+        name: 'Dólar',
+        code: 'USD',
+        symbol: '$',
       });
       component.callback = callback;
       component.update();
@@ -309,9 +309,9 @@ describe('CurrencyNewEditModalComponent', () => {
     });
 
     it('should handle invalid response on update', (done) => {
-      const invalidResponse: ResponseDto<GetCurrencyModel> = {
+      const invalidResponse: ResponseDto<Currency> = {
         isValid: false,
-        data: {} as GetCurrencyModel,
+        data: {} as Currency,
         messages: ['Código duplicado'],
       } as any;
       currencyServiceMock.update.and.returnValue(of(invalidResponse));
@@ -319,9 +319,9 @@ describe('CurrencyNewEditModalComponent', () => {
 
       component.form.patchValue({
         id: 1,
-        nombre: 'Dólar',
-        codigo: 'USD',
-        simbolo: '$',
+        name: 'Dólar',
+        code: 'USD',
+        symbol: '$',
       });
       component.callback = callback;
       component.update();

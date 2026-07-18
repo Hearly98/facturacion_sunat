@@ -20,7 +20,7 @@ import { RolNewEditModal } from '../../components/rol-new-edit-modal/rol-new-edi
 import { RolService } from '../../core/services/rol.service';
 import { Rol } from '../../core/models';
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 
@@ -41,7 +41,7 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
   templateUrl: './rol.html',
   styleUrl: './rol.scss',
 })
-export class Rol extends BaseSearchComponent {
+export class RolPage extends BaseSearchComponent {
   @ViewChild('rolNewEditModal') rolNewEditModal!: RolNewEditModal;
   public form!: TypedFormGroup<FilterForm>;
   #formBuilder = inject(FormBuilder);

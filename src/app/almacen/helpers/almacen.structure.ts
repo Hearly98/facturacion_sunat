@@ -1,9 +1,9 @@
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 
-export const AlmacenStructure = (sucursales?: GetSucursalModel[]) => {
+export const AlmacenStructure = (sucursales?: Sucursal[]) => {
   let sucursalOptions: { label: string; value: number }[] = [];
   if (sucursales) {
-    sucursalOptions = sucursales.map((s) => ({ label: s.nombre, value: s.id }));
+    sucursalOptions = sucursales.map((s) => ({ label: s.name, value: s.id }));
   }
   return [
     {

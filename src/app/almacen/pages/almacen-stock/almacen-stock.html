@@ -44,8 +44,8 @@
                         <tbody>
                             <tr *ngFor="let item of filteredProductos; let i = index">
                                 <td>{{ i + 1 }}</td>
-                                <td>{{ item.producto?.codigoInterno || 'N/A' }}</td>
-                                <td>{{ item.producto?.nombre || 'N/A' }}</td>
+                                <td>{{ item.producto?.internalCode || 'N/A' }}</td>
+                                <td>{{ item.producto?.name || 'N/A' }}</td>
                                 <td class="text-center">
                                     <span class="badge" [ngClass]="item.stockActual <= 5 ? 'bg-danger' : 'bg-success'">
                                         {{ item.stockActual }}

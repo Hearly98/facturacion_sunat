@@ -12,7 +12,7 @@ import { TypedFormGroup } from '@shared/types/types-form';
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
 import { UnitOfMeasureService } from '../../core/services/unit-of-measure.service';
 import { UnitOfMeasure } from '../../core/models';
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 import { MODULES } from 'src/app/core/config/permissions/modules';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
 import { buildUnitOfMeasureFilterForm, unitOfMeasureFilterSort, unitOfMeasureMapFilterParams } from '../../helpers';
@@ -59,7 +59,7 @@ export class UnitOfMeasurePage extends BaseSearchComponent implements OnInit {
   readonly #unitOfMeasureService = inject(UnitOfMeasureService);
   readonly #sucursalService = inject(SucursalService);
   public units: UnitOfMeasure[] = [];
-  public sucursales: GetSucursalModel[] = [];
+  public sucursales: Sucursal[] = [];
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
 

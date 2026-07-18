@@ -322,10 +322,10 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
             fecha_vencimiento: response.data.fecha_vencimiento
               ? new Date(response.data.fecha_vencimiento).toISOString().split('T')[0]
               : null,
-            cli_documento: response.data.cliente?.documento,
-            cli_direcc: response.data.cliente?.direccion,
-            cli_correo: response.data.cliente?.correo,
-            cli_telf: response.data.cliente?.telefono,
+            cli_documento: response.data.cliente?.document,
+            cli_direcc: response.data.cliente?.address,
+            cli_correo: response.data.cliente?.email,
+            cli_telf: response.data.cliente?.phone,
           });
 
           if (response.data.detalles) {
@@ -373,14 +373,14 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
     this.#currencyService.getAll().subscribe({
       next: (response) =>
         response.data.map((item) => {
-          currencies.push({ value: item.id, label: item.nombre });
+          currencies.push({ value: item.id, label: item.name });
         }),
     });
 
     this.#documentService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          documents.push({ value: item.id, label: item.nombre });
+          documents.push({ value: item.id, label: item.name });
         });
       },
     });
@@ -395,7 +395,7 @@ export class SaleViewComponent extends BaseComponent implements OnInit {
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          sucursalOptions.push({ value: item.id, label: item.nombre });
+          sucursalOptions.push({ value: item.id, label: item.name });
         });
       },
     });

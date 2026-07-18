@@ -1,8 +1,8 @@
 export const userValidationMessage = {
-    usu_nom: {
+    firstName: {
         required: 'El nombre es obligatorio',
     },
-    usu_ape: {
+    lastName: {
         required: 'El apellido es obligatorio',
     },
     email: {
@@ -11,16 +11,16 @@ export const userValidationMessage = {
     password: {
         required: 'La contraseña es obligatoria',
     },
-    rol_id: {
+    roleId: {
         required: 'El rol es obligatorio',
     },
-    usu_telf: {
+    phone: {
         required: 'El teléfono es obligatorio',
     },
-    usu_dni: {
+    dni: {
         required: 'El DNI es obligatorio',
     },
-    usu_img: {
+    image: {
         required: 'La imagen es obligatoria',
     },
 };

@@ -1,3 +1,5 @@
-import { CurrencyModel } from './currency.model';
-
-export class CreateCurrencyModel extends CurrencyModel {}
+export interface CreateCurrency {
+  name: string;
+  code: string;
+  symbol: string;
+}

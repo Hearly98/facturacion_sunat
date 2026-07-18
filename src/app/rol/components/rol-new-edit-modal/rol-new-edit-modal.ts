@@ -18,7 +18,7 @@ import { BaseComponent } from '../../../shared/base/base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { CreateRol, UpdateRol } from '../../core/models';
 import { GlobalNotification } from '../../../shared/alerts/global-notification/global-notification';
-import { GetSucursalModel } from '../../../sucursal/core/models';
+import { Sucursal } from '../../../sucursal/core/models';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
 @Component({
@@ -42,7 +42,7 @@ export class RolNewEditModal extends BaseComponent implements OnInit {
   form!: TypedFormGroup<RolForm>;
   visible = false;
   structure = rolStructure;
-  sucursales: GetSucursalModel[] = [];
+  sucursales: Sucursal[] = [];
   messages = rolErrorMessages();
   isLoading = signal(false);
   readonly #globalNotification = inject(GlobalNotification);

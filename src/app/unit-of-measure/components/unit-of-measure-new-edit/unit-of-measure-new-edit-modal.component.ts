@@ -23,7 +23,7 @@ import {
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 import { CreateUnitOfMeasure, UpdateUnitOfMeasure } from '../../core/models';
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
 @Component({
@@ -52,7 +52,7 @@ export class UnitOfMeasureNewEditModalComponent extends BaseComponent {
   messages = unitOfMeasureErrorMessages();
   structure = unitOfMeasureStructure;
   form!: TypedFormGroup<UnitOfMeasureForm>;
-  sucursales: GetSucursalModel[] = [];
+  sucursales: Sucursal[] = [];
   readonly #globalNotification = inject(GlobalNotification);
   readonly #formBuilder = inject(FormBuilder);
   readonly #unitOfMeasureService = inject(UnitOfMeasureService);

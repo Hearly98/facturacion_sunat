@@ -17,7 +17,7 @@ import { TypedFormGroup } from '@shared/types/types-form';
 import { UserForm } from '../../core/types';
 import { MODULES } from 'src/app/core/config/permissions/modules';
 import { buildUserForm, userStructure, userValidationMessage } from '../../helpers';
-import { CreateUserModel, UpdateUserModel } from '../../core/models';
+import { CreateUser, UpdateUser } from '../../core/models';
 import { UserService } from '../../core/services/user.service';
 import { Rol } from 'src/app/rol/core/models';
 import { RolService } from 'src/app/rol/core/services/rol.service';
@@ -97,7 +97,7 @@ export class UserNewEditModalComponent extends BaseComponent implements OnInit {
 
   onSubmit() {
     if (this.form.valid) {
-      if (this.form.value.usu_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -109,8 +109,8 @@ export class UserNewEditModalComponent extends BaseComponent implements OnInit {
 
   create() {
     this.isLoading.set(true);
-    const { usu_id, ...body } = this.form.value;
-    const subscription = this.#userService.create(body as CreateUserModel).subscribe({
+    const { id, ...body } = this.form.value;
+    const subscription = this.#userService.create(body as CreateUser).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -132,7 +132,7 @@ export class UserNewEditModalComponent extends BaseComponent implements OnInit {
 
   update() {
     this.isLoading.set(true);
-    const subscription = this.#userService.update(this.form.value as UpdateUserModel).subscribe({
+    const subscription = this.#userService.update(this.form.value as UpdateUser).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
