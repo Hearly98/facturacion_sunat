@@ -1,4 +1,4 @@
-export interface FilterForm {
-  nombre: string | null;
+export interface CustomerFilterForm {
+  firstName: string | null;
   order: string | null;
 }

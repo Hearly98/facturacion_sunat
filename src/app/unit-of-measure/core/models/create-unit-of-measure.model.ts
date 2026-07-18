@@ -1,3 +1,5 @@
-import { UnitOfMeasureModel } from './unit-of-measure.model';
-
-export class CreateUnitOfMeasureModel extends UnitOfMeasureModel {}
+export interface CreateUnitOfMeasure {
+  code: string;
+  name: string;
+  abbreviation: string;
+}

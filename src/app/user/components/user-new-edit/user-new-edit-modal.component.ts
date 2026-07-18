@@ -19,7 +19,7 @@ import { MODULES } from 'src/app/core/config/permissions/modules';
 import { buildUserForm, userStructure, userValidationMessage } from '../../helpers';
 import { CreateUserModel, UpdateUserModel } from '../../core/models';
 import { UserService } from '../../core/services/user.service';
-import { GetRolModel } from 'src/app/rol/core/models';
+import { Rol } from 'src/app/rol/core/models';
 import { RolService } from 'src/app/rol/core/services/rol.service';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
@@ -44,7 +44,7 @@ export class UserNewEditModalComponent extends BaseComponent implements OnInit {
   form!: TypedFormGroup<UserForm>;
   visible = signal<boolean>(false);
   structure = userStructure;
-  roles: GetRolModel[] = [];
+  roles: Rol[] = [];
   isLoading = signal(false);
   errorMessages = userValidationMessage;
   readonly #rolService = inject(RolService);

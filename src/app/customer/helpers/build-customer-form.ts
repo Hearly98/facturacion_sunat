@@ -6,21 +6,21 @@ export const buildCustomerForm = (): {
 } => {
   return {
     id: new FormControl(null),
-    nombre: new FormControl(
+    companyId: new FormControl(null),
+    firstName: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    tipoDocumentoId: new FormControl(null, Validators.required),
-    documento: new FormControl(null, Validators.required),
-    telefono: new FormControl(null, Validators.required),
-    direccion: new FormControl(null),
+    lastName: new FormControl(null),
+    businessName: new FormControl(null),
+    documentTypeId: new FormControl(null, Validators.required),
+    document: new FormControl(null, Validators.required),
+    phone: new FormControl(null, Validators.required),
+    address: new FormControl(null),
     email: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
-    empresaId: new FormControl(null),
-    apellido: new FormControl(null),
-    razonSocial: new FormControl(null),
-    departamento: new FormControl(null),
-    provincia: new FormControl(null),
-    distrito: new FormControl(null),
-    codigoUbigeo: new FormControl(null),
+    department: new FormControl(null),
+    province: new FormControl(null),
+    district: new FormControl(null),
+    ubigeoCode: new FormControl(null),
   };
 };

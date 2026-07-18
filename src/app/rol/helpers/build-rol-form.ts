@@ -6,10 +6,10 @@ export const buildRolForm = (): {
 } => {
   return {
     id: new FormControl(null),
-    nombre: new FormControl(
+    name: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    est: new FormControl(true),
+    active: new FormControl(true),
   };
 };

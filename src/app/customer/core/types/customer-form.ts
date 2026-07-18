@@ -1,16 +1,16 @@
 export interface CustomerForm {
   id: number | null;
-  tipoDocumentoId: number | null;
-  nombre: string | null;
-  apellido: string | null;
-  razonSocial: string | null;
-  documento: string | null;
-  telefono: string | null;
-  direccion: string | null;
+  companyId: number | null;
+  documentTypeId: number | null;
+  firstName: string | null;
+  lastName: string | null;
+  businessName: string | null;
+  document: string | null;
+  phone: string | null;
+  address: string | null;
   email: string | null;
-  empresaId: number | null;
-  departamento: string | null;
-  provincia: string | null;
-  distrito: string | null;
-  codigoUbigeo: string | null;
+  department: string | null;
+  province: string | null;
+  district: string | null;
+  ubigeoCode: string | null;
 }

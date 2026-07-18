@@ -1,5 +1,3 @@
-export * from "./category.model"
-export * from "./create-category.model"
-export * from "./get-category.model"
-export * from "./update-category.model"
-
+export type { Category } from './category.model';
+export type { CreateCategory } from './create-category.model';
+export type { UpdateCategory } from './update-category.model';

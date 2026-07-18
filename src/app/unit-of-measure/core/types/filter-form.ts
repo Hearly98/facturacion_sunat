@@ -1,4 +1,3 @@
-export interface FilterForm {
-  nombre: string | null;
-  order: string | null;
+export interface UnitOfMeasureFilterForm {
+  name: string | null;
 }

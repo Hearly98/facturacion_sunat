@@ -16,7 +16,7 @@ import { TypedFormGroup } from '../../../shared/types/types-form';
 import { RolForm } from '../../core/types/rol-form';
 import { BaseComponent } from '../../../shared/base/base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
-import { CreateRolModel, UpdateRolModel } from '../../core/models';
+import { CreateRol, UpdateRol } from '../../core/models';
 import { GlobalNotification } from '../../../shared/alerts/global-notification/global-notification';
 import { GetSucursalModel } from '../../../sucursal/core/models';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
@@ -103,7 +103,7 @@ export class RolNewEditModal extends BaseComponent implements OnInit {
   create() {
     this.isLoading.set(true);
     const { id, ...body } = this.form.value;
-    const subscription = this.#rolService.create(body as CreateRolModel).subscribe({
+    const subscription = this.#rolService.create(body as CreateRol).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -125,7 +125,7 @@ export class RolNewEditModal extends BaseComponent implements OnInit {
 
   update() {
     this.isLoading.set(true);
-    const subscription = this.#rolService.update(this.form.value as UpdateRolModel).subscribe({
+    const subscription = this.#rolService.update(this.form.value as UpdateRol).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);

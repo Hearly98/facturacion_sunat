@@ -1,9 +1,18 @@
-export class CustomerModel {
-  empresaId: number = 0;
-  nombre: string = '';
-  documento: string = '';
-  telefono: string = '';
-  direccion: string = '';
-  correo: string = '';
-  est: boolean = false;
+export interface Customer {
+  id: number;
+  companyId: number;
+  firstName: string;
+  lastName: string;
+  businessName: string;
+  document: string;
+  phone: string;
+  address: string;
+  email: string;
+  ubigeoCode: string;
+  documentTypeId: number;
+  department: string;
+  province: string;
+  district: string;
 }
+
+export type CustomerType = Customer;

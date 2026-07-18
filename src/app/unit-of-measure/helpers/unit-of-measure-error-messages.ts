@@ -1,12 +1,12 @@
 export const unitOfMeasureErrorMessages = () => {
   return {
-    nombre: {
+    name: {
       required: 'El nombre es obligatorio.',
     },
-    abreviatura: {
+    abbreviation: {
       required: 'La abreviatura es obligatoria.',
     },
-    codigo: {
+    code: {
       required: 'El código es obligatorio.',
     },
   };

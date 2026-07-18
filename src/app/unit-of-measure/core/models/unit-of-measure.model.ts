@@ -1,6 +1,7 @@
-export class UnitOfMeasureModel {
-    codigo: string = '';
-    nombre: string = '';
-    abreviatura: string = '';
+export interface UnitOfMeasure {
+  id: number | null;
+  code: string;
+  name: string;
+  abbreviation: string;
 }
 

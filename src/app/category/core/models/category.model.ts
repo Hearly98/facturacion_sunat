@@ -1,8 +1,5 @@
-export class CategoryModel {
-    empresaId: number = 0;
-    nombre: string = '';
-    empresa?: {
-        emp_id: number;
-        emp_nom: string;
-    } | null = null;
+export interface Category {
+  id: number | null;
+  code: string;
+  name: string;
 }

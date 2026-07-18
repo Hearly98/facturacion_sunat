@@ -7,13 +7,13 @@ export const buildUnitOfMeasureForm = (): {
 {
   return {
     id: new FormControl(null),
-    codigo: new FormControl(null, Validators.compose([
+    code: new FormControl(null, Validators.compose([
       Validators.required
     ])),
-    nombre: new FormControl(null, Validators.compose([
+    name: new FormControl(null, Validators.compose([
       Validators.required, Validators.minLength(3)
     ])),
-    abreviatura: new FormControl(null, Validators.compose([
+    abbreviation: new FormControl(null, Validators.compose([
       Validators.required, Validators.minLength(2)
     ]))
   };

@@ -1,20 +1,20 @@
 export const customerErrorMessages = () => {
   return {
-    nombre: {
+    firstName: {
       required: 'El nombre es obligatorio',
       minLength: 'El nombre debe tener un mínimo de 3 caracteres',
     },
-    apellido: {
+    lastName: {
       required: 'El apellido es obligatorio',
       minLength: 'El apellido debe tener un mínimo de 3 caracteres',
     },
-    tipoDocumentoId: {
+    documentTypeId: {
       required: 'El tipo de documento es obligatorio',
     },
-    documento: {
+    document: {
       required: 'El documento es obligatorio',
     },
-    telefono: {
+    phone: {
       required: 'El telefono es obligatorio'
     },
     email: {

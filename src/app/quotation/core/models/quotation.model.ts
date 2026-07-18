@@ -1,4 +1,4 @@
-import { GetCustomerModel } from "src/app/customer/core/models";
+import { GetCustomer } from "src/app/customer/core/models";
 import { GetQuotationStateModel } from "src/app/quotation-state/models";
 
 export interface QuotationModel {
@@ -15,7 +15,7 @@ export interface QuotationModel {
     ser_num: string;
     doc_cod: string;
   };
-  cliente?: GetCustomerModel;
+  cliente?: GetCustomer;
   detalles: QuotationDetailModel[];
   estado_cotizacion?: GetQuotationStateModel
 }

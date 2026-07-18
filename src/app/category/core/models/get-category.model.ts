@@ -1,5 +1,8 @@
-import { CategoryModel } from "./category.model";
-
-export class GetCategoryModel extends CategoryModel {
-    id: number = 0;
+/**
+ * @deprecated Use Category type from category.model.ts instead
+ */
+export interface GetCategoryModel {
+  id: number;
+  codigo: string;
+  nombre: string;
 }

@@ -10,7 +10,7 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { TypedFormGroup } from '../../../shared/types/types-form';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { buildFilterForm, filterSort, mapParams } from '../../helpers';
+import { buildRolFilterForm, rolFilterSort, mapFilterParams } from '../../helpers';
 import { FilterForm } from '../../core/types/filter-form';
 import { BaseSearchComponent } from '../../../shared/base/search-base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
@@ -18,7 +18,7 @@ import { PageParamsModel } from '../../../shared/models/query/page-params.model'
 import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { RolNewEditModal } from '../../components/rol-new-edit-modal/rol-new-edit-modal';
 import { RolService } from '../../core/services/rol.service';
-import { GetRolModel } from '../../core/models';
+import { Rol } from '../../core/models';
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
 import { GetSucursalModel } from 'src/app/sucursal/core/models';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
@@ -50,7 +50,7 @@ export class Rol extends BaseSearchComponent {
   #sucursalService = inject(SucursalService);
   #globalNotification = inject(GlobalNotification);
   #confirmService = inject(ConfirmService);
-  public roles: GetRolModel[] = [];
+  public roles: Rol[] = [];
   public sucursales: GetSucursalModel[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
@@ -65,12 +65,12 @@ export class Rol extends BaseSearchComponent {
   }
 
   createForm() {
-    this.form = this.#formBuilder.group(buildFilterForm());
+    this.form = this.#formBuilder.group(buildRolFilterForm());
   }
 
   onSearch(filter = null, page = 1) {
-    const sort = filterSort(this.form.value);
-    const filterToUse = filter || mapParams(this.form.value);
+    const sort = rolFilterSort(this.form.value);
+    const filterToUse = filter || mapFilterParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);

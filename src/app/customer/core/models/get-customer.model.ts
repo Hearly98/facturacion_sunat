@@ -1,5 +1,18 @@
-import { CustomerModel } from './customer.model';
-
-export class GetCustomerModel extends CustomerModel {
-  id: number = 0;
+export interface GetCustomer {
+  id: number;
+  companyId: number;
+  firstName: string;
+  lastName: string;
+  businessName: string;
+  document: string;
+  phone: string;
+  address: string;
+  email: string;
+  ubigeoCode: string;
+  documentTypeId: number;
+  department: string;
+  province: string;
+  district: string;
 }
+
+export type GetCustomerType = GetCustomer;

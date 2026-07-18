@@ -1,19 +1,19 @@
 export const unitOfMeasureStructure = [
   {
     label: 'Codigo',
-    formControlName: 'codigo',
+    formControlName: 'code',
     type: 'text',
     col: '12',
   },
   {
     label: 'Nombre',
-    formControlName: 'nombre',
+    formControlName: 'name',
     type: 'text',
     col: '12',
   },
   {
     label: 'Abreviatura',
-    formControlName: 'abreviatura',
+    formControlName: 'abbreviation',
     type: 'text',
     col: '12',
   },

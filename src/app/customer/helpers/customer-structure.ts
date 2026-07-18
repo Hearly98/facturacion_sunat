@@ -1,31 +1,31 @@
 export const customerStructure = [
   {
     label: 'Nombre',
-    formControlName: 'nombre',
+    formControlName: 'firstName',
     type: 'text',
     col: '12',
   },
   {
     label: 'Apellido',
-    formControlName: 'apellido',
+    formControlName: 'lastName',
     type: 'text',
     col: '12',
   },
   {
     label: 'Tipo Documento',
-    formControlName: 'tipoDocumentoId',
+    formControlName: 'documentTypeId',
     type: 'select',
     col: '12',
   },
   {
     label: 'Documento',
-    formControlName: 'documento',
+    formControlName: 'document',
     type: 'text',
     col: '12',
   },
   {
     label: 'Telefono',
-    formControlName: 'telefono',
+    formControlName: 'phone',
     type: 'text',
     col: '12',
   },
@@ -37,31 +37,31 @@ export const customerStructure = [
   },
   {
     label: 'Direccion',
-    formControlName: 'direccion',
+    formControlName: 'address',
     type: 'text',
     col: '12',
   },
-   {
+  {
     label: 'Departamento',
-    formControlName: 'departamento',
+    formControlName: 'department',
     type: 'text',
     col: '12',
   },
-   {
+  {
     label: 'Provincia',
-    formControlName: 'provincia',
+    formControlName: 'province',
     type: 'text',
     col: '12',
   },
-   {
+  {
     label: 'Distrito',
-    formControlName: 'distrito',
+    formControlName: 'district',
     type: 'text',
     col: '12',
   },
-   {
+  {
     label: 'Razon Social',
-    formControlName: 'razonSocial',
+    formControlName: 'businessName',
     type: 'text',
     col: '12',
   },

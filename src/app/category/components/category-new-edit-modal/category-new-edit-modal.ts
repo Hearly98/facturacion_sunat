@@ -14,10 +14,10 @@ import { IconDirective } from '@coreui/icons-angular';
 import { buildCategoryForm, categoryErrorMessages, categoryStructure } from '../../helpers';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TypedFormGroup } from '../../../shared/types/types-form';
-import { CategoryForm } from '../../core/types/cat-form';
+import { CategoryForm } from '../../core/types';
 import { BaseComponent } from '../../../shared/base/base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
-import { CreateCategoryModel, UpdateCategoryModel } from '../../core/models';
+import { CreateCategory, UpdateCategory } from '../../core/models';
 import { GlobalNotification } from '../../../shared/alerts/global-notification/global-notification';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
@@ -102,7 +102,7 @@ export class CategoryNewEditModal extends BaseComponent implements OnInit {
 
   create() {
     const { id, ...body } = this.form.value;
-    const subscription = this.#categoryService.create(body as CreateCategoryModel).subscribe({
+    const subscription = this.#categoryService.create(body as CreateCategory).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -124,7 +124,7 @@ export class CategoryNewEditModal extends BaseComponent implements OnInit {
 
   update() {
     const subscription = this.#categoryService
-      .update(this.form.value as UpdateCategoryModel)
+      .update(this.form.value as UpdateCategory)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

@@ -1,4 +1,4 @@
-import { GetCustomerModel } from "src/app/customer/core/models";
+import { GetCustomer } from "src/app/customer/core/models";
 import { GetDocumentModel } from "src/app/document/core/models/get-document.model";
 import { GetSaleDetailModel } from "src/app/sale-detail/core/models";
 import { GetStateSaleModel } from "src/app/sale-state/core/models/get-state-sale.model";
@@ -17,7 +17,7 @@ export class SaleModel {
   venta_total: number = 0;
   est: boolean = false;
   documento?: GetDocumentModel;
-  cliente?: GetCustomerModel;
+  cliente?: GetCustomer;
   estado?: GetStateSaleModel;
   detalles?: GetSaleDetailModel[] = [];
 }

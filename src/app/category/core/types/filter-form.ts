@@ -1,4 +1,4 @@
-export interface FilterForm {
-    nombre: string | null;
-    order: string | null;
+export interface CategoryFilterForm {
+  code?: string | null;
+  name?: string | null;
 }

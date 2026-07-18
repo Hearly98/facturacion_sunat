@@ -3,8 +3,11 @@ import { BaseService } from '../../../shared/services/base.service';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ResponseDto } from '@shared/models/api/response.dto';
-import { CreateCustomerModel, GetCustomerModel, UpdateCustomerModel } from '../models';
+import { CreateCustomer, GetCustomer, UpdateCustomer } from '../models';
+import { CustomerDto, CreateCustomerDto, UpdateCustomerDto } from '../dto';
+import { CustomerMapper } from '../mappers';
 import { QueryParamsModel } from '@shared/models/query/query-params.model';
 import { QueryResultsModel } from '@shared/models/query/query-results.model';
 
@@ -16,34 +19,74 @@ export class CustomerService extends BaseService {
     super(http, `${environment.apiUrl}/clientes`);
   }
 
-  getAll(): Observable<ResponseDto<GetCustomerModel[]>> {
-    return this.getRequest('');
-  }
-
-  create(body: CreateCustomerModel): Observable<ResponseDto<GetCustomerModel>> {
-    return this.postRequest<CreateCustomerModel, ResponseDto<GetCustomerModel>>('/', body);
-  }
-
-  update(body: UpdateCustomerModel): Observable<ResponseDto<GetCustomerModel>> {
-    return this.putRequest<UpdateCustomerModel, ResponseDto<GetCustomerModel>>('/', body);
-  }
-
-  getById(id: number): Observable<ResponseDto<GetCustomerModel>> {
-    return this.getRequest<ResponseDto<GetCustomerModel>>(`/${id}`);
-  }
-
-  delete(id: number): Observable<ResponseDto<GetCustomerModel>> {
-    return this.deleteRequest(`/${id}`);
-  }
-
-  search(body: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<GetCustomerModel>>> {
-    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<GetCustomerModel>>>(
-      `/search`,
-      body
+  getAll(): Observable<ResponseDto<GetCustomer[]>> {
+    return this.getRequest<ResponseDto<CustomerDto[]>>('').pipe(
+      map(response => ({
+        ...response,
+        data: response.data.map(dto => CustomerMapper.fromApi(dto)),
+      }))
     );
   }
 
-  searchQuick(term: string): Observable<ResponseDto<GetCustomerModel[]>> {
-    return this.getRequest(`/search-quick?term=${term}`);
+  create(body: CreateCustomer): Observable<ResponseDto<GetCustomer>> {
+    const dto = CustomerMapper.toApiCreate(body);
+    return this.postRequest<CreateCustomerDto, ResponseDto<CustomerDto>>('/', dto).pipe(
+      map(response => ({
+        ...response,
+        data: CustomerMapper.fromApi(response.data),
+      }))
+    );
+  }
+
+  update(body: UpdateCustomer): Observable<ResponseDto<GetCustomer>> {
+    const dto = CustomerMapper.toApiUpdate(body);
+    return this.putRequest<UpdateCustomerDto, ResponseDto<CustomerDto>>('/', dto).pipe(
+      map(response => ({
+        ...response,
+        data: CustomerMapper.fromApi(response.data),
+      }))
+    );
+  }
+
+  getById(id: number): Observable<ResponseDto<GetCustomer>> {
+    return this.getRequest<ResponseDto<CustomerDto>>(`/${id}`).pipe(
+      map(response => ({
+        ...response,
+        data: CustomerMapper.fromApi(response.data),
+      }))
+    );
+  }
+
+  delete(id: number): Observable<ResponseDto<GetCustomer | null>> {
+    return this.deleteRequest<ResponseDto<CustomerDto>>(`/${id}`).pipe(
+      map(response => ({
+        ...response,
+        data: response.data ? CustomerMapper.fromApi(response.data) : null,
+      }))
+    );
+  }
+
+  search(body: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<GetCustomer>>> {
+    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<CustomerDto>>>(
+      `/search`,
+      body
+    ).pipe(
+      map(response => ({
+        ...response,
+        data: {
+          ...response.data,
+          data: response.data.data.map(dto => CustomerMapper.fromApi(dto)),
+        },
+      }))
+    );
+  }
+
+  searchQuick(term: string): Observable<ResponseDto<GetCustomer[]>> {
+    return this.getRequest<ResponseDto<CustomerDto[]>>(`/search-quick?term=${term}`).pipe(
+      map(response => ({
+        ...response,
+        data: response.data.map(dto => CustomerMapper.fromApi(dto)),
+      }))
+    );
   }
 }

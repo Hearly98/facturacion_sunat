@@ -22,7 +22,7 @@ import {
   SpinnerComponent,
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
-import { CreateUnitOfMeasureModel, UpdateUnitOfMeasureModel } from '../../core/models';
+import { CreateUnitOfMeasure, UpdateUnitOfMeasure } from '../../core/models';
 import { GetSucursalModel } from 'src/app/sucursal/core/models';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
@@ -112,7 +112,7 @@ export class UnitOfMeasureNewEditModalComponent extends BaseComponent {
   create() {
     const { id, ...body } = this.form.value;
     const subscription = this.#unitOfMeasureService
-      .create(body as CreateUnitOfMeasureModel)
+      .create(body as CreateUnitOfMeasure)
       .subscribe({
         next: (response) => {
           if (response.isValid) {
@@ -136,7 +136,7 @@ export class UnitOfMeasureNewEditModalComponent extends BaseComponent {
   update() {
     this.isLoading.set(true);
     const subscription = this.#unitOfMeasureService
-      .update(this.form.value as UpdateUnitOfMeasureModel)
+      .update(this.form.value as UpdateUnitOfMeasure)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

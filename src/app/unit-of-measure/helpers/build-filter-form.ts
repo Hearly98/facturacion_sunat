@@ -1,11 +1,10 @@
 import { FormControl } from '@angular/forms';
-import { FilterForm } from '../core/types';
+import { UnitOfMeasureFilterForm } from '../core/types';
 
-export const buildFilterForm = (): {
-  [K in keyof FilterForm]: FormControl<FilterForm[K]>;
+export const buildUnitOfMeasureFilterForm = (): {
+  [K in keyof UnitOfMeasureFilterForm]: FormControl<UnitOfMeasureFilterForm[K]>;
 } => {
   return {
-    nombre: new FormControl(null),
-    order: new FormControl('desc'),
+    name: new FormControl(null),
   };
 };

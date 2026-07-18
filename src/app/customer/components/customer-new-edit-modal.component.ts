@@ -20,7 +20,7 @@ import { CustomerForm } from '../core/types/customer-form';
 import { buildCustomerForm, customerErrorMessages, customerStructure } from '../helpers';
 import { CustomerService } from '../core/services/customer.service';
 import { MODULES } from 'src/app/core/config/permissions/modules';
-import { CreateCustomerModel, UpdateCustomerModel } from '../core/models';
+import { CreateCustomer, UpdateCustomer } from '../core/models';
 import { DocumentType } from 'src/app/document-type/core/models';
 import { DocumentTypeService } from 'src/app/document-type/core/services/document-type.service';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
@@ -114,7 +114,7 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
   create() {
     this.isLoading.set(true);
     const { id, ...body } = this.form.value;
-    const subscription = this.#customerService.create(body as CreateCustomerModel).subscribe({
+    const subscription = this.#customerService.create(body as CreateCustomer).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -137,7 +137,7 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
   update() {
     this.isLoading.set(true);
     const subscription = this.#customerService
-      .update(this.form.value as UpdateCustomerModel)
+      .update(this.form.value as UpdateCustomer)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

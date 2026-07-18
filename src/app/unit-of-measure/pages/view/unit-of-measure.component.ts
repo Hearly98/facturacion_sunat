@@ -11,12 +11,12 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TypedFormGroup } from '@shared/types/types-form';
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
 import { UnitOfMeasureService } from '../../core/services/unit-of-measure.service';
-import { GetUnitOfMeasureModel } from '../../core/models';
+import { UnitOfMeasure } from '../../core/models';
 import { GetSucursalModel } from 'src/app/sucursal/core/models';
 import { MODULES } from 'src/app/core/config/permissions/modules';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
-import { buildFilterForm, filterSort, mapParams } from '../../helpers';
-import { FilterForm } from '../../core/types';
+import { buildUnitOfMeasureFilterForm, unitOfMeasureFilterSort, unitOfMeasureMapFilterParams } from '../../helpers';
+import { UnitOfMeasureFilterForm } from '../../core/types';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
 import { UnitOfMeasureNewEditModalComponent } from '../../components/unit-of-measure-new-edit/unit-of-measure-new-edit-modal.component';
 import { CommonModule } from '@angular/common';
@@ -53,12 +53,12 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
 export class UnitOfMeasurePage extends BaseSearchComponent implements OnInit {
   @ViewChild('unitOfMeasureNewEditModal')
   unitOfMeasureNewEditModal!: UnitOfMeasureNewEditModalComponent;
-  public form!: TypedFormGroup<FilterForm>;
+  public form!: TypedFormGroup<UnitOfMeasureFilterForm>;
   readonly #formBuilder = inject(FormBuilder);
   title = signal('Unidad Medida');
   readonly #unitOfMeasureService = inject(UnitOfMeasureService);
   readonly #sucursalService = inject(SucursalService);
-  public units: GetUnitOfMeasureModel[] = [];
+  public units: UnitOfMeasure[] = [];
   public sucursales: GetSucursalModel[] = [];
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
@@ -74,7 +74,7 @@ export class UnitOfMeasurePage extends BaseSearchComponent implements OnInit {
   }
 
   createForm() {
-    this.form = this.#formBuilder.group(buildFilterForm());
+    this.form = this.#formBuilder.group(buildUnitOfMeasureFilterForm());
   }
 
   loadSelectCombos() {
@@ -82,8 +82,8 @@ export class UnitOfMeasurePage extends BaseSearchComponent implements OnInit {
   }
 
   onSearch(filter = null, page = 1) {
-    const sort = filterSort(this.form.value);
-    const filterToUse = filter ?? mapParams(this.form.value);
+    const sort = unitOfMeasureFilterSort(this.form.value);
+    const filterToUse = filter ?? unitOfMeasureMapFilterParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);
