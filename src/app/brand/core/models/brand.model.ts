@@ -1,9 +1,12 @@
-export class MarcaModel {
-  empresaId: number = 0;
-  codigo: string = '';
-  nombre: string = '';
-  empresa?: {
-    emp_id: number;
-    emp_nom: string;
-  } | null = null;
+export interface Brand {
+  id: number | null;
+  companyId: number;
+  name: string;
+  code: string;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
+
+
+

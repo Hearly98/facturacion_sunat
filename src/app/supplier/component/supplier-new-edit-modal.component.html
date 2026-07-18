@@ -26,7 +26,7 @@
                   >
                     <option [ngValue]="null">Seleccione</option>
                     @for (docType of documentTypes; track $index) {
-                      <option [ngValue]="docType.id">{{ docType.nombre }}</option>
+                      <option [ngValue]="docType.id">{{ docType.name }}</option>
                     }
                   </select>
                   <app-validation-messages

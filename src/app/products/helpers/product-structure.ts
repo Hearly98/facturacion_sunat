@@ -1,10 +1,10 @@
-import { GetMarcaModel } from 'src/app/brand/core/models';
+import { Brand } from 'src/app/brand/core/models';
 import { GetCategoryModel } from 'src/app/category/core/models';
 import { GetCurrencyModel } from 'src/app/currency/core/models/get-currency.model';
 import { GetUnitOfMeasureModel } from 'src/app/unit-of-measure/core/models';
 
 export const productStructure = (
-  brandOptions?: GetMarcaModel[],
+  brandOptions?: Brand[],
   unitOfMeasureOptions?: GetUnitOfMeasureModel[],
   categoryOptions?: GetCategoryModel[],
   currencyOptions?: GetCurrencyModel[],
@@ -14,7 +14,7 @@ export const productStructure = (
   let unitOfMeasures: { label: string; value: number }[] = [];
   let categories: { label: string; value: number }[] = [];
   let currencies: { label: string; value: number }[] = [];
-  if (brandOptions) brands = brandOptions.map((s) => ({ label: s.nombre, value: s.id }));
+  if (brandOptions) brands = brandOptions.filter((s) => s.id !== null).map((s) => ({ label: s.name, value: s.id as number }));
   if (unitOfMeasureOptions)
     unitOfMeasures = unitOfMeasureOptions.map((s) => ({ label: s.nombre, value: s.id }));
   if (categoryOptions)

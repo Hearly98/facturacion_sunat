@@ -1,4 +1,4 @@
-export interface FilterForm {
-  nombre: string | null;
+export interface DocumentTypeFilterForm {
+  name: string | null;
   order: string | null;
 }

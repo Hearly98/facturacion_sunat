@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(~/.claude/skills/angular-dto-model-mapper/**)"
+    ]
+  }
+}

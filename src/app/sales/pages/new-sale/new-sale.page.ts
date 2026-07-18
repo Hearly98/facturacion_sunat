@@ -442,7 +442,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          documentTypes.push({ value: item.id, label: item.nombre });
+          documentTypes.push({ value: item.id, label: item.name });
         });
       },
     });

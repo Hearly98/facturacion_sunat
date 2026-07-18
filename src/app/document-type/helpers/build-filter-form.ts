@@ -1,11 +1,11 @@
-import { FilterForm } from '../core/types/filter-form';
+import { DocumentTypeFilterForm } from '../core/types/filter-form';
 import { FormControl } from '@angular/forms';
 
-export const buildFilterForm = (): {
-  [K in keyof FilterForm]: FormControl<FilterForm[K]>;
+export const buildDocumentTypeFilterForm = (): {
+  [K in keyof DocumentTypeFilterForm]: FormControl<DocumentTypeFilterForm[K]>;
 } => {
   return {
-    nombre: new FormControl(null),
+    name: new FormControl(null),
     order: new FormControl('desc'),
   };
 };

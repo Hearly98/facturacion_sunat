@@ -360,7 +360,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
         this.documentTypeOptions.set(
-          response.data.map((item) => ({ value: item.id, label: item.nombre }))
+          response.data.map((item) => ({ value: item.id, label: item.name }))
         );
       },
     });

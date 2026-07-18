@@ -1,10 +1,8 @@
-import { FilterForm } from '../core/types/filter-form';
-
-export function filterSort(value: Partial<FilterForm>) {
+export function filterSort() {
   return [
     {
       property: "createdAt",
-      direction: value.order
+      direction: 'desc'
     }
   ]
 };

@@ -1,5 +1,5 @@
-export class DocumentTypeModel {
-  descripcion: string = '';
-  nombre: string = '';
-  codigo: string = '';
+export interface DocumentType {
+  id: number;
+  name: string;
+  code: string;
 }

@@ -4,8 +4,7 @@ import { NewPurchaseComponent } from '../pages/new-purchase/new-purchase.compone
 import { PurchaseForm } from '../core/purchase.form';
 import { GetCurrencyModel } from 'src/app/currency/core/models/get-currency.model';
 import { GetPaymentMethodModel } from 'src/app/payment-method/core/models';
-import { GetDocumentModel } from 'src/app/document/core/models/get-document.model';
-import { GetDocumentTypeModel } from 'src/app/document-type/core/models';
+import { DocumentType } from 'src/app/document-type/core/models';
 
 export type Control<SM extends Record<string, any>> =
   | SelectControl
@@ -48,7 +47,7 @@ export interface PurchaseStructure<SM extends Record<string, any>> {
 export const purchaseStructure = (
   CurrencySelectOptions: GetCurrencyModel[] = [],
   PaymentTypeOptions: GetPaymentMethodModel[] = [],
-  DocumentTypesOptions: GetDocumentTypeModel[] = [],
+  DocumentTypesOptions: DocumentType[] = [],
 ): PurchaseStructure<NewPurchaseComponent['serviceMap']>[] => {
   return [
     {
@@ -114,7 +113,7 @@ export const purchaseStructure = (
           col: '4',
           type: 'select',
           formControlName: 'tip_id',
-          options: mapToSelectOption(DocumentTypesOptions, 'id', 'nombre'),
+          options: mapToSelectOption(DocumentTypesOptions, 'id', 'name'),
         },
         {
           label: 'Documento',

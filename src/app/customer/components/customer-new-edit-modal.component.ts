@@ -21,7 +21,7 @@ import { buildCustomerForm, customerErrorMessages, customerStructure } from '../
 import { CustomerService } from '../core/services/customer.service';
 import { MODULES } from 'src/app/core/config/permissions/modules';
 import { CreateCustomerModel, UpdateCustomerModel } from '../core/models';
-import { GetDocumentTypeModel } from 'src/app/document-type/core/models';
+import { DocumentType } from 'src/app/document-type/core/models';
 import { DocumentTypeService } from 'src/app/document-type/core/services/document-type.service';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
@@ -48,7 +48,7 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
   form!: TypedFormGroup<CustomerForm>;
   visible = false;
   structure = customerStructure;
-  documentTypes: GetDocumentTypeModel[] = [];
+  documentTypes: DocumentType[] = [];
   readonly #documentTypeService = inject(DocumentTypeService);
   readonly #globalNotification = inject(GlobalNotification);
   readonly #customerService = inject(CustomerService);

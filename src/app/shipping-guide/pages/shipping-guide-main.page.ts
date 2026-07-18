@@ -326,8 +326,8 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
         this.tiposDocumento = response.data.map((item) => ({
-          value: item.nombre,
-          label: item.nombre,
+          value: item.name,
+          label: item.name,
         }));
       },
     });

@@ -1,16 +1,25 @@
 export const brandStructure = [
   {
-    label: 'Código',
-    formControlName: 'codigo',
+    label: 'Nombre',
+    formControlName: 'name',
     type: 'text',
     col: '12',
-    placeholder: 'Ej: MRC-001',
+    required: true,
+    maxLength: 100,
   },
   {
-    label: 'Nombre',
-    formControlName: 'nombre',
+    label: 'Código',
+    formControlName: 'code',
     type: 'text',
     col: '12',
-    placeholder: 'Ej: Samsung',
+    required: true,
+    maxLength: 50,
+    pattern: '^[A-Za-z0-9\-_]+$',
+  },
+  {
+    label: 'Activo',
+    formControlName: 'active',
+    type: 'checkbox',
+    col: '12',
   },
 ];

@@ -1,5 +1,3 @@
-import { DocumentTypeModel } from './document-type.model';
+import { DocumentType } from './document-type.model';
 
-export class GetDocumentTypeModel extends DocumentTypeModel {
-  id: number = 0;
-}
+export type GetDocumentType = DocumentType;

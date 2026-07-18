@@ -7,20 +7,50 @@
     </c-row>
     <c-card>
       <c-card-body [formGroup]="form">
+        <input type="hidden" [formControlName]="'id'" />
         <c-row>
           @for (item of structure; track $index) {
             <c-col [md]="item.col">
-              <label for="" class="form-label">{{ item.label }}</label>
-              <input
-                class="form-control"
-                type="text"
-                [class.is-invalid]="
-                  form.get(item.formControlName)?.invalid && form.get(item.formControlName)?.touched
-                "
-                [name]="item.label"
-                [id]="item.formControlName + 'id'"
-                [formControlName]="item.formControlName"
-              />
+              @switch (item.type) {
+                @case ('text') {
+                  <label [for]="item.formControlName" class="form-label">{{ item.label }}</label>
+                  <input
+                    [id]="item.formControlName"
+                    class="form-control"
+                    type="text"
+                    [class.is-invalid]="
+                      form.get(item.formControlName)?.invalid && form.get(item.formControlName)?.touched
+                    "
+                    [formControlName]="item.formControlName"
+                    [placeholder]="item.label"
+                  />
+                }
+                @case ('number') {
+                  <label [for]="item.formControlName" class="form-label">{{ item.label }}</label>
+                  <input
+                    [id]="item.formControlName"
+                    class="form-control"
+                    type="number"
+                    [class.is-invalid]="
+                      form.get(item.formControlName)?.invalid && form.get(item.formControlName)?.touched
+                    "
+                    [formControlName]="item.formControlName"
+                  />
+                }
+                @case ('checkbox') {
+                  <div class="form-check">
+                    <input
+                      [id]="item.formControlName"
+                      class="form-check-input"
+                      type="checkbox"
+                      [formControlName]="item.formControlName"
+                    />
+                    <label [for]="item.formControlName" class="form-check-label">
+                      {{ item.label }}
+                    </label>
+                  </div>
+                }
+              }
               <app-validation-messages
                 [messages]="messages"
                 [form]="form"

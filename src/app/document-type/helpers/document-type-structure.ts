@@ -1,19 +1,13 @@
 export const documentTypeStructure = [
   {
-    label: 'Código',
-    formControlName: 'codigo',
-    type: 'text',
-    col: '12',
-  },
-  {
     label: 'Nombre',
-    formControlName: 'nombre',
+    formControlName: 'name',
     type: 'text',
     col: '12',
   },
   {
-    label: 'Descripción',
-    formControlName: 'descripcion',
+    label: 'Código',
+    formControlName: 'code',
     type: 'text',
     col: '12',
   },

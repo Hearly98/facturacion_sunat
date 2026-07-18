@@ -1,12 +1,11 @@
-export const brandErrorMessages = () => {
-  return {
-    codigo: {
-      required: 'El código es obligatorio.',
-      minLength: 'El código debe tener un mínimo de 2 caracteres.',
-    },
-    nombre: {
-      required: 'El nombre es obligatorio.',
-      minLength: 'El nombre debe tener un mínimo de 3 caracteres.',
-    },
-  };
+export const brandErrorMessages = {
+  name: {
+    required: 'El nombre es requerido',
+    maxLength: 'El nombre no debe exceder 100 caracteres',
+  },
+  code: {
+    required: 'El código es requerido',
+    maxLength: 'El código no debe exceder 50 caracteres',
+    pattern: 'El código solo puede contener letras, números, guiones y guiones bajos',
+  },
 };

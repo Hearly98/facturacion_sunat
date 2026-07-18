@@ -1,4 +1,4 @@
-import { MarcaModel } from './brand.model';
-
-export class CreateMarcaModel extends MarcaModel {
+export interface CreateBrand {
+  name: string;
+  code: string;
 }

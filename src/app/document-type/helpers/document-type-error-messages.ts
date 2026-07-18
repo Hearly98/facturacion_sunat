@@ -1,10 +1,10 @@
 export const documentTypeErrorMessages = () => {
   return {
-    nombre: {
+    name: {
       required: 'El nombre es obligatorio',
       minLength: 'El nombre debe tener un mínimo de 3 caracteres',
     },
-    codigo: {
+    code: {
       required: 'El código es obligatorio',
     },
   };

@@ -22,7 +22,7 @@ import {
   documentTypeStructure,
 } from '../../helpers';
 import { DocumentTypeService } from '../../core/services/document-type.service';
-import { CreateDocumentTypeModel, UpdateDocumentTypeModel } from '../../core/models';
+import { CreateDocumentType, UpdateDocumentType } from '../../core/models';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
 @Component({
@@ -107,7 +107,7 @@ export class DocumentTypeNewEditModalComponent extends BaseComponent implements 
   create() {
     const { id, ...body } = this.form.value;
     const subscription = this.#documentTypeService
-      .create(body as CreateDocumentTypeModel)
+      .create(body as CreateDocumentType)
       .subscribe({
         next: (response) => {
           if (response.isValid) {
@@ -130,7 +130,7 @@ export class DocumentTypeNewEditModalComponent extends BaseComponent implements 
 
   update() {
     const subscription = this.#documentTypeService
-      .update(this.form.value as UpdateDocumentTypeModel)
+      .update(this.form.value as UpdateDocumentType)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

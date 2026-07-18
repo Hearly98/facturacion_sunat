@@ -1,2 +1,1 @@
-export * from './brand.form';
-export * from './filter-form';
+export * from './brand-form';

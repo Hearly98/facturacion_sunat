@@ -23,8 +23,8 @@ import { BaseComponent } from '@shared/base/base.component';
 import { SupplierForm } from '../core/types/supplier-form';
 import { CreateSupplier, UpdateSupplier } from '../core/models';
 import { DocumentTypeService } from 'src/app/document-type/core/services/document-type.service';
-import { GetDocumentTypeModel } from 'src/app/document-type/core/models';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
+import { DocumentType } from 'src/app/document-type/core/models';
 @Component({
   selector: 'app-supplier-new-edit-modal',
   imports: [
@@ -49,7 +49,7 @@ export class SupplierNewEditModalComponent extends BaseComponent implements OnIn
   form!: TypedFormGroup<SupplierForm>;
   visible = false;
   structure = supplierStructure;
-  documentTypes: GetDocumentTypeModel[] = [];
+  documentTypes: DocumentType[] = [];
   readonly #globalNotification = inject(GlobalNotification);
   readonly #supplierService = inject(SupplierService);
   readonly #documentTypeService = inject(DocumentTypeService);

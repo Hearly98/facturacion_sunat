@@ -6,11 +6,10 @@ export const buildDocumentTypeForm = (): {
 } => {
   return {
     id: new FormControl(null),
-    codigo: new FormControl(null, Validators.compose([Validators.required])),
-    descripcion: new FormControl(null),
-    nombre: new FormControl(
+    name: new FormControl(
       null,
-      Validators.compose([Validators.compose([Validators.required, Validators.minLength(3)])]),
+      Validators.compose([Validators.required, Validators.minLength(3)])
     ),
+    code: new FormControl(null, Validators.compose([Validators.required])),
   };
 };

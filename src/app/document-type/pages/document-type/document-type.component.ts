@@ -10,14 +10,14 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { TypedFormGroup } from '../../../shared/types/types-form';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { buildFilterForm, filterSort, mapParams } from '../../helpers';
-import { FilterForm } from '../../core/types/filter-form';
+import { buildDocumentTypeFilterForm, documentTypeFilterSort, documentTypeMapFilterParams } from '../../helpers';
+import { DocumentTypeFilterForm } from '../../core/types/filter-form';
 import { BaseSearchComponent } from '../../../shared/base/search-base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { DocumentTypeNewEditModalComponent } from '../../components/document-type-new-edit/document-type-new-edit-modal.component';
-import { GetDocumentTypeModel } from '../../core/models';
+import { DocumentType } from '../../core/models';
 import { DocumentTypeService } from '../../core/services/document-type.service';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
@@ -43,11 +43,11 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
 export class DocumentTypeComponent extends BaseSearchComponent implements OnInit {
   @ViewChild('documentTypeNewEditModal')
   documentTypeNewEditModal!: DocumentTypeNewEditModalComponent;
-  public form!: TypedFormGroup<FilterForm>;
+  public form!: TypedFormGroup<DocumentTypeFilterForm>;
   readonly #formBuilder = inject(FormBuilder);
   public title = 'Tipo Documentos';
   readonly #documentTypeService = inject(DocumentTypeService);
-  public documentTypes: GetDocumentTypeModel[] = [];
+  public documentTypes: DocumentType[] = [];
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
@@ -60,12 +60,12 @@ export class DocumentTypeComponent extends BaseSearchComponent implements OnInit
   }
 
   createForm() {
-    this.form = this.#formBuilder.group(buildFilterForm());
+    this.form = this.#formBuilder.group(buildDocumentTypeFilterForm());
   }
 
   onSearch(filter = null, page = 1) {
-    const sort = filterSort(this.form.value);
-    const filterToUse = filter ?? mapParams(this.form.value);
+    const sort = documentTypeFilterSort(this.form.value);
+    const filterToUse = filter ?? documentTypeMapFilterParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);
