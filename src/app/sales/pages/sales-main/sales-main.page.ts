@@ -33,7 +33,7 @@ import { TypedFormGroup } from '@shared/types/types-form';
 import { SearchSelectComponent } from '@shared/components/search-select.component';
 import { SaleDetailTableComponent } from 'src/app/sale-detail/components/sale-detail-table.component';
 import { SaleDetailForm } from 'src/app/sale-detail/core/types';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { SaleService } from '../../core/services/sale.service';

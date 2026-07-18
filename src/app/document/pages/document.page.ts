@@ -17,7 +17,7 @@ import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { DocumentService } from '../core/services/document.service';
 import { DocumentModel } from '../core/models/document.model';
 import { PageParamsModel } from '../../shared/models/query/page-params.model';
-import { PaginatorComponent } from '../../paginator/paginator.component';
+import { PaginatorComponent } from '../../shared/components/paginator/paginator.component';
 import { DocumentNewEditModalComponent } from '../components/document-new-edit-modal.component';
 import { GetDocumentModel } from '../core/models/get-document.model';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';

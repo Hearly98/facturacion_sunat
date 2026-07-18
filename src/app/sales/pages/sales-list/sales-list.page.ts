@@ -17,7 +17,7 @@ import { IconDirective } from '@coreui/icons-angular';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
 import { MODULES } from 'src/app/core/config/permissions/modules';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { SaleService } from '../../core/services/sale.service';

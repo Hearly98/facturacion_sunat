@@ -16,7 +16,7 @@ import { FilterForm } from '../core/types/filter-form';
 import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { CurrencyService } from '../core/services/currency.service';
 import { PageParamsModel } from '../../shared/models/query/page-params.model';
-import { PaginatorComponent } from '../../paginator/paginator.component';
+import { PaginatorComponent } from '../../shared/components/paginator/paginator.component';
 import { CurrencyNewEditModalComponent } from '../components/currency-new-edit-modal.component';
 import { GetCurrencyModel } from '../core/models/get-currency.model';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';

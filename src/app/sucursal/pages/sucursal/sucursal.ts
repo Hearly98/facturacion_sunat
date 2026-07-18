@@ -18,7 +18,7 @@ import { PageParamsModel } from '../../../shared/models/query/page-params.model'
 import { SucursalNewEditModal } from '../../components/sucursal-new-edit-modal/sucursal-new-edit-modal';
 import { FilterForm } from '../../core/types';
 import { GetSucursalModel } from '../../core/models';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 

@@ -19,7 +19,7 @@ import { BaseSearchComponent } from '@shared/base/search-base.component';
 import { MODULES } from 'src/app/core/config/permissions/modules';
 import { SelectOption } from '@shared/types';
 import { SearchSelectComponent } from '@shared/components/search-select.component';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { ShippingGuideService } from '../core/services/shipping-guide.service';

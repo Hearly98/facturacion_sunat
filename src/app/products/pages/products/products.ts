@@ -17,7 +17,7 @@ import { BaseSearchComponent } from '../../../shared/base/search-base.component'
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { ProductNewEditModal } from '../../components/product-new-edit-modal/product-new-edit-modal';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { GetProductModel } from '../../core/models';
 import { CategoryService } from '../../../category/core/services/category.service';
 import { GetCategoryModel } from '../../../category/core/models';

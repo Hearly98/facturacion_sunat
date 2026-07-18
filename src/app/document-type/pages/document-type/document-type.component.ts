@@ -15,7 +15,7 @@ import { FilterForm } from '../../core/types/filter-form';
 import { BaseSearchComponent } from '../../../shared/base/search-base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { DocumentTypeNewEditModalComponent } from '../../components/document-type-new-edit/document-type-new-edit-modal.component';
 import { GetDocumentTypeModel } from '../../core/models';
 import { DocumentTypeService } from '../../core/services/document-type.service';

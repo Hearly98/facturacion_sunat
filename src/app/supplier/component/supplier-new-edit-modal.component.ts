@@ -21,8 +21,7 @@ import { buildSupplierForm, supplierStructure } from '../helpers';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { BaseComponent } from '@shared/base/base.component';
 import { SupplierForm } from '../core/types/supplier-form';
-import { CreateSupplierModel } from '../core/models';
-import { UpdateSupplierModel } from '../core/models/update-supplier.model';
+import { CreateSupplier, UpdateSupplier } from '../core/models';
 import { DocumentTypeService } from 'src/app/document-type/core/services/document-type.service';
 import { GetDocumentTypeModel } from 'src/app/document-type/core/models';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
@@ -107,7 +106,7 @@ export class SupplierNewEditModalComponent extends BaseComponent implements OnIn
     this.submitted = true;
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.prov_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -118,8 +117,8 @@ export class SupplierNewEditModalComponent extends BaseComponent implements OnIn
   }
 
   create() {
-    const { prov_id, ...body } = this.form.value;
-    const subscription = this.#supplierService.create(body as CreateSupplierModel).subscribe({
+    const { id, ...body } = this.form.value;
+    const subscription = this.#supplierService.create(body as CreateSupplier).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -141,7 +140,7 @@ export class SupplierNewEditModalComponent extends BaseComponent implements OnIn
 
   update() {
     const subscription = this.#supplierService
-      .update(this.form.value as UpdateSupplierModel)
+      .update(this.form.value as UpdateSupplier)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

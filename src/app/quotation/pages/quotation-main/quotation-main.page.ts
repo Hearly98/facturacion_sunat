@@ -26,7 +26,7 @@ import { DateRangePickerComponent } from '@shared/components/date-range-picker/d
 import { QuotationService } from '../../core/services/quotation.service';
 import { QuotationModel } from '../../core/models/quotation.model';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { buildFilterForm, filterSort, mapParams, messages } from '../../helpers';
 import { quotationStructure } from '../../helpers/quotation-structure';

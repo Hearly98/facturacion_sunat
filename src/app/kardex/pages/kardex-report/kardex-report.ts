@@ -17,7 +17,7 @@ import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { KardexService } from '../../core/services/kardex.service';
 import { GetKardexModel } from '../../core/models/get-kardex.model';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { CommonModule } from '@angular/common';
 import { buildKardexFilterForm } from '../../helpers/build-kardex-filter-form';
 import { ProductService } from '../../../products/core/services/product.service';

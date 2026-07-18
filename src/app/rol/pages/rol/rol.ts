@@ -15,7 +15,7 @@ import { FilterForm } from '../../core/types/filter-form';
 import { BaseSearchComponent } from '../../../shared/base/search-base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { RolNewEditModal } from '../../components/rol-new-edit-modal/rol-new-edit-modal';
 import { RolService } from '../../core/services/rol.service';
 import { GetRolModel } from '../../core/models';

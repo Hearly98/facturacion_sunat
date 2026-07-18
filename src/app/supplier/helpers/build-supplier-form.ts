@@ -5,22 +5,22 @@ export const buildSupplierForm = (): {
   [K in keyof SupplierForm]: FormControl<SupplierForm[K]>;
 } => {
   return {
-    emp_id: new FormControl(1),
-    est: new FormControl(true),
-     prov_nom: new FormControl(
+    id: new FormControl(null),
+    companyId: new FormControl(1),
+    active: new FormControl(true),
+    name: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    prov_correo: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
-    prov_direcc: new FormControl(
+    email: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
+    address: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    prov_id: new FormControl(null),
-    tip_id: new FormControl(null, Validators.required),
-    prov_documento: new FormControl(null, Validators.required),
-    prov_telf: new FormControl(
-      null,
-    ),
+    documentTypeId: new FormControl(null, Validators.required),
+    document: new FormControl(null, Validators.required),
+    phone: new FormControl(null),
+    bank: new FormControl(null),
+    account: new FormControl(null),
   };
 };

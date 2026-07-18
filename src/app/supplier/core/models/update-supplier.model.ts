@@ -1,3 +1,5 @@
-import { SupplierModel } from "./supplier.model";
+import { CreateSupplier } from './create-supplier.model';
 
-export class UpdateSupplierModel extends SupplierModel {}
+export interface UpdateSupplier extends CreateSupplier {
+  id: number;
+}

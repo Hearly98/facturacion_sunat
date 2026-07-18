@@ -9,7 +9,7 @@ import {
   TableDirective,
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { UserNewEditModalComponent } from '../../components/user-new-edit/user-new-edit-modal.component';
 import { TypedFormGroup } from '@shared/types/types-form';
 import { UserService } from '../../core/services/user.service';

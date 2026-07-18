@@ -1,4 +1,4 @@
 export interface FilterForm {
-  prov_nom: string | null;
+  name: string | null;
   order: string | null;
 }

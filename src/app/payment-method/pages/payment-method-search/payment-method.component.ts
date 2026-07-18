@@ -13,7 +13,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { BaseSearchComponent } from '../../../shared/base/search-base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { PaymentMethodService } from '../../core/services/payment-method.service';

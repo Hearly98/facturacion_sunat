@@ -11,7 +11,7 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { TypedFormGroup } from '@shared/types/types-form';
 import { MODULES } from 'src/app/core/config/permissions/modules';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
 import { BaseSearchComponent } from '@shared/base/search-base.component';

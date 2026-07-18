@@ -32,11 +32,7 @@
   </c-col>
   <c-col sm="6" class="text-end">
     @if (total > 0) {
-      <span class="ml-2">
-        Mostrando {{ firstItem() }}-{{ lastItem() }} de {{ total }} registros
-      </span>
-    } @else {
-      <span class="ml-2">Sin registros</span>
+      <span class="ml-2">{{ firstItem() }}-{{ lastItem() }} de {{ total }}</span>
     }
   </c-col>
 </c-row>

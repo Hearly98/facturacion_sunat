@@ -1,9 +1,15 @@
-export class SupplierModel {
-  emp_id: number = 0;
-  prov_nom: string = '';
-  prov_ruc: string = '';
-  prov_telf: string = '';
-  prov_direcc: string = '';
-  prov_correo: string = '';
-  est: boolean = true;
+export interface Supplier {
+  id: number;
+  companyId: number;
+  documentTypeId: number | null;
+  name: string;
+  document: string;
+  phone: string;
+  address: string;
+  email: string;
+  bank: string | null;
+  account: string | null;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

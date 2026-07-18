@@ -17,7 +17,7 @@ import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { OrganizationService } from '../core/services/organization.service';
 import { OrganizationModel } from '../core/models/organization.model';
 import { PageParamsModel } from '../../shared/models/query/page-params.model';
-import { PaginatorComponent } from '../../paginator/paginator.component';
+import { PaginatorComponent } from '../../shared/components/paginator/paginator.component';
 import { OrganizationNewEditModalComponent } from '../components/organization-new-edit-modal.component';
 import { GetOrganizationModel } from '../core/models/get-organization.model';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';

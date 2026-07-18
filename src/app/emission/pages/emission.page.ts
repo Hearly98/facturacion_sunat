@@ -18,7 +18,7 @@ import { TypedFormGroup } from '../../shared/types/types-form';
 import { FilterForm } from '../core/types/filter-form';
 import { EmissionService } from '../core/services/emission.service';
 import { GetEmissionModel } from '../core/models/get-emission.model';
-import { PaginatorComponent } from '../../paginator/paginator.component';
+import { PaginatorComponent } from '../../shared/components/paginator/paginator.component';
 import { EmissionListComponent } from '../components/emission-list.component';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { buildFilterForm, mapFilterParams } from '../helpers';
