@@ -1,5 +1,18 @@
-import { ProductModel } from "./product.model";
-
-export class CreateProductModel extends ProductModel {
+export interface CreateProduct {
+  branchId: number;
+  categoryId: number;
+  name: string;
+  description: string;
+  unitId: number;
+  internalCode: string;
+  manufacturerCode: string;
+  weight: number;
+  image?: File;
+  warehouses: number[];
+  currencyId: number;
+  brandId: number;
+  basePurchasePrice: number;
+  baseSalePrice: number;
+  branches?: number[];
 }
 

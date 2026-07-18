@@ -15,11 +15,11 @@
     <c-row class="g-3 align-items-end" [formGroup]="form">
       <c-col sm="12" md="6" lg="3">
         <label for="">Nombre</label>
-        <input formControlName="prod_nom" type="text" class="form-control" />
+        <input formControlName="name" type="text" class="form-control" />
       </c-col>
       <c-col sm="12" md="6" lg="3">
         <label for="">Categoría</label>
-        <select formControlName="cat_id" class="form-control form-select">
+        <select formControlName="categoryId" class="form-control form-select">
           <option [ngValue]="null">Todas</option>
           @for (categoria of categorias; track $index) {
             <option [ngValue]="categoria.id">{{ categoria.nombre }}</option>
@@ -64,7 +64,7 @@
                 <tr>
                   <td>
                     <button
-                      (click)="openModal(product.prod_id)"
+                      (click)="openModal(product.id)"
                       size="sm"
                       class="me-2"
                       cButton
@@ -72,14 +72,14 @@
                     >
                       <svg cIcon name="cilPencil"></svg>
                     </button>
-                    <button (click)="onDelete(product.prod_id)" size="sm" cButton color="danger">
+                    <button (click)="onDelete(product.id)" size="sm" cButton color="danger">
                       <svg cIcon name="cilTrash"></svg>
                     </button>
                   </td>
                   <td></td>
-                  <td>{{ product.codigoInterno }}</td>
-                  <td>{{ product.nombre }}</td>
-                  <td>{{ product.categoria?.nombre }}</td>
+                  <td>{{ product.internalCode }}</td>
+                  <td>{{ product.name }}</td>
+                  <td>{{ product.category?.nombre }}</td>
                 </tr>
               }
             }

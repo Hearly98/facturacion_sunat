@@ -5,10 +5,10 @@ export const buildFilterForm = (): {
   [K in keyof FilterForm]: FormControl<FilterForm[K]>;
 } => {
   return {
-    prod_nom: new FormControl(null),
-    cat_id: new FormControl(null),
-    est: new FormControl(true),
-    order: new FormControl('desc')
+    name: new FormControl(null),
+    categoryId: new FormControl(null),
+    active: new FormControl(true),
+    order: new FormControl('desc'),
   };
 };
 

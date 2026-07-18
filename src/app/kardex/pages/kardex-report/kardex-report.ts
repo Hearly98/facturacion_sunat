@@ -25,7 +25,7 @@ import { AlmacenService } from '../../../almacen/core/services/almacen.service';
 import { UserService } from '../../../user/core/services/user.service';
 import { TypedFormGroup } from '../../../shared/types/types-form';
 import { KardexFilterForm } from '../../core/types/kardex-filter.form';
-import { GetProductModel } from '../../../products/core/models';
+import { Product } from '../../../products/core/models';
 import { GetAlmacenModel } from '../../../almacen/core/models';
 
 @Component({
@@ -50,7 +50,7 @@ import { GetAlmacenModel } from '../../../almacen/core/models';
 })
 export class KardexReportComponent extends BaseSearchComponent implements OnInit {
     public kardexItems: GetKardexModel[] = [];
-    public products: GetProductModel[] = [];
+    public products: Product[] = [];
     public warehouses: GetAlmacenModel[] = [];
     public users: any[] = [];
     public title = 'Kardex de Inventario';

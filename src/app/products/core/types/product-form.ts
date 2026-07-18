@@ -1,14 +1,17 @@
-export interface ProductForm {
-  prod_id: number | null;
-  cat_id: number | null;
-  und_id: number | null;
-  mon_id: number | null;
-  marca_id: number | null;
-  prod_nom: string | null;
-  prod_descrip: string | null;
-  prod_cod_interno: string | null;
-  cod_fabricante: string | null;
-  prod_img: string | File | null;
-  precio_compra_base: number | null;
-  precio_venta_base: number | null;
-}
+export type ProductForm = {
+  id: number | null;
+  categoryId: number | null;
+  unitId: number | null;
+  currencyId: number | null;
+  brandId: number | null;
+  name: string | null;
+  description: string | null;
+  internalCode: string | null;
+  manufacturerCode: string | null;
+  image: string | File | null;
+  basePurchasePrice: number | null;
+  baseSalePrice: number | null;
+  weight: number | null;
+  branchId: number | null;
+  warehouses: number[] | null;
+};

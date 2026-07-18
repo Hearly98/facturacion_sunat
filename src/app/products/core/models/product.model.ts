@@ -1,16 +1,21 @@
-export class ProductModel {
-  sucursalId: number = 0;
-  categoriaId: number = 0;
-  nombre: string = '';
-  descripcion: string = '';
-  unidadId: number = 0;
-  codigoInterno: string = '';
-  codigoFabricante: string = '';
-  imagen: string = '';
-  monedaId: number = 0;
-  marcaId: number = 0;
-  precioCompraBase: number = 0;
-  precioVentaBase: number = 0;
-  sucursales?: number[] = [];
-  est?: boolean = false;
+export interface Product {
+  id: number | null;
+  branchId: number;
+  categoryId: number;
+  name: string;
+  description: string;
+  unitId: number;
+  internalCode: string;
+  manufacturerCode: string;
+  weight: number;
+  image: string;
+  warehouses: number[];
+  currencyId: number;
+  brandId: number;
+  basePurchasePrice: number;
+  baseSalePrice: number;
+  branches?: number[];
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

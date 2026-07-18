@@ -18,7 +18,7 @@ import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { ProductNewEditModal } from '../../components/product-new-edit-modal/product-new-edit-modal';
 import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
-import { GetProductModel } from '../../core/models';
+import { Product } from '../../core/models';
 import { CategoryService } from '../../../category/core/services/category.service';
 import { GetCategoryModel } from '../../../category/core/models';
 import { SucursalService } from '../../../sucursal/core/services/sucursal.service';
@@ -53,7 +53,7 @@ export class Products extends BaseSearchComponent implements OnInit {
   readonly #sucursalService = inject(SucursalService);
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
-  public products: GetProductModel[] = [];
+  public products: Product[] = [];
   public categorias: GetCategoryModel[] = [];
   public sucursales: GetSucursalModel[] = [];
 

@@ -11,6 +11,7 @@ import {
   SpinnerComponent,
 } from '@coreui/angular';
 import { ProductService } from '../../core/services/product.service';
+import { CreateProduct, UpdateProduct, Product } from '../../core/models';
 import { IconDirective } from '@coreui/icons-angular';
 import { buildProductForm, productStructure } from '../../helpers';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -121,9 +122,24 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
       next: (response) => {
         if (response.isValid) {
           const productData = response.data;
-          this.form.patchValue(productData);
-          if (productData.imagen) {
-            this.imagePreview.set(productData.image_url);
+          this.form.patchValue({
+            id: productData.id,
+            name: productData.name,
+            description: productData.description,
+            categoryId: productData.categoryId,
+            unitId: productData.unitId,
+            currencyId: productData.currencyId,
+            brandId: productData.brandId,
+            internalCode: productData.internalCode,
+            manufacturerCode: productData.manufacturerCode,
+            basePurchasePrice: productData.basePurchasePrice,
+            baseSalePrice: productData.baseSalePrice,
+            weight: productData.weight,
+            branchId: productData.branchId,
+            warehouses: productData.warehouses,
+          });
+          if (productData.image) {
+            this.imagePreview.set(productData.image);
           }
         }
       },
@@ -137,7 +153,7 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.prod_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -152,32 +168,48 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
     }
   }
 
-  private buildFormData(): FormData {
-    const formData = new FormData();
-    const formValues = this.form.value;
+  private buildCreateProduct(): CreateProduct {
+    const formValue = this.form.value;
+    return {
+      name: formValue.name,
+      description: formValue.description,
+      categoryId: formValue.categoryId,
+      unitId: formValue.unitId,
+      currencyId: formValue.currencyId,
+      brandId: formValue.brandId,
+      internalCode: formValue.internalCode,
+      manufacturerCode: formValue.manufacturerCode,
+      basePurchasePrice: formValue.basePurchasePrice,
+      baseSalePrice: formValue.baseSalePrice,
+      weight: formValue.weight,
+      branchId: formValue.branchId,
+      warehouses: formValue.warehouses || [],
+    };
+  }
 
-    Object.keys(formValues).forEach((key) => {
-      const value = formValues[key];
-
-      if (key !== 'prod_img' && value !== null && value !== undefined && value !== '') {
-        if (typeof value === 'boolean') {
-          formData.append(key, value ? 'true' : 'false');
-        } else {
-          formData.append(key, value.toString());
-        }
-      }
-    });
-
-    if (this.selectedFile) {
-      formData.append('prod_img', this.selectedFile);
-    }
-
-    return formData;
+  private buildUpdateProduct(): UpdateProduct {
+    const formValue = this.form.value;
+    return {
+      id: formValue.id,
+      name: formValue.name,
+      description: formValue.description,
+      categoryId: formValue.categoryId,
+      unitId: formValue.unitId,
+      currencyId: formValue.currencyId,
+      brandId: formValue.brandId,
+      internalCode: formValue.internalCode,
+      manufacturerCode: formValue.manufacturerCode,
+      basePurchasePrice: formValue.basePurchasePrice,
+      baseSalePrice: formValue.baseSalePrice,
+      weight: formValue.weight,
+      branchId: formValue.branchId,
+      warehouses: formValue.warehouses || [],
+    };
   }
 
   create() {
-    const body = this.buildFormData();
-    const subscription = this.#productService.createBulk(body).subscribe({
+    const product = this.buildCreateProduct();
+    const subscription = this.#productService.createBulk(product, this.selectedFile || undefined).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -198,8 +230,8 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
   }
 
   update() {
-    const body = this.buildFormData();
-    const subscription = this.#productService.update(body).subscribe({
+    const product = this.buildUpdateProduct();
+    const subscription = this.#productService.update(product, this.selectedFile || undefined).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -302,7 +334,7 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
     };
     reader.readAsDataURL(file);
 
-    this.form.patchValue({ prod_img: file });
+    this.form.patchValue({ image: file });
   }
 
   removeImage() {
@@ -310,6 +342,6 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
 
     this.selectedFile = null;
     this.imagePreview.set(null);
-    this.form.patchValue({ prod_img: null });
+    this.form.patchValue({ image: null });
   }
 }

@@ -25,7 +25,7 @@
                   >
                     <option [ngValue]="null">Seleccione</option>
                     @for (rol of roles; track $index) {
-                      <option [ngValue]="rol.id">{{ rol.nombre }}</option>
+                      <option [ngValue]="rol.id">{{ rol.name }}</option>
                     }
                   </select>
                   <app-validation-messages

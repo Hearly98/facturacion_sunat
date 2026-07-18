@@ -318,7 +318,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
       next: (response) => {
         this.unidadesMedida = response.data.map((item) => ({
           value: item.id,
-          label: item.nombre,
+          label: item.name,
         }));
       },
     });
