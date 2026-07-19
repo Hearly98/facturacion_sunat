@@ -98,9 +98,9 @@ export class AlmacenStockComponent extends BaseComponent implements OnInit {
         if (!term) {
             this.filteredProductos = this.productos;
         } else {
-            this.filteredProductos = this.productos.filter(p => 
-                p.producto?.nombre?.toLowerCase().includes(term) ||
-                p.producto?.codigoInterno?.toLowerCase().includes(term)
+            this.filteredProductos = this.productos.filter(p =>
+                p.producto?.name?.toLowerCase().includes(term) ||
+                p.producto?.internalCode?.toLowerCase().includes(term)
             );
         }
     }

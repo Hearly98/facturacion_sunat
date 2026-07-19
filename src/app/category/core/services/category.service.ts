@@ -46,7 +46,7 @@ export class CategoryService extends BaseService {
 
   update(body: UpdateCategory): Observable<ResponseDto<Category>> {
     const dto = CategoryMapper.toApiUpdate(body);
-    return this.putRequest<UpdateCategoryDto, ResponseDto<CategoryDto>>('/', dto).pipe(
+    return this.putRequest<UpdateCategoryDto, ResponseDto<CategoryDto>>(`/`, dto).pipe(
       map(response => ({
         ...response,
         data: CategoryMapper.fromApi(response.data),

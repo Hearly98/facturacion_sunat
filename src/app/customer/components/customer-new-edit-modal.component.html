@@ -9,53 +9,62 @@
       <c-card-body [formGroup]="form">
         <c-row>
           @for (item of structure; track $index) {
-            <c-col [md]="item.col">
-              <label for="" class="form-label">{{ item.label }}</label>
-              @switch (item.type) {
-                @case ('select') {
-                  <select
-                    cSelect
-                    class="form-control form-select"
-                    name=""
-                    id=""
-                    [formControlName]="item.formControlName"
-                    [class.is-invalid]="
-                      form.get(item.formControlName)?.invalid &&
-                      form.get(item.formControlName)?.touched
-                    "
-                  >
-                    <option [ngValue]="null">Seleccione</option>
-                    @for (item of documentTypes; track $index) {
-                      <option [ngValue]="item.id">{{ item.name }}</option>
-                    }
-                  </select>
-                  <app-validation-messages
-                    [form]="form"
-                    [controlName]="item.formControlName"
-                    [messages]="messages"
-                  ></app-validation-messages>
+            @if (
+              (item.formControlName === 'firstName' || item.formControlName === 'lastName') &&
+              !isDni
+            ) {
+              <!-- Ocultar firstName y lastName si no es DNI -->
+            } @else if (item.formControlName === 'businessName' && isDni) {
+              <!-- Ocultar businessName si es DNI -->
+            } @else {
+              <c-col [md]="item.col">
+                <label for="" class="form-label">{{ item.label }}</label>
+                @switch (item.type) {
+                  @case ('select') {
+                    <select
+                      cSelect
+                      class="form-control form-select"
+                      name=""
+                      id=""
+                      [formControlName]="item.formControlName"
+                      [class.is-invalid]="
+                        form.get(item.formControlName)?.invalid &&
+                        form.get(item.formControlName)?.touched
+                      "
+                    >
+                      <option [ngValue]="null">Seleccione</option>
+                      @for (item of documentTypes; track $index) {
+                        <option [ngValue]="item.id">{{ item.name }}</option>
+                      }
+                    </select>
+                    <app-validation-messages
+                      [form]="form"
+                      [controlName]="item.formControlName"
+                      [messages]="messages"
+                    ></app-validation-messages>
+                  }
+                  @default {
+                    <input
+                      cFormControl
+                      class="form-control"
+                      type="text"
+                      name=""
+                      id=""
+                      [formControlName]="item.formControlName"
+                      [class.is-invalid]="
+                        form.get(item.formControlName)?.invalid &&
+                        form.get(item.formControlName)?.touched
+                      "
+                    />
+                    <app-validation-messages
+                      [form]="form"
+                      [controlName]="item.formControlName"
+                      [messages]="messages"
+                    ></app-validation-messages>
+                  }
                 }
-                @default {
-                  <input
-                    cFormControl
-                    class="form-control"
-                    type="text"
-                    name=""
-                    id=""
-                    [formControlName]="item.formControlName"
-                    [class.is-invalid]="
-                      form.get(item.formControlName)?.invalid &&
-                      form.get(item.formControlName)?.touched
-                    "
-                  />
-                  <app-validation-messages
-                    [form]="form"
-                    [controlName]="item.formControlName"
-                    [messages]="messages"
-                  ></app-validation-messages>
-                }
-              }
-            </c-col>
+              </c-col>
+            }
           }
         </c-row>
       </c-card-body>

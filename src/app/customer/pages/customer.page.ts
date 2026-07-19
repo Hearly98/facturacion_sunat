@@ -78,7 +78,7 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
               <thead>
                 <tr>
                   <th>Acciones</th>
-                  <th>Nombre</th>
+                  <th>Razon Social</th>
                   <th>Documento</th>
                   <th>Teléfono</th>
                 </tr>
@@ -97,16 +97,11 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                         >
                           <svg cIcon name="cilPencil"></svg>
                         </button>
-                        <button
-                          (click)="onDelete(customer.id)"
-                          size="sm"
-                          cButton
-                          color="danger"
-                        >
+                        <button (click)="onDelete(customer.id)" size="sm" cButton color="danger">
                           <svg cIcon name="cilTrash"></svg>
                         </button>
                       </td>
-                      <td>{{ customer.firstName }}</td>
+                      <td>{{ customer.businessName }}</td>
                       <td>{{ customer.document }}</td>
                       <td>{{ customer.phone }}</td>
                     </tr>

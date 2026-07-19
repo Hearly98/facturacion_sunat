@@ -1,5 +1,11 @@
 export const paymentMethodStructure = [
   {
+    label: 'Código',
+    formControlName: 'code',
+    type: 'text',
+    col: '12',
+  },
+  {
     label: 'Nombre',
     formControlName: 'name',
     type: 'text',

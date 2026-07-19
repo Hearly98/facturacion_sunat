@@ -12,7 +12,7 @@ import {
   SpinnerComponent,
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BaseComponent } from '@shared/base/base.component';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { TypedFormGroup } from '@shared/types/types-form';
@@ -49,6 +49,7 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
   visible = false;
   structure = customerStructure;
   documentTypes: DocumentType[] = [];
+  selectedDocumentType: DocumentType | null = null;
   readonly #documentTypeService = inject(DocumentTypeService);
   readonly #globalNotification = inject(GlobalNotification);
   readonly #customerService = inject(CustomerService);
@@ -70,9 +71,18 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
     this.form = this.#formBuilder.group(buildCustomerForm());
   }
 
+  get isDni(): boolean {
+    return this.selectedDocumentType?.code === 'DNI' || this.selectedDocumentType?.code === 'dni';
+  }
+
+  get isRuc(): boolean {
+    return this.selectedDocumentType?.code === 'RUC' || this.selectedDocumentType?.code === 'ruc';
+  }
+
   openModal(idCustomer?: number, callback: any = null) {
     this.title.set('Crear Cliente');
     this.createForm();
+    this.setupFormListeners();
     this.visible = true;
     this.callback = callback;
     if (idCustomer) {
@@ -81,11 +91,66 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
     }
   }
 
+  setupFormListeners() {
+    const documentTypeControl = this.form.get('documentTypeId');
+    const firstNameControl = this.form.get('firstName');
+    const lastNameControl = this.form.get('lastName');
+    const businessNameControl = this.form.get('businessName');
+
+    if (documentTypeControl) {
+      const subscription = documentTypeControl.valueChanges.subscribe((typeId) => {
+        this.selectedDocumentType =
+          this.documentTypes.find((type) => type.id === typeId) || null;
+
+        if (this.isDni) {
+          firstNameControl?.setValidators([
+            Validators.required,
+            Validators.minLength(3),
+          ]);
+          lastNameControl?.setValidators(Validators.required);
+          businessNameControl?.clearValidators();
+          businessNameControl?.setValue('', { emitEvent: false });
+        } else if (this.isRuc) {
+          firstNameControl?.clearValidators();
+          lastNameControl?.clearValidators();
+          businessNameControl?.setValidators(Validators.required);
+          firstNameControl?.setValue('', { emitEvent: false });
+          lastNameControl?.setValue('', { emitEvent: false });
+        }
+
+        firstNameControl?.updateValueAndValidity({ emitEvent: false });
+        lastNameControl?.updateValueAndValidity({ emitEvent: false });
+        businessNameControl?.updateValueAndValidity({ emitEvent: false });
+      });
+      this.subscriptions.push(subscription);
+    }
+
+    if (firstNameControl && lastNameControl && businessNameControl) {
+      const updateBusinessName = () => {
+        if (this.isDni) {
+          const firstName = firstNameControl.value || '';
+          const lastName = lastNameControl.value || '';
+          const combined = `${firstName} ${lastName}`.trim();
+          if (combined) {
+            businessNameControl.setValue(combined, { emitEvent: false });
+          }
+        }
+      };
+
+      const firstNameSub = firstNameControl.valueChanges.subscribe(updateBusinessName);
+      const lastNameSub = lastNameControl.valueChanges.subscribe(updateBusinessName);
+      this.subscriptions.push(firstNameSub, lastNameSub);
+    }
+  }
+
   loadData(idCustomer: number) {
     this.#customerService.getById(idCustomer).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.form.patchValue(response.data);
+          const documentTypeId = response.data.documentTypeId;
+          this.selectedDocumentType =
+            this.documentTypes.find((type) => type.id === documentTypeId) || null;
         }
       },
     });

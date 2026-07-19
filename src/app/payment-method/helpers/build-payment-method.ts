@@ -6,6 +6,10 @@ export const buildPaymentMethodForm = (): {
 } => {
   return {
     id: new FormControl(0),
+    code: new FormControl(
+      null,
+      Validators.compose([Validators.required, Validators.minLength(1)]),
+    ),
     name: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),

@@ -1,5 +1,5 @@
-import { DocumentModel } from './document.model';
-
-export class UpdateDocumentModel extends DocumentModel {
-  id: number = 0;
-}
+export type UpdateDocument = {
+  id: number;
+  code: string;
+  name: string;
+};

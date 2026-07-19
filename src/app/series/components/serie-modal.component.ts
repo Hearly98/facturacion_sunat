@@ -17,7 +17,7 @@ import { buildSerieForm } from '../helpers/build-serie-form';
 import { SerieService } from '../core/services/serie.service';
 import { CreateSerie, UpdateSerie } from '../core/models';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
-import { GetDocumentModel } from 'src/app/document/core/models/get-document.model';
+import { GetDocument } from 'src/app/document/core/models/get-document.model';
 import { BaseComponent } from '@shared/base/base.component';
 import { MODULES } from 'src/app/core/config/permissions/modules';
 import { DocumentService } from 'src/app/document/core/services/document.service';
@@ -53,7 +53,7 @@ import { DocumentService } from 'src/app/document/core/services/document.service
                 <select formControlName="code" class="form-control form-select" id="code">
                   <option [ngValue]="null">Seleccione</option>
                   @for (item of documentos; track $index) {
-                    <option [ngValue]="item.codigo">{{ item.name }}</option>
+                    <option [ngValue]="item.code">{{ item.name }}</option>
                   }
                 </select>
               </c-col>
@@ -96,13 +96,13 @@ export class SerieModalComponent extends BaseComponent implements OnInit {
   isEdit = false;
   serieId?: number;
   form!: FormGroup;
-  documentos: GetDocumentModel[] = [];
+  documentos: GetDocument[] = [];
   onSaveCallback?: () => void;
 
-  #formBuilder = inject(FormBuilder);
-  #serieService = inject(SerieService);
-  #globalNotification = inject(GlobalNotification);
-  #documentService = inject(DocumentService);
+  readonly #formBuilder = inject(FormBuilder);
+  readonly #serieService = inject(SerieService);
+  readonly #globalNotification = inject(GlobalNotification);
+  readonly #documentService = inject(DocumentService);
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.SERIES, viewContainerRef);
     this.form = this.#formBuilder.group(buildSerieForm());
@@ -171,6 +171,6 @@ export class SerieModalComponent extends BaseComponent implements OnInit {
   }
 
   loadSelectCombos() {
-    this.fetchData(this.#documentService.getAll(), this.documents);
+    this.fetchData(this.#documentService.getAll(), this.documentos);
   }
 }

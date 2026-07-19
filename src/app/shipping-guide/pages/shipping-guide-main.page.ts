@@ -296,30 +296,36 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
   loadSelectCombos() {
     this.#shippingGuideService.getSeries().subscribe({
       next: (response) => {
-        this.series = response.data.map((item) => ({
-          value: item.id,
-          label: item.number,
-        }));
+        this.series = response.data
+          .filter(item => item.id != null)
+          .map((item) => ({
+            value: item.id!,
+            label: item.number,
+          }));
         this.updateStructure();
       },
     });
 
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
-        this.sucursales = response.data.map((item) => ({
-          value: item.id,
-          label: item.name,
-        }));
+        this.sucursales = response.data
+          .filter(item => item.id != null)
+          .map((item) => ({
+            value: item.id!,
+            label: item.name,
+          }));
         this.updateStructure();
       },
     });
 
     this.#unitOfMeasureService.getAll().subscribe({
       next: (response) => {
-        this.unidadesMedida = response.data.map((item) => ({
-          value: item.id,
-          label: item.name,
-        }));
+        this.unidadesMedida = response.data
+          .filter(item => item.id != null)
+          .map((item) => ({
+            value: item.id!,
+            label: item.name,
+          }));
       },
     });
 

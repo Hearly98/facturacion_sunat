@@ -344,7 +344,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#currencyService.getAll().subscribe({
       next: (response) => {
         this.currencyOptions.set(
-          response.data.map((item) => ({ value: item.id, label: item.name }))
+          response.data.map((item) => ({ value: item.id!, label: item.name }))
         );
       },
     });
@@ -368,7 +368,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
         this.sucursalOptions.set(
-          response.data.map((item) => ({ value: item.id, label: item.name }))
+          response.data.map((item) => ({ value: item.id!, label: item.name }))
         );
       },
     });
@@ -376,7 +376,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#paymentMethod.getAll().subscribe({
       next: (response) => {
         this.paymentMethodOptions.set(
-          response.data.map((item) => ({ value: item.mp_cod, label: item.mp_nom }))
+          response.data.map((item) => ({ value: item.id, label: item.name }))
         );
       },
     });
@@ -384,7 +384,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.#organizationService.getAll().subscribe({
       next: (response) => {
         this.companyOptions.set(
-          response.data.map((item) => ({ value: item.emp_id, label: item.emp_nom }))
+          response.data.map((item) => ({ value: item.id, label: item.name }))
         );
       },
     });

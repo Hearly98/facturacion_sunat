@@ -5,11 +5,11 @@ export const buildDocumentForm = (): {
   [K in keyof DocumentForm]: FormControl<DocumentForm[K]>;
 } => ({
   id: new FormControl(null),
-  nombre: new FormControl(
+  name: new FormControl(
     null,
     Validators.compose([Validators.required, Validators.minLength(3)]),
   ),
-  codigo: new FormControl(
+  code: new FormControl(
     null,
     Validators.compose([Validators.required, Validators.minLength(2)]),
   ),

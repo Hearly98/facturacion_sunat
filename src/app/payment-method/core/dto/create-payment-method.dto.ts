@@ -1,4 +1,5 @@
 export interface CreatePaymentMethodDto {
-  nombre: string;
-  activo: boolean;
+  mp_cod: string;
+  mp_nom: string;
+  mp_activo: boolean;
 }

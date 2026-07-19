@@ -51,7 +51,7 @@ export class RolPage extends BaseSearchComponent {
   #globalNotification = inject(GlobalNotification);
   #confirmService = inject(ConfirmService);
   public roles: Rol[] = [];
-  public sucursales: GetSucursalModel[] = [];
+  public sucursales: Sucursal[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ADMINISTRATION, viewContainerRef);

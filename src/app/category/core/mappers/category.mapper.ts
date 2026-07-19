@@ -7,6 +7,7 @@ export class CategoryMapper {
       id: dto.id,
       code: dto.codigo,
       name: dto.nombre,
+      abbreviation: dto.abreviatura,
     };
   }
 
@@ -14,6 +15,7 @@ export class CategoryMapper {
     return {
       codigo: model.code,
       nombre: model.name,
+      abreviatura: model.abbreviation,
     };
   }
 
@@ -22,14 +24,7 @@ export class CategoryMapper {
       id: model.id,
       codigo: model.code,
       nombre: model.name,
-    };
-  }
-
-  static toApi(model: Category): CategoryDto {
-    return {
-      id: model.id,
-      codigo: model.code,
-      nombre: model.name,
+      abreviatura: model.abbreviation,
     };
   }
 }

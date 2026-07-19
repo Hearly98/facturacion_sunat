@@ -71,7 +71,7 @@ export const purchaseStructure = (
           type: 'select',
           col: '4',
           formControlName: 'mp_cod',
-          options: mapToSelectOption(PaymentTypeOptions, 'mp_cod', 'mp_nom'),
+          options: mapToSelectOption(PaymentTypeOptions, 'code', 'name'),
         },
         {
           label: 'Moneda',

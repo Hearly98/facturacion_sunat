@@ -1,5 +1,1 @@
-import { DocumentModel } from './document.model';
-
-export class GetDocumentModel extends DocumentModel {
-  id: number = 0;
-}
+export type { Document as GetDocument } from './document.model';

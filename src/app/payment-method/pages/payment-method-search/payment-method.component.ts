@@ -53,6 +53,10 @@ import { PaymentMethodNewEditModalComponent } from '../../components/payment-met
       <c-card-body>
         <c-row class="g-3 align-items-end" [formGroup]="form">
           <c-col sm="12" md="6" lg="4">
+            <label for="">Código</label>
+            <input formControlName="code" type="text" class="form-control" />
+          </c-col>
+          <c-col sm="12" md="6" lg="4">
             <label for="">Nombre</label>
             <input formControlName="name" type="text" class="form-control" />
           </c-col>
@@ -78,6 +82,7 @@ import { PaymentMethodNewEditModalComponent } from '../../components/payment-met
               <thead>
                 <tr>
                   <th>Acciones</th>
+                  <th>Código</th>
                   <th>Nombre</th>
                 </tr>
               </thead>
@@ -103,12 +108,13 @@ import { PaymentMethodNewEditModalComponent } from '../../components/payment-met
                         <svg cIcon name="cilTrash"></svg>
                       </button>
                     </td>
+                    <td>{{ paymentMethod.code }}</td>
                     <td>{{ paymentMethod.name }}</td>
                   </tr>
                 }
                 @if (paymentMethods.length === 0) {
                   <tr>
-                    <td colspan="2">No se encontraron datos</td>
+                    <td colspan="3">No se encontraron datos</td>
                   </tr>
                 }
               </tbody>

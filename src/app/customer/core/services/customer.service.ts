@@ -75,7 +75,7 @@ export class CustomerService extends BaseService {
         ...response,
         data: {
           ...response.data,
-          data: response.data.items.map(dto => CustomerMapper.fromApi(dto)),
+          items: response.data.items.map(dto => CustomerMapper.fromApi(dto)),
         },
       }))
     );

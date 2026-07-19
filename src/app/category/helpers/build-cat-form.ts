@@ -8,5 +8,6 @@ export const buildCategoryForm = (): {
     id: new FormControl(null),
     code: new FormControl(null, Validators.required),
     name: new FormControl(null, Validators.required),
+    abbreviation: new FormControl(null),
   };
 };

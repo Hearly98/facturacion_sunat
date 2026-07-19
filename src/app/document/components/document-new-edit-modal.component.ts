@@ -17,9 +17,9 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { DocumentForm } from '../core/types';
 import { buildDocumentForm, documentErrorMessages, documentStructure } from '../helpers';
-import { CreateDocumentModel } from '../core/models/create-document.model';
+import { CreateDocument } from '../core/models/create-document.model';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
-import { UpdateDocumentModel } from '../core/models/update-document.model';
+import { UpdateDocument } from '../core/models/update-document.model';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
 @Component({
@@ -102,7 +102,7 @@ export class DocumentNewEditModalComponent extends BaseComponent implements OnIn
 
   create() {
     const { id, ...body } = this.form.value;
-    const subscription = this.#documentService.create(body as CreateDocumentModel).subscribe({
+    const subscription = this.#documentService.create(body as CreateDocument).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -124,7 +124,7 @@ export class DocumentNewEditModalComponent extends BaseComponent implements OnIn
 
   update() {
     const subscription = this.#documentService
-      .update(this.form.value as UpdateDocumentModel)
+      .update(this.form.value as UpdateDocument)
       .subscribe({
         next: (response) => {
           if (response.isValid) {

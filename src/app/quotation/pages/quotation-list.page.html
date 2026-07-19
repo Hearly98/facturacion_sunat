@@ -20,7 +20,7 @@
         <select cSelect formControlName="suc_id" id="suc_id">
           <option [value]="null">Todas</option>
           @for (sucursal of sucursales; track sucursal.id) {
-            <option [value]="sucursal.id">{{ sucursal.nombre }}</option>
+            <option [value]="sucursal.id">{{ sucursal.name }}</option>
           }
         </select>
       </c-col>

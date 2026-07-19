@@ -7,10 +7,7 @@ export const buildCustomerForm = (): {
   return {
     id: new FormControl(null),
     companyId: new FormControl(null),
-    firstName: new FormControl(
-      null,
-      Validators.compose([Validators.required, Validators.minLength(3)]),
-    ),
+    firstName: new FormControl(null),
     lastName: new FormControl(null),
     businessName: new FormControl(null),
     documentTypeId: new FormControl(null, Validators.required),

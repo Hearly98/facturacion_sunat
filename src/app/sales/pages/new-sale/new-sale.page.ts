@@ -427,7 +427,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.#currencyService.getAll().subscribe({
       next: (response) =>
         response.data.map((item) => {
-          currencies.push({ value: item.id, label: item.name });
+          currencies.push({ value: item.id!, label: item.name });
         }),
     });
 
@@ -449,16 +449,18 @@ export class NewSalePage extends BaseComponent implements OnInit {
 
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
-        response.data.map((item) => {
-          sucursalOptions.push({ value: item.id, label: item.name });
-        });
+        response.data
+          .filter((item) => item.id != null)
+          .map((item) => {
+            sucursalOptions.push({ value: item.id!, label: item.name });
+          });
       },
     });
 
     this.#paymentMethod.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          paymentType.push({ value: item.mp_id, label: item.mp_nom });
+          paymentType.push({ value: item.id, label: item.name });
         });
       },
     });
@@ -466,7 +468,7 @@ export class NewSalePage extends BaseComponent implements OnInit {
     this.#organizationService.getAll().subscribe({
       next: (response) => {
         response.data.map((item) => {
-          companyOptions.push({ value: item.emp_id, label: item.emp_nom });
+          companyOptions.push({ value: item.id, label: item.name });
         });
       },
     });

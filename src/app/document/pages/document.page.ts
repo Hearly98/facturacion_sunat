@@ -15,11 +15,10 @@ import { TypedFormGroup } from '../../shared/types/types-form';
 import { FilterForm } from '../core/types/filter-form';
 import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { DocumentService } from '../core/services/document.service';
-import { DocumentModel } from '../core/models/document.model';
+import { Document } from '../core/models/document.model';
 import { PageParamsModel } from '../../shared/models/query/page-params.model';
 import { PaginatorComponent } from '../../shared/components/paginator/paginator.component';
 import { DocumentNewEditModalComponent } from '../components/document-new-edit-modal.component';
-import { GetDocumentModel } from '../core/models/get-document.model';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 
@@ -45,7 +44,7 @@ export class DocumentPage extends BaseSearchComponent implements OnInit {
   @ViewChild('documentNewEditModal') documentNewEditModal!: DocumentNewEditModalComponent;
   public form!: TypedFormGroup<FilterForm>;
   public title = 'Documentos';
-  public documents: GetDocumentModel[] = [];
+  public documents: Document[] = [];
   #formBuilder = inject(FormBuilder);
   #service = inject(DocumentService);
   #confirmService = inject(ConfirmService);
