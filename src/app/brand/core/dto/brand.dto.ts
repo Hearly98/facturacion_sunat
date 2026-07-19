@@ -14,6 +14,7 @@ export interface CreateBrandDto {
 }
 
 export interface UpdateBrandDto {
+  id: number;
   nombre: string;
   codigo: string;
 }

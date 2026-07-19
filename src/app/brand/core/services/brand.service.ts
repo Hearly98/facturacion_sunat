@@ -13,69 +13,69 @@ import { environment } from '@environments/environment';
 @Injectable({ providedIn: 'root' })
 export class BrandService extends BaseService {
   constructor(http: HttpClient) {
-    super(http, `${environment.apiUrl}/v1/marcas`);
+    super(http, `${environment.apiUrl}/marcas`);
   }
 
   getAll(): Observable<ResponseDto<Brand[]>> {
     return this.getRequest<ResponseDto<BrandDto[]>>('').pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
-        data: response.data.map(dto => BrandMapper.fromApi(dto)),
-      }))
+        data: response.data.map((dto) => BrandMapper.fromApi(dto)),
+      })),
     );
   }
 
   getById(id: number): Observable<ResponseDto<Brand>> {
     return this.getRequest<ResponseDto<BrandDto>>(`/${id}`).pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
         data: BrandMapper.fromApi(response.data),
-      }))
+      })),
     );
   }
 
   create(body: CreateBrand): Observable<ResponseDto<Brand>> {
     const dto = BrandMapper.toApiCreate(body);
     return this.postRequest<CreateBrandDto, ResponseDto<BrandDto>>('/', dto).pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
         data: BrandMapper.fromApi(response.data),
-      }))
+      })),
     );
   }
 
-  update(id: number, body: UpdateBrand): Observable<ResponseDto<Brand>> {
+  update(body: UpdateBrand): Observable<ResponseDto<Brand>> {
     const dto = BrandMapper.toApiUpdate(body);
-    return this.putRequest<UpdateBrandDto, ResponseDto<BrandDto>>(`/${id}`, dto).pipe(
-      map(response => ({
+    return this.putRequest<UpdateBrandDto, ResponseDto<BrandDto>>(`/`, dto).pipe(
+      map((response) => ({
         ...response,
         data: BrandMapper.fromApi(response.data),
-      }))
+      })),
     );
   }
 
   delete(id: number): Observable<ResponseDto<Brand | null>> {
     return this.deleteRequest<ResponseDto<BrandDto>>(`/${id}`).pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
         data: response.data ? BrandMapper.fromApi(response.data) : null,
-      }))
+      })),
     );
   }
 
   search(params: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<Brand>>> {
     return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<BrandDto>>>(
       '/search',
-      params
+      params,
     ).pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
         data: new QueryResultsModel(
-          response.data.items.map(dto => BrandMapper.fromApi(dto)),
+          response.data.items.map((dto) => BrandMapper.fromApi(dto)),
           response.data.total,
-          response.data.errorMessage
+          response.data.errorMessage,
         ),
-      }))
+      })),
     );
   }
 }

@@ -18,64 +18,64 @@ export class CategoryService extends BaseService {
 
   getAll(): Observable<ResponseDto<Category[]>> {
     return this.getRequest<ResponseDto<CategoryDto[]>>('').pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
-        data: response.data.map(dto => CategoryMapper.fromApi(dto)),
-      }))
+        data: response.data.map((dto) => CategoryMapper.fromApi(dto)),
+      })),
     );
   }
 
   getById(id: number): Observable<ResponseDto<Category>> {
     return this.getRequest<ResponseDto<CategoryDto>>(`/${id}`).pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
         data: CategoryMapper.fromApi(response.data),
-      }))
+      })),
     );
   }
 
   create(body: CreateCategory): Observable<ResponseDto<Category>> {
     const dto = CategoryMapper.toApiCreate(body);
     return this.postRequest<CreateCategoryDto, ResponseDto<CategoryDto>>('/', dto).pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
         data: CategoryMapper.fromApi(response.data),
-      }))
+      })),
     );
   }
 
   update(body: UpdateCategory): Observable<ResponseDto<Category>> {
     const dto = CategoryMapper.toApiUpdate(body);
-    return this.putRequest<UpdateCategoryDto, ResponseDto<CategoryDto>>(`/${body.id}`, dto).pipe(
-      map(response => ({
+    return this.putRequest<UpdateCategoryDto, ResponseDto<CategoryDto>>(`/`, dto).pipe(
+      map((response) => ({
         ...response,
         data: CategoryMapper.fromApi(response.data),
-      }))
+      })),
     );
   }
 
   delete(id: number): Observable<ResponseDto<Category | null>> {
     return this.deleteRequest<ResponseDto<CategoryDto>>(`/${id}`).pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
         data: response.data ? CategoryMapper.fromApi(response.data) : null,
-      }))
+      })),
     );
   }
 
   search(params: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<Category>>> {
     return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<CategoryDto>>>(
       `/search`,
-      params
+      params,
     ).pipe(
-      map(response => ({
+      map((response) => ({
         ...response,
         data: new QueryResultsModel(
-          response.data.items.map(dto => CategoryMapper.fromApi(dto)),
+          response.data.items.map((dto) => CategoryMapper.fromApi(dto)),
           response.data.total,
-          response.data.errorMessage
+          response.data.errorMessage,
         ),
-      }))
+      })),
     );
   }
 }

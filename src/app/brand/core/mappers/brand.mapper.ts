@@ -23,6 +23,7 @@ export class BrandMapper {
 
   static toApiUpdate(model: UpdateBrand): UpdateBrandDto {
     return {
+      id: model.id,
       nombre: model.name,
       codigo: model.code,
     };

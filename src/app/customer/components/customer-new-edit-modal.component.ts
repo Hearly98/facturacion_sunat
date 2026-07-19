@@ -72,11 +72,11 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
   }
 
   get isDni(): boolean {
-    return this.selectedDocumentType?.code === 'DNI' || this.selectedDocumentType?.code === 'dni';
+    return this.selectedDocumentType?.code === '1';
   }
 
   get isRuc(): boolean {
-    return this.selectedDocumentType?.code === 'RUC' || this.selectedDocumentType?.code === 'ruc';
+    return this.selectedDocumentType?.code === '6';
   }
 
   openModal(idCustomer?: number, callback: any = null) {
@@ -99,14 +99,10 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
 
     if (documentTypeControl) {
       const subscription = documentTypeControl.valueChanges.subscribe((typeId) => {
-        this.selectedDocumentType =
-          this.documentTypes.find((type) => type.id === typeId) || null;
+        this.selectedDocumentType = this.documentTypes.find((type) => type.id === typeId) || null;
 
         if (this.isDni) {
-          firstNameControl?.setValidators([
-            Validators.required,
-            Validators.minLength(3),
-          ]);
+          firstNameControl?.setValidators([Validators.required, Validators.minLength(3)]);
           lastNameControl?.setValidators(Validators.required);
           businessNameControl?.clearValidators();
           businessNameControl?.setValue('', { emitEvent: false });
@@ -201,25 +197,23 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
 
   update() {
     this.isLoading.set(true);
-    const subscription = this.#customerService
-      .update(this.form.value as UpdateCustomer)
-      .subscribe({
-        next: (response) => {
-          if (response.isValid) {
-            this.#globalNotification.openAlert(response);
-            this.callback(response.data);
-            this.onClose();
-            this.isLoading.set(false);
-          } else {
-            this.#globalNotification.openAlert(response);
-            this.isLoading.set(false);
-          }
-        },
-        error: (error) => {
-          this.#globalNotification.openAlert(error.error);
+    const subscription = this.#customerService.update(this.form.value as UpdateCustomer).subscribe({
+      next: (response) => {
+        if (response.isValid) {
+          this.#globalNotification.openAlert(response);
+          this.callback(response.data);
+          this.onClose();
           this.isLoading.set(false);
-        },
-      });
+        } else {
+          this.#globalNotification.openAlert(response);
+          this.isLoading.set(false);
+        }
+      },
+      error: (error) => {
+        this.#globalNotification.openAlert(error.error);
+        this.isLoading.set(false);
+      },
+    });
     this.subscriptions.push(subscription);
   }
 }

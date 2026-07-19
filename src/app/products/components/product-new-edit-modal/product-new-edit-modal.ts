@@ -78,13 +78,18 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
       brand: this.#brandService.getAll(),
       currency: this.#currencyService.getAll(),
       unitOfMeasure: this.#unidadService.getAll(),
-      category: this.#categoryService.getAll()
-    }).subscribe(({brand, currency, unitOfMeasure, category}) => {
+      category: this.#categoryService.getAll(),
+    }).subscribe(({ brand, currency, unitOfMeasure, category }) => {
       this.brandOptions = brand.data;
       this.unitOfMeasureOptions = unitOfMeasure.data;
       this.categoryOptions = category.data;
       this.currencyOptions = currency.data;
-      this.structure = productStructure(brand.data, unitOfMeasure.data, category.data, currency.data);
+      this.structure = productStructure(
+        brand.data,
+        unitOfMeasure.data,
+        category.data,
+        currency.data,
+      );
       this.createForm();
     });
   }
@@ -102,11 +107,11 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
     this.createForm();
     if (this.isEditMode) {
       this.structure = productStructure(
-        this.brandOptions, 
-        this.unitOfMeasureOptions, 
-        this.categoryOptions, 
-        this.currencyOptions, 
-        true
+        this.brandOptions,
+        this.unitOfMeasureOptions,
+        this.categoryOptions,
+        this.currencyOptions,
+        true,
       );
     }
     if (idProduct) {
@@ -209,45 +214,49 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
 
   create() {
     const product = this.buildCreateProduct();
-    const subscription = this.#productService.createBulk(product, this.selectedFile || undefined).subscribe({
-      next: (response) => {
-        if (response.isValid) {
-          this.#globalNotification.openAlert(response);
-          this.callback(response.data);
-          this.onClose();
+    const subscription = this.#productService
+      .createBulk(product, this.selectedFile || undefined)
+      .subscribe({
+        next: (response) => {
+          if (response.isValid) {
+            this.#globalNotification.openAlert(response);
+            this.callback(response.data);
+            this.onClose();
+            this.isLoading.set(false);
+          } else {
+            this.#globalNotification.openAlert(response);
+            this.isLoading.set(false);
+          }
+        },
+        error: (error) => {
+          this.#globalNotification.openAlert(error.error);
           this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
-        }
-      },
-      error: (error) => {
-        this.#globalNotification.openAlert(error.error);
-        this.isLoading.set(false);
-      },
-    });
+        },
+      });
     this.subscriptions.push(subscription);
   }
 
   update() {
     const product = this.buildUpdateProduct();
-    const subscription = this.#productService.update(product, this.selectedFile || undefined).subscribe({
-      next: (response) => {
-        if (response.isValid) {
-          this.#globalNotification.openAlert(response);
-          this.callback(response.data);
-          this.onClose();
+    const subscription = this.#productService
+      .update(product, this.selectedFile || undefined)
+      .subscribe({
+        next: (response) => {
+          if (response.isValid) {
+            this.#globalNotification.openAlert(response);
+            this.callback(response.data);
+            this.onClose();
+            this.isLoading.set(false);
+          } else {
+            this.#globalNotification.openAlert(response);
+            this.isLoading.set(false);
+          }
+        },
+        error: (error) => {
+          this.#globalNotification.openAlert(error.error);
           this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
-        }
-      },
-      error: (error) => {
-        this.#globalNotification.openAlert(error.error);
-        this.isLoading.set(false);
-      },
-    });
+        },
+      });
     this.subscriptions.push(subscription);
   }
 

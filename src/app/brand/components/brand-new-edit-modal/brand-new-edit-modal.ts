@@ -104,18 +104,15 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
   create() {
     const subscription = this.#brandService.create(this.form.value as CreateBrand).subscribe({
       next: (response) => {
+        this.#globalNotification.openAlert(response);
+        this.isLoading.set(false);
         if (response.isValid) {
-          this.#globalNotification.openAlert(response);
           this.callback(response.data);
           this.onClose();
-          this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
         }
       },
       error: (error) => {
-        this.#globalNotification.openAlert(error.error);
+        this.#globalNotification.openAlert(error.message);
         this.isLoading.set(false);
       },
     });
@@ -123,16 +120,14 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
   }
 
   update() {
-    const subscription = this.#brandService.update(this.form.value.id!, this.form.value as UpdateBrand).subscribe({
+    const value = this.form.getRawValue();
+    const subscription = this.#brandService.update(value as UpdateBrand).subscribe({
       next: (response) => {
+        this.#globalNotification.openAlert(response);
+        this.isLoading.set(false);
         if (response.isValid) {
-          this.#globalNotification.openAlert(response);
           this.callback(response.data);
           this.onClose();
-          this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
         }
       },
       error: (error) => {

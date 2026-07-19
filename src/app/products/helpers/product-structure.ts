@@ -1,3 +1,4 @@
+import { SelectOption } from '@shared/types';
 import { Brand } from 'src/app/brand/core/models';
 import { Category } from 'src/app/category/core/models';
 import { Currency } from 'src/app/currency/core/models';
@@ -10,15 +11,22 @@ export const productStructure = (
   currencyOptions?: Currency[],
   isEditMode: boolean = false,
 ) => {
-  let brands: { label: string; value: number }[] = [];
-  let unitOfMeasures: { label: string; value: number }[] = [];
-  let categories: { label: string; value: number }[] = [];
-  let currencies: { label: string; value: number }[] = [];
-  if (brandOptions) brands = brandOptions.filter((s) => s.id !== null).map((s) => ({ label: s.name, value: s.id as number }));
+  let brands: SelectOption[] = [];
+  let unitOfMeasures: SelectOption[] = [];
+  let categories: SelectOption[] = [];
+  let currencies: SelectOption[] = [];
+  if (brandOptions)
+    brands = brandOptions
+      .filter((s) => s.id !== null)
+      .map((s) => ({ label: s.name, value: s.id as number }));
   if (unitOfMeasureOptions)
-    unitOfMeasures = unitOfMeasureOptions.filter((s) => s.id !== null).map((s) => ({ label: s.name, value: s.id as number }));
+    unitOfMeasures = unitOfMeasureOptions
+      .filter((s) => s.id !== null)
+      .map((s) => ({ label: s.name, value: s.id as number }));
   if (categoryOptions)
-    categories = categoryOptions.filter((s) => s.id !== null).map((s) => ({ label: s.name, value: s.id as number }));
+    categories = categoryOptions
+      .filter((s) => s.id !== null)
+      .map((s) => ({ label: s.name, value: s.id as number }));
   if (currencyOptions)
     currencies = currencyOptions.map((s) => ({ label: s.name, value: s.id as number }));
   return [
@@ -74,20 +82,22 @@ export const productStructure = (
       col: '3',
       options: brands,
     },
-    ...(isEditMode ? [] : [
-      {
-        label: 'Precio Compra Base',
-        formControlName: 'basePurchasePrice',
-        type: 'number',
-        col: '6',
-      },
-      {
-        label: 'Precio Venta Base',
-        formControlName: 'baseSalePrice',
-        type: 'number',
-        col: '6',
-      },
-    ]),
+    ...(isEditMode
+      ? []
+      : [
+          {
+            label: 'Precio Compra Base',
+            formControlName: 'basePurchasePrice',
+            type: 'number',
+            col: '6',
+          },
+          {
+            label: 'Precio Venta Base',
+            formControlName: 'baseSalePrice',
+            type: 'number',
+            col: '6',
+          },
+        ]),
     {
       label: 'Imagen',
       formControlName: 'image',

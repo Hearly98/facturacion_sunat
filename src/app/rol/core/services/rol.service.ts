@@ -60,11 +60,11 @@ export class RolService extends BaseService {
     );
   }
 
-  delete(id: number): Observable<ResponseDto<Rol>> {
+  delete(id: number): Observable<ResponseDto<Rol | null>> {
     return this.deleteRequest<ResponseDto<RolDto>>(`/${id}`).pipe(
       map((response) => ({
         ...response,
-        data: this.rolMapper.fromApiDto(response.data),
+        data: response.data ? this.rolMapper.fromApiDto(response.data) : null,
       })),
     );
   }

@@ -54,7 +54,7 @@ export class Products extends BaseSearchComponent implements OnInit {
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
   public products: Product[] = [];
-  public categorias: Category[] = [];
+  public categories: Category[] = [];
   public sucursales: Sucursal[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
@@ -72,7 +72,7 @@ export class Products extends BaseSearchComponent implements OnInit {
   }
 
   loadSelectCombos() {
-    this.fetchData(this.#categoryService.getAll(), this.categorias);
+    this.fetchData(this.#categoryService.getAll(), this.categories);
     this.fetchData(this.#sucursalService.getAll(), this.sucursales);
   }
 
