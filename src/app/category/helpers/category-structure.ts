@@ -11,10 +11,4 @@ export const categoryStructure = [
     type: 'text',
     col: '12',
   },
-  {
-    label: 'Abreviatura',
-    formControlName: 'abbreviation',
-    type: 'text',
-    col: '12',
-  },
 ];
