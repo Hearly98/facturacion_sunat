@@ -1,21 +1,23 @@
 export interface SerieDto {
-  id: number | null;
-  code: string;
-  number: string;
-  counter: number;
-  active: boolean;
+  id: number;
+  empresaId: number;
+  numero: string;
+  docCod: string;
+  correlativo: number;
+  activo: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateSerieDto {
-  code: string;
-  number: string;
-  counter: number;
+  ser_num: string;
+  doc_cod: string;
+  ser_corr: number;
 }
 
 export interface UpdateSerieDto {
-  code: string;
-  number: string;
-  counter: number;
+  id: number;
+  ser_num: string;
+  doc_cod: string;
+  ser_corr: number;
 }

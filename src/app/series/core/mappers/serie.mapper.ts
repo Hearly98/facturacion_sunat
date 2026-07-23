@@ -5,10 +5,10 @@ export class SerieMapper {
   static fromApi(dto: SerieDto): Serie {
     return {
       id: dto.id,
-      code: dto.code,
-      number: dto.number,
-      counter: dto.counter,
-      active: dto.active,
+      code: dto.docCod,
+      number: dto.numero,
+      counter: dto.correlativo,
+      active: dto.activo,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
     };
@@ -16,29 +16,18 @@ export class SerieMapper {
 
   static toApiCreate(model: CreateSerie): CreateSerieDto {
     return {
-      code: model.code,
-      number: model.number,
-      counter: model.counter,
+      ser_num: model.number,
+      doc_cod: model.code,
+      ser_corr: model.counter,
     };
   }
 
-  static toApiUpdate(model: UpdateSerie): UpdateSerieDto {
+  static toApiUpdate(model: UpdateSerie, id: number): UpdateSerieDto {
     return {
-      code: model.code,
-      number: model.number,
-      counter: model.counter,
-    };
-  }
-
-  static toApi(model: Serie): SerieDto {
-    return {
-      id: model.id,
-      code: model.code,
-      number: model.number,
-      counter: model.counter,
-      active: model.active,
-      createdAt: model.createdAt,
-      updatedAt: model.updatedAt,
+      id,
+      ser_num: model.number,
+      doc_cod: model.code,
+      ser_corr: model.counter,
     };
   }
 }
