@@ -22,6 +22,7 @@ export class CurrencyMapper {
 
   static toApiUpdate(model: UpdateCurrency): UpdateCurrencyDto {
     return {
+      id: model.id,
       nombre: model.name,
       codigo: model.code,
       simbolo: model.symbol,
