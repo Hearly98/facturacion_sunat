@@ -42,3 +42,10 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 .vercel
+
+# Playwright E2E
+/e2e/.auth
+/e2e/report
+/test-results
+/playwright-report
+/blob-report
