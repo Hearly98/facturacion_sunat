@@ -8,7 +8,7 @@ export class BrandMapper {
       companyId: dto.empresaId,
       name: dto.nombre,
       code: dto.codigo,
-      active: dto.est,
+      active: dto.activo,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
     };
@@ -35,7 +35,7 @@ export class BrandMapper {
       empresaId: model.companyId,
       nombre: model.name,
       codigo: model.code,
-      est: model.active,
+      activo: model.active,
       createdAt: model.createdAt,
       updatedAt: model.updatedAt,
     };

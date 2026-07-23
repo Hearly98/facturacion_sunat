@@ -3,7 +3,7 @@ export interface BrandDto {
   empresaId: number;
   nombre: string;
   codigo: string;
-  est: boolean;
+  activo: boolean;
   createdAt: string;
   updatedAt: string;
 }
