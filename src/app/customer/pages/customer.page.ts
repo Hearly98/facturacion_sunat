@@ -44,7 +44,7 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
       <c-col class="text-end">
         <button cButton color="primary" (click)="openModal()">
           <svg cIcon name="cilPlus"></svg>
-          Nuevo Registro
+          Nuevo Cliente
         </button>
       </c-col>
     </c-row>
