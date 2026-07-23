@@ -26,7 +26,7 @@
 <ng-template #userDropdown>
   <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
     <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
-      <c-avatar color="primary" status="success">CUI</c-avatar>
+      <c-avatar color="primary" status="success" [title]="user()?.name ?? ''">{{ initials() }}</c-avatar>
     </button>
     <ul cDropdownMenu class="pt-0 w-auto">
       <li>

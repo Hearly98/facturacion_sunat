@@ -58,6 +58,15 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find((mode) => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
+  readonly initials = computed(() => {
+    const name = this.user()?.name?.trim();
+    if (!name) return '?';
+    const parts = name.split(/\s+/);
+    return parts.length === 1
+      ? parts[0].slice(0, 2).toUpperCase()
+      : (parts[0][0] + parts[1][0]).toUpperCase();
+  });
+
   constructor() {
     super();
   }
