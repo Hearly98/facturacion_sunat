@@ -4,53 +4,51 @@ import { PaymentMethod, CreatePaymentMethod, UpdatePaymentMethod } from '../mode
 export class PaymentMethodMapper {
   static fromApi(dto: PaymentMethodDto): PaymentMethod {
     return {
-      id: dto.mp_id,
-      code: dto.mp_cod,
-      name: dto.mp_nom,
-      active: dto.mp_activo,
+      id: dto.id,
+      code: dto.codigo,
+      name: dto.nombre,
+      active: dto.est,
     };
   }
 
   static toApi(model: PaymentMethod): PaymentMethodDto {
     return {
-      mp_id: model.id,
-      mp_cod: model.code,
-      mp_nom: model.name,
-      mp_activo: model.active,
+      id: model.id,
+      codigo: model.code,
+      nombre: model.name,
+      est: model.active,
     };
   }
 
   static fromApiCreate(dto: CreatePaymentMethodDto): CreatePaymentMethod {
     return {
-      code: dto.mp_cod,
-      name: dto.mp_nom,
-      active: dto.mp_activo,
+      code: dto.codigo,
+      name: dto.nombre,
+      active: true,
     };
   }
 
   static toApiCreate(model: CreatePaymentMethod): CreatePaymentMethodDto {
     return {
-      mp_cod: model.code,
-      mp_nom: model.name,
-      mp_activo: model.active,
+      codigo: model.code,
+      nombre: model.name,
     };
   }
 
   static fromApiUpdate(dto: UpdatePaymentMethodDto): UpdatePaymentMethod {
     return {
-      id: dto.mp_id,
-      code: dto.mp_cod,
-      name: dto.mp_nom,
-      active: dto.mp_activo,
+      id: dto.id,
+      code: dto.codigo,
+      name: dto.nombre,
+      active: true,
     };
   }
 
   static toApiUpdate(model: UpdatePaymentMethod): UpdatePaymentMethodDto {
     return {
-      mp_id: model.id,
-      mp_cod: model.code,
-      mp_nom: model.name,
-      mp_activo: model.active,
+      id: model.id,
+      codigo: model.code,
+      nombre: model.name,
     };
   }
 }

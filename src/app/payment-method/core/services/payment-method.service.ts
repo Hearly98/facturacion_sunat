@@ -15,7 +15,7 @@ import { QueryResultsModel } from '@shared/models/query/query-results.model';
 })
 export class PaymentMethodService extends BaseService {
   constructor(http: HttpClient) {
-    super(http, `${environment.apiUrl}/metodo_pagos`);
+    super(http, `${environment.apiUrl}/metodos-pago`);
   }
 
   getAll(): Observable<ResponseDto<PaymentMethod[]>> {
