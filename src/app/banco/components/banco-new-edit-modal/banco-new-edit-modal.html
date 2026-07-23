@@ -1,0 +1,98 @@
+<c-modal [visible]="visible" alignment="center" backdrop="static">
+  <c-modal-body>
+    <c-row class="mb-2">
+      <c-col [sm]="12">
+        <h5>{{ title() }}</h5>
+      </c-col>
+    </c-row>
+    <c-card>
+      <c-card-body [formGroup]="form">
+        <input type="hidden" formControlName="id" />
+        <c-row>
+          <c-col [md]="12" class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input
+              id="name"
+              class="form-control"
+              type="text"
+              [class.is-invalid]="form.get('name')?.invalid && form.get('name')?.touched"
+              formControlName="name"
+              placeholder="Nombre del banco"
+            />
+            <app-validation-messages [messages]="messages" [form]="form" controlName="name"></app-validation-messages>
+          </c-col>
+          <c-col [md]="12" class="mb-3">
+            <label for="accountNumber" class="form-label">Número de Cuenta</label>
+            <input
+              id="accountNumber"
+              class="form-control"
+              type="text"
+              [class.is-invalid]="form.get('accountNumber')?.invalid && form.get('accountNumber')?.touched"
+              formControlName="accountNumber"
+              placeholder="Número de cuenta"
+            />
+            <app-validation-messages
+              [messages]="messages"
+              [form]="form"
+              controlName="accountNumber"
+            ></app-validation-messages>
+          </c-col>
+          <c-col [md]="6" class="mb-3">
+            <label for="accountType" class="form-label">Tipo de Cuenta</label>
+            <select
+              id="accountType"
+              class="form-control form-select"
+              [class.is-invalid]="form.get('accountType')?.invalid && form.get('accountType')?.touched"
+              formControlName="accountType"
+            >
+              <option [ngValue]="null">Seleccione</option>
+              <option value="AHORRO">Ahorro</option>
+              <option value="CORRIENTE">Corriente</option>
+            </select>
+            <app-validation-messages
+              [messages]="messages"
+              [form]="form"
+              controlName="accountType"
+            ></app-validation-messages>
+          </c-col>
+          <c-col [md]="6" class="mb-3">
+            <label for="currencyId" class="form-label">Moneda</label>
+            <select
+              id="currencyId"
+              class="form-control form-select"
+              [class.is-invalid]="form.get('currencyId')?.invalid && form.get('currencyId')?.touched"
+              formControlName="currencyId"
+            >
+              <option [ngValue]="null">Seleccione</option>
+              @for (currency of currencies; track currency.id) {
+                <option [ngValue]="currency.id">{{ currency.name }} ({{ currency.code }})</option>
+              }
+            </select>
+            <app-validation-messages
+              [messages]="messages"
+              [form]="form"
+              controlName="currencyId"
+            ></app-validation-messages>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+    <c-row class="mt-4">
+      <c-col class="text-end">
+        <button cButton color="secondary" class="me-2" (click)="onClose()">
+          <svg cIcon name="cilX"></svg>
+          Cancelar
+        </button>
+        <button cButton color="success" (click)="onSubmit()">
+          @if (isLoading()) {
+            <c-spinner size="sm" class="me-2"></c-spinner>
+            Cargando...
+          } @else {
+            <svg cIcon name="cilSave"></svg>
+            Guardar
+          }
+        </button>
+      </c-col>
+    </c-row>
+  </c-modal-body>
+</c-modal>

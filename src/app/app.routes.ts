@@ -40,6 +40,13 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'bancos',
+        loadComponent: () => import('./banco/pages/banco/banco').then((m) => m.BancoComponent),
+        data: {
+          title: 'Bancos',
+        },
+      },
+      {
         path: 'empresa',
         loadComponent: () =>
           import('./organization/pages/organization-profile.component').then((m) => m.OrganizationProfileComponent),
