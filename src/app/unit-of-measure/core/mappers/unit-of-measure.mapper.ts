@@ -21,6 +21,7 @@ export class UnitOfMeasureMapper {
 
   static toApiUpdate(model: UpdateUnitOfMeasure): UpdateUnitOfMeasureDto {
     return {
+      id: model.id,
       codigo: model.code,
       nombre: model.name,
       abreviatura: model.abbreviation,

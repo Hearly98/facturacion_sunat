@@ -12,6 +12,7 @@ export interface CreateUnitOfMeasureDto {
 }
 
 export interface UpdateUnitOfMeasureDto {
+  id: number;
   codigo: string;
   nombre: string;
   abreviatura: string;
