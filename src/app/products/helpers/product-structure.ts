@@ -9,7 +9,6 @@ export const productStructure = (
   unitOfMeasureOptions?: UnitOfMeasure[],
   categoryOptions?: Category[],
   currencyOptions?: Currency[],
-  isEditMode: boolean = false,
 ) => {
   let brands: SelectOption[] = [];
   let unitOfMeasures: SelectOption[] = [];
@@ -82,22 +81,18 @@ export const productStructure = (
       col: '3',
       options: brands,
     },
-    ...(isEditMode
-      ? []
-      : [
-          {
-            label: 'Precio Compra Base',
-            formControlName: 'basePurchasePrice',
-            type: 'number',
-            col: '6',
-          },
-          {
-            label: 'Precio Venta Base',
-            formControlName: 'baseSalePrice',
-            type: 'number',
-            col: '6',
-          },
-        ]),
+    {
+      label: 'Precio Compra Base',
+      formControlName: 'basePurchasePrice',
+      type: 'number',
+      col: '6',
+    },
+    {
+      label: 'Precio Venta Base',
+      formControlName: 'baseSalePrice',
+      type: 'number',
+      col: '6',
+    },
     {
       label: 'Imagen',
       formControlName: 'image',

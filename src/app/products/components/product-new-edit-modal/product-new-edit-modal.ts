@@ -111,7 +111,6 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
         this.unitOfMeasureOptions,
         this.categoryOptions,
         this.currencyOptions,
-        true,
       );
     }
     if (idProduct) {

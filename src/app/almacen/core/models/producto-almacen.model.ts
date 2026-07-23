@@ -6,8 +6,6 @@ export class ProductoAlmacenModel {
   productoId: number = 0;
   almacenId: number = 0;
   stockActual: number = 0;
-  precioCompraBase: number | null = null;
-  precioVentaBase: number | null = null;
   activo: boolean = true;
   producto?: Product;
   almacen?: GetAlmacenModel;

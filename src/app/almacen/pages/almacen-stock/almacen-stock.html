@@ -36,8 +36,6 @@
                                 <th>Código</th>
                                 <th>Producto</th>
                                 <th class="text-center">Stock</th>
-                                <th class="text-end">P. Compra</th>
-                                <th class="text-end">P. Venta</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
@@ -51,8 +49,6 @@
                                         {{ item.stockActual }}
                                     </span>
                                 </td>
-                                <td class="text-end">{{ item.precioCompraBase | currency }}</td>
-                                <td class="text-end">{{ item.precioVentaBase | currency }}</td>
                                 <td>
                                     <span class="badge" [ngClass]="item.activo ? 'bg-success' : 'bg-danger'">
                                         {{ item.activo ? 'Activo' : 'Inactivo' }}
@@ -60,7 +56,7 @@
                                 </td>
                             </tr>
                             <tr *ngIf="filteredProductos.length === 0">
-                                <td colspan="7" class="text-center py-3">
+                                <td colspan="5" class="text-center py-3">
                                     No hay productos vinculados a este almacén
                                 </td>
                             </tr>
