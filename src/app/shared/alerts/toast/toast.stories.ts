@@ -19,7 +19,7 @@ export default {
         closeButton: { control: 'boolean' },
         title: { control: 'text' },
         message: { control: 'text' },
-        selectColor: {
+        color: {
             control: {
                 type: 'select',
                 options: ['success', 'info', 'warning', 'danger'],
@@ -39,7 +39,7 @@ export const Default: Story = {
         closeButton: true,
         title: 'Success',
         message: 'The operation completed successfully.',
-        selectColor: 'success',
+        color: 'success',
     }
 };
 /**
@@ -50,7 +50,7 @@ export const Warning: Story = {
         closeButton: true,
         title: 'Warning',
         message: 'Please check your input.',
-        selectColor: 'warning',
+        color: 'warning',
     }
 };
 
@@ -62,7 +62,7 @@ export const Danger: Story = {
         closeButton: true,
         title: 'Error',
         message: 'Something went wrong!',
-        selectColor: 'danger',
+        color: 'danger',
     }
 };
 
@@ -74,7 +74,7 @@ export const Info = {
         closeButton: true,
         title: 'Info',
         message: 'Here is some information for you.',
-        selectColor: 'info',
+        color: 'info',
     }
 };
 /**

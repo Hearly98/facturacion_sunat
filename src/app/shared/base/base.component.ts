@@ -1,7 +1,6 @@
 import { Inject, OnDestroy, ViewContainerRef } from "@angular/core";
 // rxjs
 import { Observable, Subscription } from "rxjs";
-import { ToasterComponent, ToasterPlacement } from "@coreui/angular";
 import * as objectPath from "object-path";
 import { PERMISSIONS } from "../../core/config/permissions/permissions";
 const DEFAULT_DELAY = 5000;
