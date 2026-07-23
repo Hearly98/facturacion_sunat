@@ -1,7 +1,7 @@
 export function filterSort() {
   return [
     {
-      property: 'name',
+      property: 'nombre',
       direction: 'desc'
     }
   ]

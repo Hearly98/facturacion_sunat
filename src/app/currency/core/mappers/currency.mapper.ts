@@ -8,7 +8,7 @@ export class CurrencyMapper {
       name: dto.nombre,
       code: dto.codigo,
       symbol: dto.simbolo,
-      active: dto.est,
+      active: dto.activo,
     };
   }
 
@@ -34,7 +34,7 @@ export class CurrencyMapper {
       nombre: model.name,
       codigo: model.code,
       simbolo: model.symbol,
-      est: model.active,
+      activo: model.active,
     };
   }
 }

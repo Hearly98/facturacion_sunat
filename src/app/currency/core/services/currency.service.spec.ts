@@ -34,8 +34,8 @@ describe('CurrencyService', () => {
       const mockResponse: ResponseDto<CurrencyDto[]> = {
         isValid: true,
         data: [
-          { id: 1, nombre: 'Dólar', codigo: 'USD', simbolo: '$', est: true } as CurrencyDto,
-          { id: 2, nombre: 'Sol', codigo: 'PEN', simbolo: 'S/', est: true } as CurrencyDto,
+          { id: 1, nombre: 'Dólar', codigo: 'USD', simbolo: '$', activo: true } as CurrencyDto,
+          { id: 2, nombre: 'Sol', codigo: 'PEN', simbolo: 'S/', activo: true } as CurrencyDto,
         ],
         messages: [],
       } as any;
@@ -56,7 +56,7 @@ describe('CurrencyService', () => {
       const currencyId = 1;
       const mockResponse: ResponseDto<CurrencyDto> = {
         isValid: true,
-        data: { id: 1, nombre: 'Dólar', codigo: 'USD', simbolo: '$', est: true } as CurrencyDto,
+        data: { id: 1, nombre: 'Dólar', codigo: 'USD', simbolo: '$', activo: true } as CurrencyDto,
         messages: [],
       } as any;
 
@@ -80,7 +80,7 @@ describe('CurrencyService', () => {
       };
       const mockResponse: ResponseDto<CurrencyDto> = {
         isValid: true,
-        data: { id: 3, nombre: 'Euro', codigo: 'EUR', simbolo: '€', est: true } as CurrencyDto,
+        data: { id: 3, nombre: 'Euro', codigo: 'EUR', simbolo: '€', activo: true } as CurrencyDto,
         messages: [],
       } as any;
 
@@ -110,7 +110,7 @@ describe('CurrencyService', () => {
       };
       const mockResponse: ResponseDto<CurrencyDto> = {
         isValid: true,
-        data: { id: 1, nombre: 'Dólar Estadounidense', codigo: 'USD', simbolo: 'USD$', est: true } as CurrencyDto,
+        data: { id: 1, nombre: 'Dólar Estadounidense', codigo: 'USD', simbolo: 'USD$', activo: true } as CurrencyDto,
         messages: ['Moneda actualizada exitosamente'],
       } as any;
 
@@ -161,7 +161,7 @@ describe('CurrencyService', () => {
         isValid: true,
         data: {
           items: [
-            { id: 1, nombre: 'Dólar', codigo: 'USD', simbolo: '$', est: true } as CurrencyDto,
+            { id: 1, nombre: 'Dólar', codigo: 'USD', simbolo: '$', activo: true } as CurrencyDto,
           ],
           total: 1,
         } as QueryResultsModel<CurrencyDto>,

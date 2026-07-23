@@ -3,7 +3,7 @@ export interface CurrencyDto {
   nombre: string;
   codigo: string;
   simbolo: string;
-  est: boolean;
+  activo: boolean;
 }
 
 export interface CreateCurrencyDto {
