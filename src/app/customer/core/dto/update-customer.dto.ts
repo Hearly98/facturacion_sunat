@@ -10,9 +10,6 @@ export interface UpdateCustomerDto {
   codigoUbigeo: string;
   tipoDocumentoId: number;
   empresaId: number;
-  departamento: string;
-  provincia: string;
-  distrito: string;
 }
 
 export type UpdateCustomerDtoType = UpdateCustomerDto;

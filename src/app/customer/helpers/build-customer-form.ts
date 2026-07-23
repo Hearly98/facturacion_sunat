@@ -15,9 +15,6 @@ export const buildCustomerForm = (): {
     phone: new FormControl(null, Validators.required),
     address: new FormControl(null),
     email: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
-    department: new FormControl(null),
-    province: new FormControl(null),
-    district: new FormControl(null),
     ubigeoCode: new FormControl(null),
   };
 };

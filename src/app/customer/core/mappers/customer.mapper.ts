@@ -18,9 +18,6 @@ export class CustomerMapper {
       email: dto.email,
       ubigeoCode: dto.codigoUbigeo,
       documentTypeId: dto.tipoDocumentoId,
-      department: dto.departamento,
-      province: dto.provincia,
-      district: dto.distrito,
     };
   }
 
@@ -40,9 +37,6 @@ export class CustomerMapper {
       email: model.email,
       codigoUbigeo: model.ubigeoCode,
       tipoDocumentoId: model.documentTypeId,
-      departamento: model.department,
-      provincia: model.province,
-      distrito: model.district,
     };
   }
 
@@ -61,9 +55,6 @@ export class CustomerMapper {
       email: model.email,
       codigoUbigeo: model.ubigeoCode,
       tipoDocumentoId: model.documentTypeId,
-      departamento: model.department,
-      provincia: model.province,
-      distrito: model.district,
     };
   }
 
@@ -83,9 +74,6 @@ export class CustomerMapper {
       email: model.email,
       codigoUbigeo: model.ubigeoCode,
       tipoDocumentoId: model.documentTypeId,
-      departamento: model.department,
-      provincia: model.province,
-      distrito: model.district,
     };
   }
 }

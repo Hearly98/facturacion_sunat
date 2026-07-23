@@ -10,9 +10,6 @@ export interface Customer {
   email: string;
   ubigeoCode: string;
   documentTypeId: number;
-  department: string;
-  province: string;
-  district: string;
 }
 
 export type CustomerType = Customer;

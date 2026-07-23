@@ -42,24 +42,6 @@ export const customerStructure = [
     col: '12',
   },
   {
-    label: 'Departamento',
-    formControlName: 'department',
-    type: 'text',
-    col: '12',
-  },
-  {
-    label: 'Provincia',
-    formControlName: 'province',
-    type: 'text',
-    col: '12',
-  },
-  {
-    label: 'Distrito',
-    formControlName: 'district',
-    type: 'text',
-    col: '12',
-  },
-  {
     label: 'Razon Social',
     formControlName: 'businessName',
     type: 'text',

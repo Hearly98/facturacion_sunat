@@ -9,8 +9,5 @@ export interface CustomerForm {
   phone: string | null;
   address: string | null;
   email: string | null;
-  department: string | null;
-  province: string | null;
-  district: string | null;
   ubigeoCode: string | null;
 }
