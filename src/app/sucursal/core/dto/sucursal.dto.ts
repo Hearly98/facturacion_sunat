@@ -21,6 +21,7 @@ export interface CreateSucursalDto {
 }
 
 export interface UpdateSucursalDto {
+  id: number;
   nombre: string;
   codigo: string;
   direccion: string;

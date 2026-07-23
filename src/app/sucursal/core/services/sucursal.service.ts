@@ -56,8 +56,10 @@ export class SucursalService extends BaseService {
   }
 
   update(id: number, body: UpdateSucursal): Observable<ResponseDto<Sucursal>> {
-    const dto = SucursalMapper.toApiUpdate(body);
-    return this.putRequest<UpdateSucursalDto, ResponseDto<SucursalDto>>(`/${id}`, dto).pipe(
+    // Backend registers PUT only on the base URL, with id expected in the body (same convention
+    // as every other master module) — there is no PUT /sucursales/{id} route.
+    const dto = SucursalMapper.toApiUpdate({ ...body, id });
+    return this.putRequest<UpdateSucursalDto, ResponseDto<SucursalDto>>(`/`, dto).pipe(
       map(response => ({
         ...response,
         data: SucursalMapper.fromApi(response.data),

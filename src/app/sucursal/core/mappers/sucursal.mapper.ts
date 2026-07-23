@@ -30,6 +30,7 @@ export class SucursalMapper {
 
   static toApiUpdate(model: UpdateSucursal): UpdateSucursalDto {
     return {
+      id: model.id,
       nombre: model.name,
       codigo: model.code,
       direccion: model.address,
