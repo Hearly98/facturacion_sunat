@@ -82,7 +82,7 @@ export class CustomerService extends BaseService {
   }
 
   searchQuick(term: string): Observable<ResponseDto<GetCustomer[]>> {
-    return this.getRequest<ResponseDto<CustomerDto[]>>(`/search-quick?term=${term}`).pipe(
+    return this.postRequest<{ term: string }, ResponseDto<CustomerDto[]>>('/search-quick', { term }).pipe(
       map(response => ({
         ...response,
         data: response.data.map(dto => CustomerMapper.fromApi(dto)),

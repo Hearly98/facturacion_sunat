@@ -216,7 +216,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
   }
 
   serviceMap: Record<string, any> = {
-    customerSearch: (term: string) => this.#customerService.getAll(),
+    customerSearch: (term: string) => this.#customerService.searchQuick(term),
     productSearch: (term: string) =>
       this.#productService.searchQuick({
         term,
@@ -226,11 +226,11 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
   patchCustomer(item: any) {
     this.form.patchValue({
-      cli_documento: item.cli_documento,
-      tip_id: item.tip_id,
-      cli_direcc: item.cli_direcc,
-      correo_contacto: item.cli_correo,
-      telefono_contacto: item.cli_telf,
+      cli_documento: item.document,
+      tip_id: item.documentTypeId,
+      cli_direcc: item.address,
+      correo_contacto: item.email,
+      telefono_contacto: item.phone,
     });
   }
 
@@ -239,9 +239,15 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
     if (formControlName === 'prod_id') {
       this.form.patchValue({
-        prod_id: item.prod_id,
+        prod_id: item.id,
       });
       this.selectedProduct = item;
+      return;
+    }
+
+    if (formControlName === 'cli_id') {
+      this.form.patchValue({ cli_id: item.id });
+      this.patchCustomer(item);
       return;
     }
 
@@ -249,17 +255,13 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
     if (control) {
       control.setValue(item[formControlName]);
     }
-
-    if (formControlName === 'cli_id') {
-      this.patchCustomer(item);
-    }
   }
 
   addProductToDetail() {
     if (!this.selectedProduct) return;
 
     const exists = this.detailsArray.controls.some(
-      (control) => control.value.prod_id === this.selectedProduct.prod_id,
+      (control) => control.value.prod_id === this.selectedProduct.id,
     );
 
     if (exists) {
@@ -273,10 +275,10 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
     const detailForm = this.#formBuilder.group(
       buildQuotationDetailForm({
-        prod_id: this.selectedProduct.prod_id,
+        prod_id: this.selectedProduct.id,
         cantidad: 1,
-        prod_nom: this.selectedProduct.prod_nom,
-        prod_cod: this.selectedProduct.prod_cod,
+        prod_nom: this.selectedProduct.nombre,
+        prod_cod: this.selectedProduct.codigo,
         unidad: this.selectedProduct.unidad || '',
         precio_unitario: this.selectedProduct.pventa || 0,
         dscto: 0,
@@ -316,14 +318,40 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
     this.isLoadingForm.set(true);
 
+    const raw = this.form.getRawValue();
+
     const quotationData: QuotationCreateDto = {
-      ...(this.form.getRawValue() as any),
+      ...(this.quotaId() ? { id: this.quotaId()! } : {}),
+      idSucursal: raw.suc_id!,
+      idUsuario: raw.usu_id!,
+      idCliente: raw.cli_id,
+      idMoneda: raw.mon_id,
+      idSerie: raw.serie_id,
+      fechaEmision: raw.fecha_emision,
+      fechaValidoHasta: raw.fecha_valido_hasta,
+      nombreContacto: raw.nombre_contacto,
+      telefonoContacto: raw.telefono_contacto,
+      correoContacto: raw.correo_contacto,
+      areaContacto: raw.area_contacto,
+      descuento: raw.cot_descuento || 0,
+      igvRequerido: raw.igv_requerido ?? true,
+      mostrarFechaValidoHasta: raw.mostrar_fecha_valido_hasta ?? false,
+      mostrarMoneda: raw.mostrar_moneda ?? true,
+      mostrarTotal: raw.mostrar_total ?? true,
+      mostrarObservaciones: raw.mostrar_observaciones ?? false,
+      mostrarCondicionesPago: raw.mostrar_condiciones_pago ?? false,
+      mostrarTipoPago: raw.mostrar_tipo_pago ?? false,
+      mostrarFormaPago: raw.mostrar_forma_pago ?? false,
+      mostrarPlazoEntrega: raw.mostrar_plazo_entrega ?? false,
+      mostrarLugarEntrega: raw.mostrar_lugar_entrega ?? false,
+      mostrarGarantia: raw.mostrar_garantia ?? false,
+      mostrarConsideraciones: raw.mostrar_consideraciones ?? false,
+      mostrarServicioComplementario: raw.mostrar_servicio_complementario ?? false,
       detalles: this.detailsArray.getRawValue().map((v) => {
         return {
-          prod_id: v.prod_id,
+          idProducto: v.prod_id,
           cantidad: v.cantidad,
-          precio_unitario: v.precio_unitario,
-          descripcion: v.prod_nom,
+          precioUnitario: v.precio_unitario,
           descuento: v.dscto || 0,
         } as QuotationDetailCreateDto;
       }),

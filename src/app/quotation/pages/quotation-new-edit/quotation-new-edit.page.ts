@@ -282,10 +282,9 @@ export class QuotationNewEditPage extends BaseComponent implements OnInit {
       ...(this.form.getRawValue() as any),
       detalles: this.detailsArray.getRawValue().map((v) => {
         return {
-          prod_id: v.prod_id,
+          idProducto: v.prod_id,
           cantidad: v.cantidad,
-          precio_unitario: v.precio_unitario,
-          descripcion: v.prod_nom,
+          precioUnitario: v.precio_unitario,
           descuento: v.dscto || 0,
         } as QuotationDetailCreateDto;
       }),

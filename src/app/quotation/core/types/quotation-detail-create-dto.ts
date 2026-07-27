@@ -1,7 +1,6 @@
 export interface QuotationDetailCreateDto {
-    prod_id: number;
+    idProducto: number;
     cantidad: number;
-    precio_unitario: number;
-    descripcion: string;
+    precioUnitario: number;
     descuento: number;
 }

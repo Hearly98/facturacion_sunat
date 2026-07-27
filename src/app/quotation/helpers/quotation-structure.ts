@@ -76,8 +76,8 @@ export function quotationStructure(
           formControlName: 'cli_id',
           type: 'search-select',
           col: 4,
-          bindLabel: 'cli_nom',
-          bindValue: 'cli_id',
+          bindLabel: 'businessName',
+          bindValue: 'id',
           serviceFnName: 'customerSearch',
         },
         {
