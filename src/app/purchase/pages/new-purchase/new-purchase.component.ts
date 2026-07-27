@@ -496,22 +496,23 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
       return;
     }
     const purchaseData: PurchaseCreateDto = {
-      fechaEmision: this.form.value.fechaEmision,
+      idSucursal: this.form.value.suc_id,
+      idUsuario: 0,
+      idAlmacen: this.form.value.almacen_id,
+      idDocumento: this.form.value.doc_id,
+      idProveedor: this.form.value.prov_id,
+      idMetodoPago: this.form.value.mp_cod ? Number(this.form.value.mp_cod) : null,
+      idMoneda: this.form.value.mon_id,
       numero: this.form.value.numero,
-      compr_coment: this.form.value.compr_coment,
-      suc_id: this.form.value.suc_id,
-      almacen_id: this.form.value.almacen_id,
-      prov_id: this.form.value.prov_id,
-      doc_id: this.form.value.doc_id,
-      mon_id: this.form.value.mon_id,
-      mp_cod: this.form.value.mp_cod,
-      afecta_stock: this.form.value.afecta_stock,
+      fechaEmision: this.form.value.fechaEmision,
+      comentario: this.form.value.compr_coment,
+      afectaStock: this.form.value.afecta_stock,
       detalles: this.detailsArray.getRawValue().map((v) => {
         return {
-          prod_id: v.prod_id,
-          detc_cant: v.cantidad,
-          prod_pcompra: v.precio_compra,
-          prod_nom: v.prod_nom,
+          idProducto: v.prod_id,
+          cantidad: v.cantidad,
+          precioCompra: v.precio_compra,
+          descuento: v.dscto,
         };
       }),
     };

@@ -41,6 +41,7 @@ import { PaymentMethodService } from 'src/app/payment-method/core/services/payme
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
 import { AlmacenService } from 'src/app/almacen/core/services/almacen.service';
 import { DateRangePickerComponent } from '@shared/components/date-range-picker/date-range-picker.component';
+import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -107,6 +108,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   readonly #globalNotification = inject(GlobalNotification);
   readonly #confirmService = inject(ConfirmService);
   readonly #route = inject(ActivatedRoute);
+  readonly #authService = inject(AuthService);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.PURCHASE, viewContainerRef);
@@ -168,11 +170,11 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
 
   patchSupplier(item: any) {
     this.form.patchValue({
-      prov_documento: item.prov_documento,
-      tip_id: item.tip_id,
-      prov_direcc: item.prov_direcc,
-      prov_correo: item.prov_correo,
-      prov_telf: item.prov_telf,
+      prov_documento: item.document,
+      tip_id: item.documentTypeId,
+      prov_direcc: item.address,
+      prov_correo: item.email,
+      prov_telf: item.phone,
     });
   }
 
@@ -196,10 +198,16 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
 
     if (formControlName === 'prod_id') {
       this.form.patchValue({
-        prod_id: item.prod_id,
+        prod_id: item.id,
       });
       this.selectedProduct = item;
       this.selectedProductStock.set(item.stock);
+      return;
+    }
+
+    if (formControlName === 'prov_id') {
+      this.form.patchValue({ prov_id: item.id });
+      this.patchSupplier(item);
       return;
     }
 
@@ -207,17 +215,13 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     if (control) {
       control.setValue(item[formControlName]);
     }
-
-    if (formControlName === 'prov_id') {
-      this.patchSupplier(item);
-    }
   }
 
   addProductToDetail() {
     if (!this.selectedProduct) return;
 
     const exists = this.detailsArray.controls.some(
-      (control) => control.value.prod_id === this.selectedProduct.prod_id,
+      (control) => control.value.prod_id === this.selectedProduct.id,
     );
 
     if (exists) {
@@ -230,10 +234,10 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     }
 
     const detailForm = buildPurchaseDetailForm({
-      prod_id: this.selectedProduct.prod_id,
+      prod_id: this.selectedProduct.id,
       cantidad: 1,
-      prod_nom: this.selectedProduct.prod_nom,
-      prod_cod_interno: this.selectedProduct.prod_cod,
+      prod_nom: this.selectedProduct.nombre,
+      prod_cod_interno: this.selectedProduct.codigo,
       unidad: this.selectedProduct.unidad,
       costo_unitario: this.selectedProduct.pcompra,
       precio_compra: null,
@@ -260,7 +264,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
       sucursales: this.#sucursalService.getAll(),
     }).subscribe(({ currencies, paymentMethods, documentTypes, sucursales }) => {
       this.sucursalOptions.set(
-        sucursales.data.map((item: any) => ({ value: item.suc_id, label: item.suc_nom })),
+        sucursales.data.map((item: any) => ({ value: item.id, label: item.name })),
       );
       this.structure.set(
         purchaseStructure(currencies.data, paymentMethods.data, documentTypes.data),
@@ -279,22 +283,23 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     }
 
     const purchaseData: PurchaseCreateDto = {
-      fechaEmision: this.form.value.fechaEmision,
+      idSucursal: this.form.value.suc_id,
+      idUsuario: this.#authService.user()?.id ?? 0,
+      idAlmacen: this.form.value.almacen_id,
+      idDocumento: this.form.value.doc_id,
+      idProveedor: this.form.value.prov_id,
+      idMetodoPago: this.form.value.mp_cod ? Number(this.form.value.mp_cod) : null,
+      idMoneda: this.form.value.mon_id,
       numero: this.form.value.numero,
-      compr_coment: this.form.value.compr_coment,
-      suc_id: this.form.value.suc_id,
-      almacen_id: this.form.value.almacen_id,
-      prov_id: this.form.value.prov_id,
-      doc_id: this.form.value.doc_id,
-      mon_id: this.form.value.mon_id,
-      mp_cod: this.form.value.mp_cod,
-      afecta_stock: this.form.value.afecta_stock,
+      fechaEmision: this.form.value.fechaEmision,
+      comentario: this.form.value.compr_coment,
+      afectaStock: this.form.value.afecta_stock,
       detalles: this.detailsArray.getRawValue().map((v) => {
         return {
-          detc_cant: v.cantidad,
-          prod_id: v.prod_id,
-          prod_nom: v.prod_nom,
-          prod_pcompra: v.precio_compra,
+          idProducto: v.prod_id,
+          cantidad: v.cantidad,
+          precioCompra: v.precio_compra,
+          descuento: v.dscto,
         };
       }),
     };
@@ -302,7 +307,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     this.isLoadingForm.set(true);
 
     const request = this.purchaseId()
-      ? this.#purchaseService.update({ ...purchaseData, compr_id: this.purchaseId() })
+      ? this.#purchaseService.update({ ...purchaseData, id: this.purchaseId() })
       : this.#purchaseService.create(purchaseData);
 
     request.subscribe({

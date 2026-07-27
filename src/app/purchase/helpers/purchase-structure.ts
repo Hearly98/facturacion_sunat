@@ -71,7 +71,8 @@ export const purchaseStructure = (
           type: 'select',
           col: '4',
           formControlName: 'mp_cod',
-          options: mapToSelectOption(PaymentTypeOptions, 'code', 'name'),
+          // El backend espera un id de metodo_pagos (StoreCompraRequest.idMetodoPago), no el code
+          options: mapToSelectOption(PaymentTypeOptions, 'id', 'name'),
         },
         {
           label: 'Moneda',
@@ -104,8 +105,8 @@ export const purchaseStructure = (
           col: '4',
           type: 'search-select',
           formControlName: 'prov_id',
-          bindLabel: 'prov_nom',
-          bindValue: 'prov_id',
+          bindLabel: 'name',
+          bindValue: 'id',
           serviceFnName: 'providerSearch',
         },
         {
