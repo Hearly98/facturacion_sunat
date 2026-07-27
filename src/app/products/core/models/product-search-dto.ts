@@ -1,10 +1,10 @@
 export class ProductoSearchDto {
-  prod_id: number = 0;
-  prod_cod: string = "";
-  prod_nom: string = "";
-  cat_id: number = 0;
-  cat_nom: string = "";
-  und_id: number = 0;
+  id: number = 0;
+  codigo: string = "";
+  nombre: string = "";
+  categoria_id: number = 0;
+  categoria_nombre: string = "";
+  unidad_id: number = 0;
   unidad: string = "";
   stock: number = 0;
   pcompra: number = 0;

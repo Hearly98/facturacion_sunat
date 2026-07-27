@@ -97,7 +97,9 @@ export class ProductService extends BaseService {
     suc_id?: number;
     almacen_id?: number;
   }): Observable<ResponseDto<ProductoSearchDto[]>> {
-    return this.postRequest(`/search-quick`, body);
+    // El backend espera 'sucursal_id', no 'suc_id' (ProductoController::searchQuick)
+    const { suc_id, ...rest } = body;
+    return this.postRequest(`/search-quick`, { ...rest, sucursal_id: suc_id });
   }
 
   /**
