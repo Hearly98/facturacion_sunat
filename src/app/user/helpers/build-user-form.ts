@@ -15,5 +15,6 @@ export const buildUserForm = (): {
     roleId: new FormControl(null),
     image: new FormControl(null),
     active: new FormControl(true),
+    idSucursales: new FormControl([]),
   };
 };

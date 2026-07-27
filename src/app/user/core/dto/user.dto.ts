@@ -1,34 +1,38 @@
 export interface UserDto {
-  usu_id: number;
-  usu_nom: string;
-  usu_ape: string;
+  id: number;
+  nombre: string;
+  apellido: string;
   email: string;
   password?: string;
-  usu_dni: string;
-  usu_telf: string;
+  dni: string;
+  telefono: string;
   rol_id: number;
   est: boolean;
-  usu_img?: string;
+  imagen_perfil?: string;
+  sucursales?: { id: number }[];
 }
 
 export interface CreateUserDto {
-  usu_nom: string;
-  usu_ape: string;
+  nombre: string;
+  apellido: string;
   email: string;
   password: string;
-  usu_dni: string;
-  usu_telf: string;
-  rol_id: number;
-  usu_img?: string;
+  dni: string;
+  telefono: string;
+  idRol: number;
+  imagenPerfil?: string;
+  idSucursales?: number[];
 }
 
 export interface UpdateUserDto {
-  usu_nom: string;
-  usu_ape: string;
+  id: number;
+  nombre: string;
+  apellido: string;
   email: string;
   password?: string;
-  usu_dni: string;
-  usu_telf: string;
-  rol_id: number;
-  usu_img?: string;
+  dni: string;
+  telefono: string;
+  idRol: number;
+  imagenPerfil?: string;
+  idSucursales?: number[];
 }

@@ -8,4 +8,5 @@ export interface UpdateUser {
   phone: string;
   roleId: number;
   image?: string;
+  idSucursales: number[];
 }

@@ -7,4 +7,5 @@ export interface CreateUser {
   phone: string;
   roleId: number;
   image?: string;
+  idSucursales: number[];
 }

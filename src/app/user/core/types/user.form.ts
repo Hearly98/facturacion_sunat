@@ -9,4 +9,5 @@ export interface UserForm {
   roleId: number | null;
   active: boolean | null;
   image: string | null;
+  idSucursales: number[] | null;
 }

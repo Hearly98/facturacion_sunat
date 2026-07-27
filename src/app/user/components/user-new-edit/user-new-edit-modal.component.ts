@@ -1,5 +1,5 @@
 import { Component, Inject, inject, OnInit, signal, ViewContainerRef } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   ButtonDirective,
   CardBodyComponent,
@@ -13,14 +13,14 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { BaseComponent } from '@shared/base/base.component';
-import { TypedFormGroup } from '@shared/types/types-form';
-import { UserForm } from '../../core/types';
 import { MODULES } from 'src/app/core/config/permissions/modules';
 import { buildUserForm, userStructure, userValidationMessage } from '../../helpers';
 import { CreateUser, UpdateUser } from '../../core/models';
 import { UserService } from '../../core/services/user.service';
 import { Rol } from 'src/app/rol/core/models';
 import { RolService } from 'src/app/rol/core/services/rol.service';
+import { Sucursal } from 'src/app/sucursal/core/models/sucursal.model';
+import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
 @Component({
@@ -41,13 +41,15 @@ import { ValidationMessagesComponent } from '@shared/components/error-messages/v
   templateUrl: './user-new-edit-modal.component.html',
 })
 export class UserNewEditModalComponent extends BaseComponent implements OnInit {
-  form!: TypedFormGroup<UserForm>;
+  form!: FormGroup<ReturnType<typeof buildUserForm>>;
   visible = signal<boolean>(false);
   structure = userStructure;
   roles: Rol[] = [];
+  sucursales: Sucursal[] = [];
   isLoading = signal(false);
   errorMessages = userValidationMessage;
   readonly #rolService = inject(RolService);
+  readonly #sucursalService = inject(SucursalService);
   readonly #userService = inject(UserService);
   readonly #globalNotification = inject(GlobalNotification);
   readonly #formBuilder = inject(FormBuilder);
@@ -61,6 +63,7 @@ export class UserNewEditModalComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.createForm();
     this.rolSelectCombo();
+    this.sucursalSelectCombo();
   }
 
   createForm() {
@@ -91,7 +94,12 @@ export class UserNewEditModalComponent extends BaseComponent implements OnInit {
     this.fetchData(this.#rolService.getAll(), this.roles);
   }
 
+  sucursalSelectCombo() {
+    this.fetchData(this.#sucursalService.getAll(), this.sucursales);
+  }
+
   onClose() {
+    this.title.set('Crear Usuario');
     this.visible.set(false);
   }
 
@@ -123,7 +131,7 @@ export class UserNewEditModalComponent extends BaseComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.#globalNotification.openAlert(error.message);
+        this.#globalNotification.openAlert(error.error);
         this.isLoading.set(false);
       },
     });
@@ -145,7 +153,7 @@ export class UserNewEditModalComponent extends BaseComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.#globalNotification.openAlert(error.message);
+        this.#globalNotification.openAlert(error.error);
         this.isLoading.set(false);
       },
     });

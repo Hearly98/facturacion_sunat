@@ -8,4 +8,5 @@ export interface User {
   roleId: number;
   active: boolean;
   image?: string;
+  idSucursales: number[];
 }
