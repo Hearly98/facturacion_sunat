@@ -104,14 +104,11 @@ export class CurrencyNewEditModalComponent extends BaseComponent implements OnIn
     const { id, ...body } = this.form.value;
     const subscription = this.#currencyService.create(body as CreateCurrency).subscribe({
       next: (response) => {
+        this.#globalNotification.openAlert(response);
+        this.isLoading.set(false);
         if (response.isValid) {
-          this.#globalNotification.openAlert(response);
           this.callback(response.data);
           this.onClose();
-          this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
         }
       },
       error: (error) => {
@@ -127,13 +124,11 @@ export class CurrencyNewEditModalComponent extends BaseComponent implements OnIn
       .update(this.form.value as UpdateCurrency)
       .subscribe({
         next: (response) => {
+          this.#globalNotification.openAlert(response);
+          this.isLoading.set(false);
           if (response.isValid) {
-            this.#globalNotification.openAlert(response);
             this.callback(response.data);
             this.onClose();
-            this.isLoading.set(false);
-          } else {
-            this.#globalNotification.openAlert(response);
           }
         },
         error: (error) => {

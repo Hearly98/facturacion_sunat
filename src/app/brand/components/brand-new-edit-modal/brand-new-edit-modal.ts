@@ -112,7 +112,7 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
         }
       },
       error: (error) => {
-        this.#globalNotification.openAlert(error.message);
+        this.#globalNotification.openAlert(error.error);
         this.isLoading.set(false);
       },
     });

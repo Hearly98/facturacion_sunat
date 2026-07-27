@@ -104,18 +104,15 @@ export class CategoryNewEditModal extends BaseComponent implements OnInit {
     const { id, ...body } = this.form.value;
     const subscription = this.#categoryService.create(body as CreateCategory).subscribe({
       next: (response) => {
+        this.#globalNotification.openAlert(response);
+        this.isLoading.set(false);
         if (response.isValid) {
-          this.#globalNotification.openAlert(response);
           this.callback(response.data);
           this.onClose();
-          this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
         }
       },
       error: (error) => {
-        this.#globalNotification.openAlert(error.message);
+        this.#globalNotification.openAlert(error.error);
         this.isLoading.set(false);
       },
     });
@@ -127,14 +124,11 @@ export class CategoryNewEditModal extends BaseComponent implements OnInit {
       .update(this.form.value as UpdateCategory)
       .subscribe({
         next: (response) => {
+          this.#globalNotification.openAlert(response);
+          this.isLoading.set(false);
           if (response.isValid) {
-            this.#globalNotification.openAlert(response);
             this.callback(response.data);
             this.onClose();
-            this.isLoading.set(false);
-          } else {
-            this.#globalNotification.openAlert(response);
-            this.isLoading.set(false);
           }
         },
         error: (error) => {
