@@ -197,32 +197,32 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
     this.selectedCotizacion.set(cotizacion);
     this.isCotizacionAttached.set(true);
     this.form.patchValue({
-      cot_id: cotizacion.cot_id,
-      nro_cotizacion: cotizacion.numero_completo,
+      cot_id: cotizacion.id,
+      nro_cotizacion: cotizacion.fullNumber,
     });
 
-    if (cotizacion.cliente) {
+    if (cotizacion.customer) {
       this.form.patchValue({
-        cli_id: cotizacion.cliente.id,
-        nombre_cliente: cotizacion.cliente.businessName,
-        doc_cliente: cotizacion.cliente.document,
-        direccion_cliente: cotizacion.cliente.address,
-        destino_direccion: cotizacion.cliente.address,
+        cli_id: cotizacion.customer.id,
+        nombre_cliente: cotizacion.customer.name,
+        doc_cliente: cotizacion.customer.document,
+        direccion_cliente: cotizacion.customer.address,
+        destino_direccion: cotizacion.customer.address,
       });
     }
 
-    if (cotizacion.detalles && cotizacion.detalles.length > 0) {
+    if (cotizacion.details && cotizacion.details.length > 0) {
       this.detailsArray.clear();
-      cotizacion.detalles.forEach((detalle: any) => {
+      cotizacion.details.forEach((detalle) => {
         const detailForm = this.#formBuilder.group(
           buildShippingGuideDetail({
-            prod_id: detalle.prod_id,
-            prod_cod: detalle.producto?.prod_cod_interno,
-            prod_nom: detalle.descripcion ?? '',
-            cantidad: detalle.cantidad,
-            peso_unitario: detalle.producto?.prod_peso ?? 0,
-            descripcion: detalle.descripcion ?? '',
-            und_id: detalle?.producto?.unidad?.und_id ?? null,
+            prod_id: detalle.productId,
+            prod_cod: detalle.productCode ?? '',
+            prod_nom: detalle.description ?? '',
+            cantidad: detalle.quantity,
+            peso_unitario: detalle.productWeight ?? 0,
+            descripcion: detalle.description ?? '',
+            und_id: detalle.productUnitId ?? null,
           }),
         );
         this.detailsArray.push(detailForm);

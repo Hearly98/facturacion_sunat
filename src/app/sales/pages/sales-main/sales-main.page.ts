@@ -230,10 +230,16 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
   onSelectCotizacion(cotizacion: QuotationModel) {
     this.linkedCotizacion.set(cotizacion);
-    this.form.patchValue({ cot_id: cotizacion.cot_id });
-    if (cotizacion.cliente) {
-      this.form.patchValue({ cli_id: cotizacion.cli_id });
-      this.patchCustomer(cotizacion.cliente);
+    this.form.patchValue({ cot_id: cotizacion.id });
+    if (cotizacion.customer) {
+      this.form.patchValue({ cli_id: cotizacion.customer.id });
+      this.patchCustomer({
+        cli_documento: cotizacion.customer.document,
+        tip_id: cotizacion.customer.documentTypeId,
+        cli_direcc: cotizacion.customer.address,
+        cli_correo: cotizacion.customer.email,
+        cli_telf: cotizacion.customer.phone,
+      });
     }
   }
 
@@ -265,7 +271,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   getClientInitialValue(formControlName: string): string {
     if (formControlName !== 'cli_id') return '';
     const cot = this.linkedCotizacion();
-    if (cot?.cliente) return cot.cliente.businessName;
+    if (cot?.customer) return cot.customer.name;
     const guia = this.linkedGuia();
     if (guia?.cliente) return guia.cliente.cli_nom;
     return '';

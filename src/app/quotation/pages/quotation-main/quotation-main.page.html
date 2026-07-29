@@ -287,34 +287,43 @@
                         </thead>
                         <tbody>
                           @if (quotations.length > 0) {
-                            @for (quotation of quotations; track quotation.cot_id) {
+                            @for (quotation of quotations; track quotation.id) {
                               <tr>
                                 <td>
-                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                  @if (quotation.stateCode !== '03') {
                                     <button
                                       size="sm"
                                       class="me-2"
                                       cButton
                                       color="secondary"
-                                      (click)="onPrint(quotation.cot_id)"
+                                      (click)="onPrint(quotation.id)"
                                     >
                                       <svg cIcon name="cilPrint"></svg>
                                     </button>
                                   }
-                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                  @if (quotation.stateCode !== '03') {
                                     <button
                                       size="sm"
                                       class="me-2"
                                       cButton
                                       color="info"
-                                      (click)="onEdit(quotation.cot_id)"
+                                      (click)="onEdit(quotation.id)"
                                     >
                                       <svg cIcon name="cilPencil"></svg>
                                     </button>
                                   }
-                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                  <button
+                                    size="sm"
+                                    class="me-2"
+                                    cButton
+                                    color="secondary"
+                                    (click)="onClone(quotation.id)"
+                                  >
+                                    <svg cIcon name="cilCopy"></svg>
+                                  </button>
+                                  @if (quotation.stateCode === '01') {
                                     <button
-                                      (click)="onDelete(quotation.cot_id)"
+                                      (click)="onDelete(quotation.id)"
                                       size="sm"
                                       cButton
                                       color="danger"
@@ -323,27 +332,19 @@
                                     </button>
                                   }
                                 </td>
-                                <td>{{ quotation.numero_completo }}</td>
-                                <td>{{ quotation.fecha_emision | date: 'dd/MM/yyyy' }}</td>
-                                <td>{{ quotation.cliente?.businessName }}</td>
-                                <td>{{ quotation.cot_total | currency: 'S/. ' }}</td>
+                                <td>{{ quotation.fullNumber }}</td>
+                                <td>{{ quotation.issueDate | date: 'dd/MM/yyyy' }}</td>
+                                <td>{{ quotation.customer?.name }}</td>
+                                <td>{{ quotation.total | currency: 'S/. ' }}</td>
                                 <td>
                                   <span
                                     class="badge"
-                                    [class.bg-warning]="
-                                      quotation.estado_cotizacion?.color === 'warning'
-                                    "
-                                    [class.bg-success]="
-                                      quotation.estado_cotizacion?.color === 'success'
-                                    "
-                                    [class.bg-danger]="
-                                      quotation.estado_cotizacion?.color === 'danger'
-                                    "
-                                   [class.bg-info]="
-                                      quotation.estado_cotizacion?.color === 'info'
-                                    "
+                                    [class.bg-warning]="stateColor(quotation.stateCode) === 'warning'"
+                                    [class.bg-success]="stateColor(quotation.stateCode) === 'success'"
+                                    [class.bg-danger]="stateColor(quotation.stateCode) === 'danger'"
+                                    [class.bg-info]="stateColor(quotation.stateCode) === 'info'"
                                   >
-                                    {{ quotation.estado_cotizacion?.nombre }}
+                                    {{ quotation.stateName }}
                                   </span>
                                 </td>
                               </tr>

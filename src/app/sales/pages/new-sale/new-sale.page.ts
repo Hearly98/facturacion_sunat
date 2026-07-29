@@ -82,7 +82,7 @@ import { QuotationModel } from 'src/app/quotation/core/models/quotation.model';
                       <div class="d-flex align-items-center gap-2">
                         <input
                           class="form-control bg-light"
-                          [value]="selectedCotizacion()!.numero_completo"
+                          [value]="selectedCotizacion()!.fullNumber"
                           disabled
                         />
                         <button
@@ -616,31 +616,31 @@ export class NewSalePage extends BaseComponent implements OnInit {
   onSelectCotizacion(cotizacion: QuotationModel) {
     this.selectedCotizacion.set(cotizacion);
     this.isCotizacionAttached.set(true);
-    this.form.patchValue({ cot_id: cotizacion.cot_id });
+    this.form.patchValue({ cot_id: cotizacion.id });
 
-    if (cotizacion.cliente) {
+    if (cotizacion.customer) {
       this.form.patchValue({
-        cli_id: cotizacion.cliente.id,
-        cli_documento: (cotizacion.cliente as any).cli_documento,
-        tip_id: (cotizacion.cliente as any).tip_id,
-        cli_direcc: (cotizacion.cliente as any).cli_direcc,
-        cli_correo: (cotizacion.cliente as any).cli_correo,
-        cli_telf: (cotizacion.cliente as any).cli_telf,
+        cli_id: cotizacion.customer.id,
+        cli_documento: cotizacion.customer.document,
+        tip_id: cotizacion.customer.documentTypeId,
+        cli_direcc: cotizacion.customer.address,
+        cli_correo: cotizacion.customer.email,
+        cli_telf: cotizacion.customer.phone,
       });
     }
 
-    if (cotizacion.detalles && cotizacion.detalles.length > 0) {
+    if (cotizacion.details && cotizacion.details.length > 0) {
       this.detailsArray.clear();
-      cotizacion.detalles.forEach((detalle: any) => {
+      cotizacion.details.forEach((detalle) => {
         const detailForm = this.#formBuilder.group({
-          prod_id: [detalle.prod_id],
-          cantidad: [detalle.cantidad],
-          prod_nom: [{ value: detalle.producto?.prod_nom ?? '', disabled: true }],
-          prod_cod_interno: [{ value: detalle.producto?.prod_cod_interno ?? '', disabled: true }],
-          unidad: [{ value: detalle.producto?.unidad?.uni_nom ?? '', disabled: true }],
-          precio_unitario: [{ value: detalle.precio_unitario, disabled: true }],
+          prod_id: [detalle.productId],
+          cantidad: [detalle.quantity],
+          prod_nom: [{ value: detalle.productName ?? '', disabled: true }],
+          prod_cod_interno: [{ value: detalle.productCode ?? '', disabled: true }],
+          unidad: [{ value: detalle.productUnit ?? '', disabled: true }],
+          precio_unitario: [{ value: detalle.unitPrice, disabled: true }],
           precio_venta: [{ value: null, disabled: true }],
-          dscto: [{ value: detalle.descuento ?? 0, disabled: true }],
+          dscto: [{ value: detalle.discount ?? 0, disabled: true }],
         });
         this.detailsArray.push(detailForm as any);
       });

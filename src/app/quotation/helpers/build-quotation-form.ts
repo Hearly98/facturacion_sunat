@@ -5,7 +5,7 @@ import { TypedFormControls } from '@shared/types/types-form';
 export function buildQuotationForm(): TypedFormControls<QuotationForm> {
   return {
     serie_id: new FormControl<number | null>(null),
-    numero: new FormControl<number | null>(null),
+    numero: new FormControl<string | null>(null),
     numero_completo: new FormControl<string | null>({ value: null, disabled: true }),
     fecha_emision: new FormControl<string | null>({ value: new Date().toISOString().split('T')[0], disabled: true }, [Validators.required]),
     fecha_valido_hasta: new FormControl<string | null>(null),

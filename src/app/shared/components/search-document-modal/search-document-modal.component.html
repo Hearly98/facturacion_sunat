@@ -57,14 +57,14 @@
           </div>
         } @else {
           @if (type() === 'cotizacion') {
-            @for (item of asCotizaciones(); track item.cot_id) {
+            @for (item of asCotizaciones(); track item.id) {
               <div
                 class="document-item border rounded p-3 mb-2 cursor-pointer"
-                (click)="selectCotizacion(item.cot_id)"
+                (click)="selectCotizacion(item.id)"
               >
                 <c-row class="mb-4">
                   <c-col>
-                    <span class="fw-semibold">{{ item.numero_completo }}</span>
+                    <span class="fw-semibold">{{ item.fullNumber }}</span>
                   </c-col>
                   <c-col class="text-end">
                     <button
@@ -86,26 +86,26 @@
                       class="me-1"
                       style="width: 12px; height: 12px"
                     ></svg>
-                    {{ item.fecha_emision | date: 'dd/MM/yyyy' }}
+                    {{ item.issueDate | date: 'dd/MM/yyyy' }}
                   </c-col>
                   <c-col lg="6">
                     <svg cIcon name="cilUser" class="me-1" style="width: 12px; height: 12px"></svg>
-                    <span class="fw-medium text-dark">{{ item.cliente?.businessName }}</span>
+                    <span class="fw-medium text-dark">{{ item.customer?.name }}</span>
                   </c-col>
                   <c-col lg="2">
                     <svg cIcon name="cilMoney" class="me-1" style="width: 12px; height: 12px"></svg>
                     <span class="fw-medium text-dark"
-                      >S/ {{ item.cot_total | number: '1.2-2' }}</span
+                      >S/ {{ item.total | number: '1.2-2' }}</span
                     >
                   </c-col>
                   <c-col lg="2">
                     <span
                       class="badge"
-                      [class.bg-warning]="item.estado_cotizacion?.color === 'warning'"
-                      [class.bg-success]="item.estado_cotizacion?.color === 'success'"
-                      [class.bg-danger]="item.estado_cotizacion?.color === 'danger'"
+                      [class.bg-warning]="cotizacionStateColor(item.stateCode) === 'warning'"
+                      [class.bg-success]="cotizacionStateColor(item.stateCode) === 'success'"
+                      [class.bg-danger]="cotizacionStateColor(item.stateCode) === 'danger'"
                     >
-                      {{ item.estado_cotizacion?.nombre }}
+                      {{ item.stateName }}
                     </span>
                   </c-col>
                 </c-row>

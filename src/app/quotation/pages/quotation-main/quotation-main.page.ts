@@ -167,38 +167,70 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
         if (response.isValid && response.data) {
           const data = response.data;
 
-          const fechaEmision = data.fecha_emision ? data.fecha_emision.substring(0, 10) : '';
-          const fechaValido = data.fecha_valido_hasta
-            ? data.fecha_valido_hasta.substring(0, 10)
-            : '';
-
-          const { detalles, ...rest } = data;
+          const fechaEmision = data.issueDate ? data.issueDate.substring(0, 10) : '';
+          const fechaValido = data.validUntilDate ? data.validUntilDate.substring(0, 10) : '';
 
           this.form.patchValue({
-            ...rest,
+            numero: data.number,
+            numero_completo: data.fullNumber,
             fecha_emision: fechaEmision,
             fecha_valido_hasta: fechaValido,
+            mostrar_fecha_valido_hasta: data.showValidUntilDate,
+            emp_id: data.companyId,
+            suc_id: data.branchId,
+            cli_id: data.customerId,
+            nombre_contacto: data.contactName,
+            telefono_contacto: data.contactPhone,
+            correo_contacto: data.contactEmail,
+            area_contacto: data.contactArea,
+            mon_id: data.currencyId,
+            mostrar_moneda: data.showCurrency,
+            cot_subtotal: data.subtotal,
+            cot_igv: data.tax,
+            igv_requerido: data.taxRequired,
+            cot_total: data.total,
+            mostrar_total: data.showTotal,
+            cot_descuento: data.discount,
+            observaciones: data.notes,
+            mostrar_observaciones: data.showNotes,
+            condiciones_pago: data.paymentTerms,
+            mostrar_condiciones_pago: data.showPaymentTerms,
+            tipo_pago_id: data.paymentMethodId,
+            mostrar_tipo_pago: data.showPaymentMethod,
+            forma_pago: data.paymentForm,
+            mostrar_forma_pago: data.showPaymentForm,
+            plazo_entrega: data.deliveryTime,
+            mostrar_plazo_entrega: data.showDeliveryTime,
+            lugar_entrega: data.deliveryPlace,
+            mostrar_lugar_entrega: data.showDeliveryPlace,
+            garantia: data.warranty,
+            mostrar_garantia: data.showWarranty,
+            consideraciones: data.considerations,
+            mostrar_consideraciones: data.showConsiderations,
+            servicio_complementario: data.complementaryService,
+            mostrar_servicio_complementario: data.showComplementaryService,
+            usu_id: data.userId,
           });
 
-          if (data.cliente) {
-            this.searchSelectLabels['cli_id'] = data.cliente.businessName;
+          if (data.customer) {
+            this.searchSelectLabels['cli_id'] = data.customer.name;
           }
 
-          this.patchCustomer(data.cliente);
+          this.patchCustomer(data.customer);
 
           this.detailsArray.clear();
-          data.detalles.forEach((det: any) => {
+          data.details.forEach((det) => {
             this.detailsArray.push(
               this.#formBuilder.group(
                 buildQuotationDetailForm({
-                  prod_id: det.prod_id,
-                  cantidad: det.cantidad,
-                  prod_nom: det.producto?.prod_nom || det.descripcion,
-                  prod_cod: det.producto?.prod_cod_interno || '',
-                  unidad: det.producto?.unidad.und_nom || '',
-                  precio_unitario: det.precio_unitario,
-                  dscto: det.descuento || 0,
-                  precio_total: det.cantidad * det.precio_unitario - (det.descuento || 0),
+                  prod_id: det.productId,
+                  cantidad: det.quantity,
+                  prod_nom: det.productName || det.description || '',
+                  prod_cod: det.productCode || '',
+                  unidad: det.productUnit || '',
+                  precio_unitario: det.unitPrice,
+                  dscto: det.discount || 0,
+                  precio_total: det.quantity * det.unitPrice - (det.discount || 0),
                 }),
               ),
             );
@@ -501,6 +533,24 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
     this.activeTab.set('create');
     this.quotaId.set(id);
     this.loadQuotation(id);
+  }
+
+  onClone(id: number) {
+    this.#quotationService.clone(id).subscribe({
+      next: (response) => {
+        this.#globalNotification.openAlert(response);
+        if (response.isValid) {
+          this.onSearch();
+        }
+      },
+      error: (error) => {
+        this.#globalNotification.openToastAlert('Error', error.message, 'danger');
+      },
+    });
+  }
+
+  stateColor(code: string | null): string {
+    return this.availableStates.find((state) => state.codigo === code)?.color ?? 'secondary';
   }
 
   onDateRangeChange(range: { start: Date | null; end: Date | null }) {

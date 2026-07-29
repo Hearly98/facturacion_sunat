@@ -2,7 +2,7 @@ import { QuotationDetailForm } from "./quotation-detail.form";
 
 export interface QuotationForm {
   serie_id: number | null;
-  numero: number | null;
+  numero: string | null;
   numero_completo: string | null;
   fecha_emision: string | null;
   fecha_valido_hasta: string | null,

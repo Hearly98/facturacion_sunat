@@ -50,14 +50,14 @@
                       <div class="d-flex align-items-center gap-2 p-3 rounded border linked-doc-card">
                         <div class="flex-grow-1">
                           <div class="d-flex align-items-center gap-2">
-                            <span class="fw-semibold">{{ linkedCotizacion()!.numero_completo }}</span>
+                            <span class="fw-semibold">{{ linkedCotizacion()!.fullNumber }}</span>
                             <span class="badge bg-primary-subtle text-primary small">
                               <svg cIcon name="cilLockLocked" style="width:10px;height:10px;" class="me-1"></svg>
                               Vinculada
                             </span>
                           </div>
                           <div class="text-muted small mt-1">
-                            {{ linkedCotizacion()!.cliente?.businessName }}
+                            {{ linkedCotizacion()!.customer?.name }}
                           </div>
                         </div>
                         <button
@@ -133,7 +133,7 @@
                     <svg cIcon name="cilInfo" class="flex-shrink-0 mt-0" style="width:14px;height:14px;"></svg>
                     <span>
                       @if (linkedCotizacion()) {
-                        Los datos del cliente provienen de la cotización <strong>{{ linkedCotizacion()!.numero_completo }}</strong>. Los campos de cliente son de solo lectura.
+                        Los datos del cliente provienen de la cotización <strong>{{ linkedCotizacion()!.fullNumber }}</strong>. Los campos de cliente son de solo lectura.
                       } @else {
                         Los datos del cliente provienen de la guía <strong>{{ linkedGuia()!.numero_completo }}</strong>. Los campos de cliente son de solo lectura.
                       }
