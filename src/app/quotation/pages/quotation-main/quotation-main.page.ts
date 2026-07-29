@@ -94,12 +94,18 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
   public sucursales: Sucursal[] = [];
 
-  availableStates = [
-    { codigo: '01', nombre: 'Pendientes', color: 'warning' },
-    { codigo: '02', nombre: 'Facturados', color: 'success' },
-    { codigo: '03', nombre: 'Anulados', color: 'danger' },
-    { codigo: '04', nombre: 'En Proceso', color: 'info' },
-  ];
+  /**
+   * Colores por codigo: decision de UI, el catalogo de EstadoCotizacion no
+   * tiene ese campo. codigo/nombre vienen de verdad de getEstados().
+   */
+  private readonly stateColorByCode: Record<string, string> = {
+    '01': 'warning',
+    '02': 'success',
+    '03': 'danger',
+    '04': 'info',
+  };
+
+  availableStates: { codigo: string; nombre: string; color: string }[] = [];
 
   readonly #formBuilder = inject(FormBuilder);
   readonly #paymentMethodService = inject(PaymentMethodService);
@@ -146,7 +152,22 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
   loadListData() {
     this.loadSucursales();
+    this.loadEstados();
     this.onSearch();
+  }
+
+  loadEstados() {
+    this.#quotationService.getEstados().subscribe({
+      next: (response) => {
+        if (response.isValid) {
+          this.availableStates = response.data.map((estado) => ({
+            codigo: estado.codigo,
+            nombre: estado.nombre,
+            color: this.stateColorByCode[estado.codigo] ?? 'secondary',
+          }));
+        }
+      },
+    });
   }
 
   loadSucursales() {
