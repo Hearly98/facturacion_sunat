@@ -50,6 +50,19 @@ test.describe('Cotización — quick-wins de UX', () => {
     await expect(fieldByLabel(page, 'Forma de Pago')).toHaveValue('');
   });
 
+  test('guardar sin obligatorios marca cada campo en rojo con su mensaje', async ({ page }) => {
+    await page.getByRole('button', { name: 'Guardar Cotización' }).click();
+    await page.getByRole('button', { name: 'Entendido' }).click();
+
+    await expect(page.getByText('La sucursal es obligatoria')).toBeVisible();
+    await expect(page.getByText('La moneda es obligatoria')).toBeVisible();
+    await expect(page.getByText('El tipo de pago es obligatorio')).toBeVisible();
+    // Cliente usa app-search-select (no un <select> nativo) — es el único de los 5 que no tenía
+    // ningún cableado de error antes de este fix.
+    await expect(page.getByText('El cliente es obligatorio')).toBeVisible();
+    await expect(page.locator('input[placeholder="Cliente"]')).toHaveClass(/is-invalid/);
+  });
+
   test('Limpiar en Historial vuelve a Pendiente, no a Facturado', async ({ page }) => {
     await page.locator('a.nav-link', { hasText: 'Historial' }).click();
 

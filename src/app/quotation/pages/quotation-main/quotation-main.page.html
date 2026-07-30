@@ -71,6 +71,11 @@
                                     ? searchSelectLabels[control.formControlName]
                                     : ''
                                 "
+                                [showError]="
+                                  !!form.get(control.formControlName)?.invalid &&
+                                  !!form.get(control.formControlName)?.touched
+                                "
+                                [errorMessage]="fieldErrorMessage(control.formControlName)"
                               ></app-search-select>
                             }
                             @case ('select') {

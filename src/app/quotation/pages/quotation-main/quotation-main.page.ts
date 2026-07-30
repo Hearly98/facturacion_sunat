@@ -124,6 +124,11 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
     ['servicio_complementario', 'mostrar_servicio_complementario'],
   ];
 
+  fieldErrorMessage(controlName?: string): string {
+    if (!controlName) return '';
+    return (this.errorMessages as Record<string, { required?: string }>)[controlName]?.required ?? '';
+  }
+
   private wireShowFieldAutoCheck() {
     for (const [fieldName, showName] of this.showFieldPairs) {
       this.form.get(fieldName)?.valueChanges.subscribe((value) => {
