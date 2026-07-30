@@ -6,6 +6,7 @@ export interface QuotationCreateDto {
   idUsuario: number;
   idCliente: number | null;
   idMoneda: number | null;
+  idTipoPago: number | null;
   idSerie: number | null;
   fechaEmision: string | null;
   fechaValidoHasta: string | null;

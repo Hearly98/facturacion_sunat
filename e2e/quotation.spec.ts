@@ -29,8 +29,17 @@ async function selectViaSearchSelect(page: Page, placeholder: string, searchTerm
 test('Cotización: crear, listar, editar, clonar, anular e imprimir', async ({ page }) => {
   await page.goto('/cotizaciones');
 
+  // ---- Validación: guardar sin completar los obligatorios muestra el modal, no crea nada ----
+  await page.getByRole('button', { name: 'Guardar Cotización' }).click();
+  await expect(page.locator('h5', { hasText: 'Faltan datos obligatorios' })).toBeVisible({ timeout: 5_000 });
+  await page.getByRole('button', { name: 'Entendido' }).click();
+
   // ---- Crear ----
+  // Sucursal/Vendedor/Moneda/Tipo de Pago son obligatorios ahora (la cotización necesita saber
+  // a quién y desde dónde se emite antes de guardarse).
   await fieldByLabel(page, 'Sucursal').selectOption({ index: 1 });
+  await fieldByLabel(page, 'Moneda').selectOption({ index: 1 });
+  await fieldByLabel(page, 'Tipo de Pago').selectOption({ index: 1 });
   await selectViaSearchSelect(page, 'Cliente', 'Hearly');
   await selectViaSearchSelect(page, 'Producto', 'Arroz');
 

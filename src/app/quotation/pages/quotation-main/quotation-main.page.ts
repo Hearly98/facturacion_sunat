@@ -362,10 +362,35 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
     });
   }
 
+  // La cotización necesita saber a quién y desde dónde se emite antes de guardarse — sin esto
+  // no hay forma de saber a quién pertenece. Se muestran como modal (no toast) porque puede ser
+  // más de un campo a la vez y el toast desaparece antes de que el usuario los lea todos.
+  private readonly requiredFieldLabels: Record<string, string> = {
+    suc_id: 'Sucursal',
+    cli_id: 'Cliente',
+    mon_id: 'Moneda',
+    usu_id: 'Vendedor',
+    tipo_pago_id: 'Tipo de Pago',
+  };
+
   save() {
-    if (this.form.invalid || this.detailsArray.length === 0) {
-      this.#globalNotification.openToastAlert('Validación', 'Complete todos los campos requeridos');
+    const missing = Object.entries(this.requiredFieldLabels)
+      .filter(([controlName]) => this.form.get(controlName)?.invalid)
+      .map(([, label]) => label);
+
+    if (this.detailsArray.length === 0) {
+      missing.push('Producto (agregar al menos uno)');
+    }
+
+    if (missing.length > 0) {
       this.form.markAllAsTouched();
+      this.#confirmService.open({
+        title: 'Faltan datos obligatorios',
+        message: `Completá lo siguiente antes de guardar:<br>${missing.map((label) => `• ${label}`).join('<br>')}`,
+        color: 'danger',
+        confirmText: 'Entendido',
+        cancelText: '',
+      });
       return;
     }
 
@@ -379,6 +404,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
       idUsuario: raw.usu_id!,
       idCliente: raw.cli_id,
       idMoneda: raw.mon_id,
+      idTipoPago: raw.tipo_pago_id,
       idSerie: raw.serie_id,
       fechaEmision: raw.fecha_emision,
       fechaValidoHasta: raw.fecha_valido_hasta,
