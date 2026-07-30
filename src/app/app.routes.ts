@@ -159,6 +159,16 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'compras/:id/editar',
+        loadComponent: () =>
+          import('./purchase/pages/purchase-edit/purchase-edit.page').then(
+            (m) => m.PurchaseEditPage,
+          ),
+        data: {
+          title: 'Editar Compra',
+        },
+      },
+      {
         path: 'ventas',
         loadComponent: () =>
           import('./sales/pages/sales-main/sales-main.page').then((m) => m.SalesMainPage),

@@ -1,0 +1,291 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-body>
+        <c-row class="align-items-center mb-3">
+          <c-col md="8">
+            <h4>
+              Compra {{ purchase()?.number }}
+              @if (!isEditable) {
+                <span class="badge bg-secondary ms-2">{{ purchase()?.stateName }}</span>
+              }
+            </h4>
+          </c-col>
+          <c-col md="4" class="text-end">
+            <button type="button" cButton color="secondary" (click)="goBack()">Volver al Historial</button>
+          </c-col>
+        </c-row>
+
+        @if (isLoading()) {
+          <div class="text-center py-5">
+            <c-spinner></c-spinner>
+          </div>
+        } @else {
+          @if (!isEditable) {
+            <div class="alert alert-warning">
+              Esta compra no se puede editar en su estado actual ({{ purchase()?.stateName }}).
+              @if (purchase()?.stateCode === '04') {
+                Ya tiene pagos registrados — solo se pueden agregar nuevos pagos hasta completar el saldo.
+              }
+            </div>
+          }
+
+          <c-container [formGroup]="form">
+            @for (item of structure(); track $index) {
+              <c-card class="mb-4">
+                <c-card-body>
+                  <c-row>
+                    <c-col [md]="12">
+                      <h5>{{ item.title }}</h5>
+                    </c-col>
+                  </c-row>
+                  <c-row>
+                    @for (control of item.controls; track $index) {
+                      <c-col [md]="control.col">
+                        <label [for]="control.formControlName!">{{ control.label }}</label>
+                        @switch (control.type) {
+                          @case ('search-select') {
+                            <app-search-select
+                              [placeholder]="control.label"
+                              [bindLabel]="control.bindLabel || ''"
+                              [bindValue]="control.bindValue || ''"
+                              [serviceFn]="control.serviceFnName ? serviceMap[control.serviceFnName] : undefined"
+                              [disabled]="!isEditable"
+                              [initialValue]="control.formControlName === 'prov_id' ? supplierLabel() : ''"
+                              (itemSelected)="onSelectItem(control.formControlName!, $event)"
+                            ></app-search-select>
+                          }
+                          @case ('select') {
+                            <select
+                              class="form-control form-select"
+                              [formControlName]="control.formControlName!"
+                            >
+                              <option [ngValue]="null">Seleccione</option>
+                              @for (option of control.options; track $index) {
+                                <option [ngValue]="option.value">{{ option.label }}</option>
+                              }
+                            </select>
+                          }
+                          @default {
+                            <input
+                              [formControlName]="control.formControlName!"
+                              [type]="control.type"
+                              class="form-control"
+                            />
+                          }
+                        }
+                      </c-col>
+                    }
+                  </c-row>
+                </c-card-body>
+              </c-card>
+            }
+
+            @if (isEditable) {
+              <c-card class="mb-4">
+                <c-card-body>
+                  <c-row>
+                    <c-col [md]="12">
+                      <h5>Agregar Producto</h5>
+                    </c-col>
+                  </c-row>
+                  <c-row>
+                    <c-col [md]="4">
+                      <label for="almacen_id">Almacén</label>
+                      <select class="form-control form-select" formControlName="almacen_id">
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of almacenOptions(); track $index) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </c-col>
+                    <c-col [md]="8">
+                      <label for="prod_id">Producto</label>
+                      <app-search-select
+                        placeholder="Producto"
+                        bindLabel="label"
+                        bindValue="prod_id"
+                        [serviceFn]="serviceMap['productSearch']"
+                        (itemSelected)="onSelectItem('prod_id', $event)"
+                      ></app-search-select>
+                    </c-col>
+                  </c-row>
+                  <c-row class="mt-3">
+                    <c-col [md]="4">
+                      <button
+                        type="button"
+                        cButton
+                        color="primary"
+                        (click)="addProductToDetail()"
+                        [disabled]="!form.value.prod_id || !selectedProduct"
+                      >
+                        <svg cIcon name="cilPlus" class="me-2"></svg>
+                        Agregar Producto
+                      </button>
+                    </c-col>
+                  </c-row>
+                </c-card-body>
+              </c-card>
+            }
+
+            <app-purchase-detail-table
+              [detailsArray]="detailsArray"
+              [showActions]="isEditable"
+              (detailRemoved)="onDetailRemoved($event)"
+            ></app-purchase-detail-table>
+
+            @if (isEditable) {
+              <c-card class="mb-4">
+                <c-card-body>
+                  <c-row class="align-items-end">
+                    <c-col md="8" sm="12" class="mb-2">
+                      <label for="compr_coment">Observaciones</label>
+                      <textarea class="form-control" formControlName="compr_coment" rows="3"></textarea>
+                    </c-col>
+                    <c-col md="4" sm="12" class="gap-2 text-end">
+                      <button
+                        type="button"
+                        cButton
+                        color="success"
+                        (click)="save()"
+                        [disabled]="isSaving() || form.invalid || detailsArray.length === 0"
+                      >
+                        <svg cIcon name="cilSave" class="me-2"></svg>
+                        Guardar Cambios
+                      </button>
+                    </c-col>
+                  </c-row>
+                </c-card-body>
+              </c-card>
+            }
+          </c-container>
+
+          <c-card class="mb-4">
+            <c-card-body>
+              <c-row class="mb-3">
+                <c-col md="8">
+                  <h5>Pagos</h5>
+                </c-col>
+                <c-col md="4" class="text-end">
+                  <strong>Pendiente: </strong
+                  ><span data-testid="monto-pendiente">{{ purchase()?.amountPending }}</span>
+                </c-col>
+              </c-row>
+
+              <table cTable [responsive]="true" striped="true" class="mb-4">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                    <th>Método</th>
+                    <th>N° Operación</th>
+                    <th>Banco Origen</th>
+                    <th>Banco Destino</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @if (payments().length > 0) {
+                    @for (payment of payments(); track payment.id) {
+                      <tr>
+                        <td>{{ payment.paymentDate | date: 'dd/MM/yyyy' }}</td>
+                        <td>{{ payment.amount | currency: 'S/. ' }}</td>
+                        <td>{{ payment.method }}</td>
+                        <td>{{ payment.externalReference || '-' }}</td>
+                        <td>{{ payment.destinationBank ? (payment.destinationBank + ' - ' + payment.destinationAccount) : '-' }}</td>
+                        <td>{{ purchase()?.supplier?.bank }} - {{ purchase()?.supplier?.bankAccount }}</td>
+                        <td>
+                          <span class="badge" [class.bg-success]="payment.paymentState === 'REGISTRADO'" [class.bg-danger]="payment.paymentState === 'ANULADO'">
+                            {{ payment.paymentState }}
+                          </span>
+                        </td>
+                      </tr>
+                    }
+                  } @else {
+                    <tr>
+                      <td colspan="7">Todavía no hay pagos registrados</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+
+              @if (canRegisterPayment) {
+                <h6>Registrar Nuevo Pago</h6>
+                <div class="alert alert-info py-2">
+                  <strong>Banco destino (proveedor):</strong>
+                  {{ purchase()?.supplier?.bank || 'Sin banco registrado' }}
+                  @if (purchase()?.supplier?.bankAccount) {
+                    — Cuenta {{ purchase()?.supplier?.bankAccount }}
+                  }
+                </div>
+                <form [formGroup]="paymentForm">
+                  <c-row>
+                    <c-col md="3">
+                      <label for="monto">Monto</label>
+                      <input
+                        id="monto"
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        formControlName="monto"
+                        [class.is-invalid]="paymentForm.get('monto')?.invalid && paymentForm.get('monto')?.touched"
+                      />
+                    </c-col>
+                    <c-col md="3">
+                      <label for="metodo">Método</label>
+                      <select id="metodo" class="form-control form-select" formControlName="metodo">
+                        @for (option of paymentMethodOptions; track option.value) {
+                          <option [value]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
+                    </c-col>
+                    @if (paymentForm.get('metodo')?.value !== 'EFECTIVO') {
+                      <c-col md="3">
+                        <label for="banco_id">Banco Origen (propio)</label>
+                        <select
+                          id="banco_id"
+                          class="form-control form-select"
+                          formControlName="banco_id"
+                          [class.is-invalid]="paymentForm.get('banco_id')?.invalid && paymentForm.get('banco_id')?.touched"
+                        >
+                          <option [ngValue]="null">Seleccione</option>
+                          @for (option of bancoOptions(); track $index) {
+                            <option [ngValue]="option.value">{{ option.label }}</option>
+                          }
+                        </select>
+                      </c-col>
+                    }
+                    <c-col md="3">
+                      <label for="referencia_externa">N° Operación</label>
+                      <input id="referencia_externa" type="text" class="form-control" formControlName="referencia_externa" />
+                    </c-col>
+                  </c-row>
+                  <c-row class="mt-2">
+                    <c-col md="9">
+                      <label for="observacion">Observación</label>
+                      <input id="observacion" type="text" class="form-control" formControlName="observacion" />
+                    </c-col>
+                    <c-col md="3" class="d-flex align-items-end">
+                      <button
+                        type="button"
+                        cButton
+                        color="success"
+                        class="w-100"
+                        (click)="registerPayment()"
+                        [disabled]="isRegisteringPayment() || paymentForm.invalid"
+                      >
+                        Registrar Pago
+                      </button>
+                    </c-col>
+                  </c-row>
+                </form>
+              } @else {
+                <p class="text-muted">Esta compra no admite más pagos en su estado actual.</p>
+              }
+            </c-card-body>
+          </c-card>
+        }
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
