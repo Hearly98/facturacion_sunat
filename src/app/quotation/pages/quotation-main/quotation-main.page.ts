@@ -107,6 +107,33 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
   availableStates: { codigo: string; nombre: string; color: string }[] = [];
 
+  /**
+   * Pares [campo, checkbox "Mostrar en PDF"]. Antes el checkbox arrancaba destildado sin ningún
+   * aviso — un dato cargado podía no llegar nunca al PDF. Ahora se auto-tilda apenas el campo
+   * asociado tiene un valor (el usuario igual puede destildarlo a mano después).
+   */
+  private readonly showFieldPairs: [string, string][] = [
+    ['mon_id', 'mostrar_moneda'],
+    ['tipo_pago_id', 'mostrar_tipo_pago'],
+    ['fecha_valido_hasta', 'mostrar_fecha_valido_hasta'],
+    ['forma_pago', 'mostrar_forma_pago'],
+    ['plazo_entrega', 'mostrar_plazo_entrega'],
+    ['lugar_entrega', 'mostrar_lugar_entrega'],
+    ['garantia', 'mostrar_garantia'],
+    ['consideraciones', 'mostrar_consideraciones'],
+    ['servicio_complementario', 'mostrar_servicio_complementario'],
+  ];
+
+  private wireShowFieldAutoCheck() {
+    for (const [fieldName, showName] of this.showFieldPairs) {
+      this.form.get(fieldName)?.valueChanges.subscribe((value) => {
+        if (value !== null && value !== '' && value !== undefined) {
+          this.form.get(showName)?.setValue(true, { emitEvent: false });
+        }
+      });
+    }
+  }
+
   readonly #formBuilder = inject(FormBuilder);
   readonly #paymentMethodService = inject(PaymentMethodService);
   readonly #quotationService = inject(QuotationService);
@@ -146,7 +173,12 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
     }
 
     if (this.quotaId()) {
+      // Se conecta recién dentro de loadQuotation(), después de aplicar los valores guardados —
+      // si se conectara acá, el propio patchValue de la carga dispararía el auto-check y
+      // pisaría el "Mostrar en PDF" real que el usuario ya había guardado para cada campo.
       this.loadQuotation(this.quotaId()!);
+    } else {
+      this.wireShowFieldAutoCheck();
     }
   }
 
@@ -256,6 +288,10 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
               ),
             );
           });
+
+          // Conectado recién acá: reacciona a ediciones reales del usuario de ahora en más, no
+          // al patchValue de arriba que acaba de aplicar los valores ya guardados.
+          this.wireShowFieldAutoCheck();
         }
       },
       error: () => {
@@ -459,6 +495,31 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
     });
   }
 
+  onCancel() {
+    // "Anular" en Historial sí pide confirmación (#confirmService) — "Cancelar" acá borraba los
+    // ~32 controles del form de un click, sin ninguna. Solo molesta con el modal si hay algo que
+    // realmente se perdería.
+    const hasChanges = this.form.dirty || this.detailsArray.length > 0;
+    if (!hasChanges) {
+      this.resetForm();
+      return;
+    }
+
+    this.#confirmService
+      .open({
+        title: 'Descartar cotización',
+        message: 'Vas a perder los datos cargados. ¿Continuar?',
+        color: 'warning',
+        confirmText: 'Sí, descartar',
+        cancelText: 'Seguir editando',
+      })
+      .then((confirmed) => {
+        if (confirmed) {
+          this.resetForm();
+        }
+      });
+  }
+
   resetForm() {
     this.form.reset();
     this.detailsArray.clear();
@@ -466,6 +527,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
     this.selectedProduct = null;
     this.searchSelectLabels = {};
     this.form = this.#formBuilder.group(buildQuotationForm());
+    this.wireShowFieldAutoCheck();
   }
 
   toggleEstado(codigo: string) {
@@ -525,9 +587,12 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
   onClean() {
     if (this.formList) {
       this.formList.reset();
+      // Mismo default que buildFilterForm() — "Limpiar" debe volver al estado inicial de la
+      // página, no saltar a un filtro distinto (era ['02'] Facturado, sin relación con el
+      // default real ['01'] Pendiente).
       this.formList.patchValue({
         order: 'desc',
-        estados: ['02'],
+        estados: ['01'],
         suc_id: null,
       });
     }

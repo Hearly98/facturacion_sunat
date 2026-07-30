@@ -129,7 +129,7 @@
                           }
                           @if (control.showControlName) {
                             <div class="mt-1 d-flex gap-2 align-items-center">
-                              <span class="text-muted small">¿Mostrar?</span>
+                              <span class="text-muted small" title="Controla si este dato aparece en el PDF de la cotización">Mostrar en PDF</span>
                               <input
                                 class="form-check-input mt-0"
                                 type="checkbox"
@@ -172,7 +172,7 @@
                     type="button"
                     cButton
                     color="secondary"
-                    (click)="resetForm()"
+                    (click)="onCancel()"
                   >
                     Cancelar
                   </button>
