@@ -1,5 +1,8 @@
 /**
- * Do not edit directly, this file was auto-generated.
+ * Originally "auto-generated", but no generator/source exists in this repo and these values were
+ * never actually wired into CoreUI's theme (warning/success/info/primary here didn't match what
+ * rendered — see src/styles.scss's @use ... with (...) for the real override). Hand-edited to
+ * document the actual palette; keep it in sync with styles.scss if you touch either.
  */
 
 :root {
@@ -7,14 +10,14 @@
   --border-radius-md: 0.375rem;
   --border-radius-lg: 0.5rem;
   --border-width: 1px;
-  --color-primary: #1d65a8;
+  --color-primary: #5856d6;
   --color-primary-dark: #265182;
   --color-secondary: #6b7785;
-  --color-info: #6793a1;
-  --color-success: #229741;
+  --color-info: #16609e;
+  --color-success: #1c6b34;
   --color-success-dark: #9db458;
-  --color-warning: #f9b115;
-  --color-danger: #e55353;
+  --color-warning: #8a5a12;
+  --color-danger: #a63a3a;
   --color-gray-100: #f6f7f8;
   --color-gray-200: #e5e9ec;
   --color-gray-300: #d4dce0;
@@ -33,11 +36,11 @@
   --color-border: #d4dce0;
   --color-card: #ffffff;
   --color-card-foreground: #1a1a1a;
-  --coreui-theme-primary: #1d65a8;
-  --coreui-theme-success: #229741;
-  --coreui-theme-info: #6793a1;
-  --coreui-theme-warning: #f9b115;
-  --coreui-theme-danger: #e55353;
+  --coreui-theme-primary: #5856d6;
+  --coreui-theme-success: #1c6b34;
+  --coreui-theme-info: #16609e;
+  --coreui-theme-warning: #8a5a12;
+  --coreui-theme-danger: #a63a3a;
   --coreui-theme-light: #f6f7f8;
   --coreui-theme-dark: #1a1a1a;
   --coreui-text-body: #1a1a1a;

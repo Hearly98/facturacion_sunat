@@ -75,6 +75,22 @@ import { AuthService } from 'src/app/core/auth/services/auth.service';
     CurrencyPipe,
   ],
   templateUrl: './quotation-main.page.html',
+  styles: `
+    /* No hay una variante Bootstrap/CoreUI para este color — Editar ya usa "primary" (el color
+       real de la app, violeta) y Clonar necesita ser distinguible de los otros 3 botones de la
+       fila (Imprimir=secondary, Editar=primary, Anular=danger). */
+    .btn-clone {
+      background-color: #12707e;
+      border-color: #12707e;
+      color: #fff;
+    }
+    .btn-clone:hover,
+    .btn-clone:focus {
+      background-color: #0d5a66;
+      border-color: #0d5a66;
+      color: #fff;
+    }
+  `,
 })
 export class QuotationMainPage extends BaseComponent implements OnInit {
   public activeTab = signal<'create' | 'history'>('create');
