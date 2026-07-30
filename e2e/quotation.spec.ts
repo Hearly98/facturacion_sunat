@@ -125,6 +125,10 @@ test('Cotización: crear, listar, editar, clonar, anular e imprimir', async ({ p
   });
   expect(anularBody.isValid, JSON.stringify(anularBody)).toBe(true);
 
+  // The estados checkbox filter defaults to Pendiente only (see build-filter-form.ts) — now that
+  // search() actually filters (fixed tonight, it used to be a no-op), the just-anulada row won't
+  // show up unless Anulado is also checked. That's the correct behavior, not a bug: check it.
+  await page.locator('#state_03').check();
   await page.locator('[formcontrolname="nombre"]').fill('Hearly');
   await page.getByRole('button', { name: 'Buscar', exact: true }).click();
   const anuladaRow = page.locator('table tbody tr', { hasText: numeroCompleto });
