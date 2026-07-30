@@ -1,7 +1,7 @@
 import { Component, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   ButtonDirective,
   CardBodyComponent,
@@ -43,6 +43,7 @@ import { AlmacenService } from 'src/app/almacen/core/services/almacen.service';
 import { DateRangePickerComponent } from '@shared/components/date-range-picker/date-range-picker.component';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { forkJoin } from 'rxjs';
+import { PurchaseModel } from '../../core/models/purchase.model';
 
 @Component({
   selector: 'app-purchase-main',
@@ -74,14 +75,13 @@ import { forkJoin } from 'rxjs';
 export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   public activeTab = signal<'create' | 'history'>('create');
   public isLoadingList = signal(false);
-  public purchases: any[] = [];
+  public purchases: PurchaseModel[] = [];
   public totalList = 0;
   public pageList = new PageParamsModel(1, 10);
 
   public isLoadingForm = signal(false);
   public form!: FormGroup;
   public selectedProduct: any = null;
-  public purchaseId = signal<number | null>(null);
   public sucursalOptions = signal<SelectOption[]>([]);
   public almacenOptions = signal<SelectOption[]>([]);
   public almacenError = signal(false);
@@ -91,9 +91,10 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   public title = signal<string>('Historial de Compras');
 
   availableStates = [
-    { id: 2, nombre: 'Pagados', color: 'success' },
     { id: 1, nombre: 'Pendientes', color: 'warning' },
+    { id: 2, nombre: 'Pagados', color: 'success' },
     { id: 3, nombre: 'Anulados', color: 'danger' },
+    { id: 4, nombre: 'En Pago', color: 'info' },
   ];
 
   readonly #formBuilder = inject(FormBuilder);
@@ -107,8 +108,9 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   readonly #almacenService = inject(AlmacenService);
   readonly #globalNotification = inject(GlobalNotification);
   readonly #confirmService = inject(ConfirmService);
-  readonly #route = inject(ActivatedRoute);
   readonly #authService = inject(AuthService);
+  readonly #router = inject(Router);
+  readonly #activatedRoute = inject(ActivatedRoute);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.PURCHASE, viewContainerRef);
@@ -117,12 +119,12 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   ngOnInit(): void {
     this.loadSelectCombos();
     this.loadForm();
-    const id = this.#route.snapshot.params['id'];
-    if (id) {
-      this.purchaseId.set(Number(id));
-      this.activeTab.set('create');
-    }
     this.loadListData();
+    // Al volver de la vista de edición de Compra (ruta independiente), aterrizar en Historial
+    // en vez del tab "Nueva Compra" por defecto.
+    if (this.#activatedRoute.snapshot.queryParams['tab'] === 'history') {
+      this.activeTab.set('history');
+    }
   }
 
   loadForm() {
@@ -132,9 +134,6 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
         this.loadAlmacenesBySucursal(value);
       }
     });
-    if (this.purchaseId()) {
-      // TODO: Load existing purchase for edit
-    }
   }
 
   loadListData() {
@@ -306,11 +305,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
 
     this.isLoadingForm.set(true);
 
-    const request = this.purchaseId()
-      ? this.#purchaseService.update({ ...purchaseData, id: this.purchaseId() })
-      : this.#purchaseService.create(purchaseData);
-
-    request.subscribe({
+    this.#purchaseService.create(purchaseData).subscribe({
       next: (response) => {
         this.isLoadingForm.set(false);
         if (response.isValid) {
@@ -332,7 +327,6 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   resetForm() {
     this.form.reset();
     this.detailsArray.clear();
-    this.purchaseId.set(null);
     this.selectedProduct = null;
     this.selectedProductStock.set(null);
   }
@@ -454,8 +448,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   }
 
   onEdit(id: number) {
-    this.activeTab.set('create');
-    this.purchaseId.set(id);
+    this.#router.navigate(['/compras', id, 'editar']);
   }
 
   onDateRangeChange(range: { start: Date | null; end: Date | null }) {

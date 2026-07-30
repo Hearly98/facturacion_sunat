@@ -298,7 +298,6 @@
                       <tr>
                         <th>Acciones</th>
                         <th>Nro.</th>
-                        <th>Tipo</th>
                         <th>Fecha Emisión</th>
                         <th>Proveedor</th>
                         <th>Precio Total</th>
@@ -307,7 +306,7 @@
                     </thead>
                     <tbody>
                       @if (purchases.length > 0) {
-                        @for (purchase of purchases; track $index) {
+                        @for (purchase of purchases; track purchase.id) {
                           <tr>
                             <td>
                               <button
@@ -315,12 +314,12 @@
                                 class="me-2"
                                 cButton
                                 color="secondary"
-                                (click)="onPrint(purchase.compr_id, purchase.numero)"
+                                (click)="onPrint(purchase.id, purchase.number ?? '')"
                               >
                                 <svg cIcon name="cilPrint"></svg>
                               </button>
                               <button
-                                (click)="onEdit(purchase.compr_id)"
+                                (click)="onEdit(purchase.id)"
                                 size="sm"
                                 class="me-2"
                                 cButton
@@ -328,35 +327,37 @@
                               >
                                 <svg cIcon name="cilPencil"></svg>
                               </button>
-                              <button
-                                (click)="onDelete(purchase.compr_id)"
-                                size="sm"
-                                cButton
-                                color="danger"
-                              >
-                                <svg cIcon name="cilTrash"></svg>
-                              </button>
+                              @if (purchase.stateCode === '01') {
+                                <button
+                                  (click)="onDelete(purchase.id)"
+                                  size="sm"
+                                  cButton
+                                  color="danger"
+                                >
+                                  <svg cIcon name="cilTrash"></svg>
+                                </button>
+                              }
                             </td>
-                            <td>{{ purchase.numero }}</td>
-                            <td>{{ purchase.documento?.doc_nom }}</td>
-                            <td>{{ purchase.fechaEmision | date: 'dd/MM/yyyy' }}</td>
-                            <td>{{ purchase.proveedor?.prov_nom }}</td>
-                            <td>{{ purchase.compr_total | currency: 'S/. ' }}</td>
+                            <td>{{ purchase.number }}</td>
+                            <td>{{ purchase.issueDate | date: 'dd/MM/yyyy' }}</td>
+                            <td>{{ purchase.supplier?.name }}</td>
+                            <td>{{ purchase.total | currency: 'S/. ' }}</td>
                             <td>
                               <span
                                 class="badge"
-                                [class.bg-warning]="purchase.estado?.estado_cod === 'PEND'"
-                                [class.bg-success]="purchase.estado?.estado_cod === 'COMP'"
-                                [class.bg-danger]="purchase.estado?.estado_cod === 'eliminado'"
+                                [class.bg-warning]="purchase.stateCode === '01'"
+                                [class.bg-success]="purchase.stateCode === '02'"
+                                [class.bg-danger]="purchase.stateCode === '03'"
+                                [class.bg-info]="purchase.stateCode === '04'"
                               >
-                                {{ purchase.estado?.estado_nom }}
+                                {{ purchase.stateName }}
                               </span>
                             </td>
                           </tr>
                         }
                       } @else {
                         <tr>
-                          <td colspan="7">No se encontraron resultados</td>
+                          <td colspan="6">No se encontraron resultados</td>
                         </tr>
                       }
                     </tbody>
