@@ -161,9 +161,9 @@ export class QuotationDetailTableComponent {
   get subtotal(): number {
     const total = this.detailsArray.controls.reduce((sum, control) => {
       const cantidad = control.get('cantidad')?.value || 0;
-      const precioUnitario = control.get('precio_unitario')?.value || 0; // CON IGV
+      const precioUnitario = control.get('precio_unitario')?.value || 0;
       const descuento = control.get('dscto')?.value || 0;
-      
+
       const ventaLinea = (precioUnitario * cantidad) - descuento;
       return sum + ventaLinea;
     }, 0);
@@ -171,16 +171,8 @@ export class QuotationDetailTableComponent {
   }
 
   get baseIgv(): number {
-    const base = this.detailsArray.controls.reduce((sum, control) => {
-      const cantidad = control.get('cantidad')?.value || 0;
-      const precioUnitario = control.get('precio_unitario')?.value || 0; // CON IGV
-      const descuento = control.get('dscto')?.value || 0;
-      
-      const ventaLinea = (precioUnitario * cantidad) - descuento;
-      const baseLinea = ventaLinea / 1.18;
-      return sum + baseLinea;
-    }, 0);
-    return Math.round(base * 100) / 100;
+    if (!this.igvRequerido) return 0;
+    return this.subtotal;
   }
 
   get totalDescuento(): number {
@@ -192,11 +184,14 @@ export class QuotationDetailTableComponent {
 
   get igv(): number {
     if (!this.igvRequerido) return 0;
-    return Math.round((this.subtotal - this.baseIgv) * 100) / 100;
+    return Math.round(this.baseIgv * 0.18 * 100) / 100;
   }
 
   get grandTotal(): number {
-    return Math.round(this.subtotal * 100) / 100;
+    if (!this.igvRequerido) {
+      return this.subtotal;
+    }
+    return Math.round((this.baseIgv + this.igv) * 100) / 100;
   }
 
   calculateTotal(index: number): number {
