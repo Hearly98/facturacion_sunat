@@ -23,6 +23,8 @@ import { buildOrganizationForm, organizationStructure } from '../helpers';
 import { BaseComponent } from '../../shared/base/base.component';
 import { MODULES } from '../../core/config/permissions/modules';
 import { OrganizationService } from '../core/services/organization.service';
+import { OrganizationMapper } from '../core/mappers';
+import { CreateOrganization, UpdateOrganization } from '../core/models';
 import { GlobalNotification } from '../../shared/alerts/global-notification/global-notification';
 import { ImageCompressionService } from '../../shared/services/image-compression.service';
 
@@ -157,6 +159,7 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
   imagePreview = signal<string | null>(null);
   isCompressing = signal<boolean>(false);
   #organizationService = inject(OrganizationService);
+  #organizationMapper = inject(OrganizationMapper);
   #globalNotification = inject(GlobalNotification);
   #imageCompressionService = inject(ImageCompressionService);
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
@@ -297,13 +300,12 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
     this.form.patchValue({ logo: null });
   }
 
-  private buildFormData(): FormData {
+  private buildFormData(dto: Record<string, unknown>): FormData {
     const formData = new FormData();
-    const formValues = this.form.value as any;
 
-    Object.keys(formValues).forEach((key) => {
-      if (key !== 'logo' && formValues[key] !== null && formValues[key] !== undefined) {
-        formData.append(key, formValues[key]);
+    Object.entries(dto).forEach(([key, value]) => {
+      if (key !== 'logo' && value !== null && value !== undefined) {
+        formData.append(key, value as string);
       }
     });
 
@@ -327,7 +329,8 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
   }
 
   create() {
-    const body = this.buildFormData();
+    const dto = this.#organizationMapper.toApiCreate(this.form.value as CreateOrganization);
+    const body = this.buildFormData(dto);
     const subscription = this.#organizationService.create(body).subscribe({
       next: (response) => {
         if (response.isValid) {
@@ -346,7 +349,8 @@ export class OrganizationNewEditModalComponent extends BaseComponent {
   }
 
   update() {
-    const body = this.buildFormData();
+    const dto = this.#organizationMapper.toApiUpdate(this.form.value as UpdateOrganization);
+    const body = this.buildFormData(dto);
     // For Laravel/PHP, PUT requests with files sometimes need _method: 'PUT' sent via POST
     // but since we updated BaseService to use putRequestForm, let's try that first.
     // However, Laravel usually expects multipart/form-data only on POST.

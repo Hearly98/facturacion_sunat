@@ -1,13 +1,13 @@
 export type OrganizationDto = {
-  com_id: number;
-  emp_id: number;
-  emp_nom: string;
-  emp_ruc: string;
-  emp_correo: string;
-  emp_direcc: string;
-  emp_telf: string;
-  emp_pag: string;
-  emp_logo: string;
-  logo_url: string;
+  id: number;
+  compania_id: number | null;
+  nombre: string;
+  ruc: string;
+  email: string | null;
+  direccion: string | null;
+  telefono: string | null;
+  pagina_web: string | null;
+  logo: string | null;
+  logo_url: string | null;
   est: boolean;
 };

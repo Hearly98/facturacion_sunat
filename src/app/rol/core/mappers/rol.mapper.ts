@@ -10,7 +10,10 @@ export class RolMapper {
     const model = new RolModel();
     model.id = dto.id;
     model.name = dto.nombre;
-    model.active = dto.est;
+    // RolController::search() devuelve el modelo Eloquent crudo (columna real `est`),
+    // pero index()/show()/store()/update() devuelven la Domain Entity (que emite `activo`).
+    // Mismo recurso, dos formas distintas según el endpoint — hay que aceptar ambas.
+    model.active = dto.activo ?? dto.est;
     return model;
   }
 

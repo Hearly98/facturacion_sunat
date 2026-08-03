@@ -1,14 +1,10 @@
-export type CreateOrganizationDto = Omit<
-  {
-    com_id: number;
-    emp_nom: string;
-    emp_ruc: string;
-    emp_correo: string;
-    emp_direcc: string;
-    emp_telf: string;
-    emp_pag: string;
-    emp_logo: string;
-    est: boolean;
-  },
-  'com_id'
->;
+export type CreateOrganizationDto = {
+  nombre: string;
+  ruc: string;
+  email?: string | null;
+  direccion?: string | null;
+  telefono?: string | null;
+  pagina_web?: string | null;
+  logo?: string | null;
+  est?: boolean;
+};

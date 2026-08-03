@@ -12,9 +12,11 @@ import { BaseComponent } from '../../shared/base/base.component';
 import { MODULES } from '../../core/config/permissions/modules';
 import { buildOrganizationForm, organizationStructure } from '../helpers';
 import { OrganizationService } from '../core/services/organization.service';
+import { OrganizationMapper } from '../core/mappers';
 import { GlobalNotification } from '../../shared/alerts/global-notification/global-notification';
 import { ImageCompressionService } from '../../shared/services/image-compression.service';
 import { GetOrganization } from '../core/models/get-organization.model';
+import { UpdateOrganization } from '../core/models/update-organization.model';
 import { ButtonDirective } from '@coreui/angular';
 
 @Component({
@@ -145,6 +147,7 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   isCompressing = signal<boolean>(false);
   isLoading = signal<boolean>(true);
   #organizationService = inject(OrganizationService);
+  #organizationMapper = inject(OrganizationMapper);
   #globalNotification = inject(GlobalNotification);
   #imageCompressionService = inject(ImageCompressionService);
   originalData: GetOrganization | null = null;
@@ -278,13 +281,12 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
     this.form.patchValue({ logo: null });
   }
 
-  private buildFormData(): FormData {
+  private buildFormData(dto: Record<string, unknown>): FormData {
     const formData = new FormData();
-    const formValues = this.form.value;
 
-    Object.keys(formValues).forEach((key) => {
-      if (key !== 'logo' && formValues[key] !== null && formValues[key] !== undefined) {
-        formData.append(key, formValues[key]);
+    Object.entries(dto).forEach(([key, value]) => {
+      if (key !== 'logo' && value !== null && value !== undefined) {
+        formData.append(key, value as string);
       }
     });
 
@@ -304,7 +306,8 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   }
 
   update() {
-    const body = this.buildFormData();
+    const dto = this.#organizationMapper.toApiUpdate(this.form.value as UpdateOrganization);
+    const body = this.buildFormData(dto);
     body.append('_method', 'PUT');
 
     const subscription = this.#organizationService.create(body).subscribe({

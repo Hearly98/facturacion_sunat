@@ -12,17 +12,17 @@ import { Organization, CreateOrganization, UpdateOrganization, GetOrganization }
 export class OrganizationMapper {
   fromApi(dto: OrganizationDto): GetOrganization {
     return {
-      id: dto.emp_id,
-      name: dto.emp_nom,
-      ruc: dto.emp_ruc,
-      email: dto.emp_correo,
-      address: dto.emp_direcc,
-      phone: dto.emp_telf,
-      website: dto.emp_pag,
-      logo: dto.emp_logo,
+      id: dto.id,
+      name: dto.nombre,
+      ruc: dto.ruc,
+      email: dto.email,
+      address: dto.direccion,
+      phone: dto.telefono,
+      website: dto.pagina_web,
+      logo: dto.logo,
       status: dto.est,
       logoUrl: dto.logo_url,
-    };
+    } as GetOrganization;
   }
 
   toApi(model: CreateOrganization | UpdateOrganization): CreateOrganizationDto | UpdateOrganizationDto {
@@ -34,28 +34,27 @@ export class OrganizationMapper {
 
   toApiCreate(model: CreateOrganization): CreateOrganizationDto {
     return {
-      emp_nom: model.name,
-      emp_ruc: model.ruc,
-      emp_correo: model.email,
-      emp_direcc: model.address,
-      emp_telf: model.phone,
-      emp_pag: model.website,
-      emp_logo: model.logo,
+      nombre: model.name,
+      ruc: model.ruc,
+      email: model.email,
+      direccion: model.address,
+      telefono: model.phone,
+      pagina_web: model.website,
+      logo: model.logo,
       est: model.status,
     };
   }
 
   toApiUpdate(model: UpdateOrganization): UpdateOrganizationDto {
     return {
-      emp_id: model.id,
-      com_id: 0,
-      emp_nom: model.name,
-      emp_ruc: model.ruc,
-      emp_correo: model.email,
-      emp_direcc: model.address,
-      emp_telf: model.phone,
-      emp_pag: model.website,
-      emp_logo: model.logo,
+      id: model.id,
+      nombre: model.name,
+      ruc: model.ruc,
+      email: model.email,
+      direccion: model.address,
+      telefono: model.phone,
+      pagina_web: model.website,
+      logo: model.logo,
       est: model.status,
     };
   }

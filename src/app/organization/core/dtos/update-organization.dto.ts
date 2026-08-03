@@ -1,12 +1,11 @@
 export type UpdateOrganizationDto = {
-  emp_id: number;
-  com_id: number;
-  emp_nom: string;
-  emp_ruc: string;
-  emp_correo: string;
-  emp_direcc: string;
-  emp_telf: string;
-  emp_pag: string;
-  emp_logo: string;
-  est: boolean;
+  id: number;
+  nombre: string;
+  ruc: string;
+  email?: string | null;
+  direccion?: string | null;
+  telefono?: string | null;
+  pagina_web?: string | null;
+  logo?: string | null;
+  est?: boolean;
 };

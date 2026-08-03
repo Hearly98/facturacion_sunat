@@ -369,8 +369,8 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
     this.#almacenService.getAll().subscribe({
       next: (response) => {
         const filteredAlmacenes = response.data
-          .filter((a: any) => a.suc_id === sucId)
-          .map((item: any) => ({ value: item.almacen_id, label: item.name }));
+          .filter((a) => a.sucursalId === sucId)
+          .map((item) => ({ value: item.id, label: item.nombre }));
         this.almacenOptions.set(filteredAlmacenes);
       },
     });

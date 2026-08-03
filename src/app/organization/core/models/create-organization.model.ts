@@ -1,5 +1,3 @@
 import { Organization } from './organization.model';
 
-export type CreateOrganization = Omit<Organization, 'id'> & {
-  comId?: number;
-};
+export type CreateOrganization = Omit<Organization, 'id'>;
