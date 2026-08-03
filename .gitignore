@@ -49,3 +49,6 @@ Thumbs.db
 /test-results
 /playwright-report
 /blob-report
+
+# Claude-generated audit reports (internal, not for the public repo)
+/docs
