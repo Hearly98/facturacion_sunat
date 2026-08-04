@@ -7,6 +7,8 @@ export class ShippingGuideDetailModel {
   peso_unitario: number = 0;
   peso_total: number = 0;
   descripcion: string = '';
+  precio_unitario?: number | null;
+  descuento?: number | null;
   producto?: {
     prod_id: number;
     prod_nom: string;

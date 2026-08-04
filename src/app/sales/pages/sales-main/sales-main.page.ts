@@ -241,6 +241,21 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
         cli_telf: cotizacion.customer.phone,
       });
     }
+
+    this.detailsArray.clear();
+    (cotizacion.details ?? []).forEach((detalle) => {
+      const detailForm = this.#formBuilder.group({
+        prod_id: [detalle.productId],
+        cantidad: [detalle.quantity],
+        prod_nom: [{ value: detalle.productName, disabled: true }],
+        prod_cod_interno: [detalle.productCode],
+        unidad: [detalle.productUnit],
+        precio_unitario: [{ value: detalle.unitPrice, disabled: true }],
+        precio_venta: [{ value: null, disabled: true }],
+        dscto: [detalle.discount ?? 0],
+      });
+      this.detailsArray.push(detailForm as any);
+    });
   }
 
   onSelectGuia(guia: GetShippingGuideModel) {
@@ -250,11 +265,30 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
       this.form.patchValue({ cli_id: guia.cliente.cli_id });
       this.patchCustomer(guia.cliente);
     }
+
+    this.detailsArray.clear();
+    (guia.detalles ?? []).forEach((detalle) => {
+      const detailForm = this.#formBuilder.group({
+        prod_id: [detalle.prod_id],
+        cantidad: [detalle.cantidad],
+        prod_nom: [{ value: detalle.producto?.prod_nom ?? '', disabled: true }],
+        prod_cod_interno: [detalle.producto?.prod_cod_interno ?? ''],
+        unidad: [null],
+        // El precio viene de la Cotización que la Guía tenía vinculada al crearse
+        // (snapshot guardado en guia_remision_detalles); si la Guía no nació de una
+        // Cotización, no hay precio y el vendedor lo completa a mano.
+        precio_unitario: [{ value: detalle.precio_unitario ?? null, disabled: !!detalle.precio_unitario }],
+        precio_venta: [{ value: null, disabled: true }],
+        dscto: [detalle.descuento ?? 0],
+      });
+      this.detailsArray.push(detailForm as any);
+    });
   }
 
   unlinkCotizacion() {
     this.linkedCotizacion.set(null);
     this.form.patchValue({ cot_id: null });
+    this.detailsArray.clear();
     if (!this.linkedGuia()) {
       this.clearClientFields();
     }
@@ -263,6 +297,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   unlinkGuia() {
     this.linkedGuia.set(null);
     this.form.patchValue({ guia_id: null });
+    this.detailsArray.clear();
     if (!this.linkedCotizacion()) {
       this.clearClientFields();
     }

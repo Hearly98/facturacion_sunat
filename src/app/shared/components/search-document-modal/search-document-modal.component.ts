@@ -170,8 +170,16 @@ export class SearchDocumentModalComponent {
     this.close();
   }
 
-  selectGuia(item: ShippingGuideModel) {
-    this.itemSelected.emit(item);
+  selectGuia(item: GetShippingGuideModel) {
+    if (item.guia_id == null) return;
+
+    this.#guiaService.getById(item.guia_id).subscribe({
+      next: (response) => {
+        if (response.isValid) {
+          this.itemSelected.emit(response.data);
+        }
+      },
+    });
     this.close();
   }
 

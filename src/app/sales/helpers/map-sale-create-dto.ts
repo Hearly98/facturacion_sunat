@@ -1,28 +1,27 @@
-import { CreateSaleModel, SaleForm } from '../core/types';
-import { SaleDetailModel } from 'src/app/sale-detail/core/models';
+import { SaleForm } from '../core/types';
 
 export function mapSaleCreateDto(formValue: SaleForm) {
   return {
-    suc_id: formValue.suc_id!,
-    almacen_id: formValue.almacen_id ?? null,
-    doc_id: formValue.doc_id!,
-    emp_id: formValue.emp_id!,
-    cli_id: formValue.cli_id!,
-    mp_cod: formValue.mp_cod!,
-    mon_id: formValue.mon_id!,
-    vendedor_id: formValue.vendedor_id!,
-    fecha_emision: formValue.fecha_emision!,
-    venta_coment: formValue.venta_coment || '',
-    afecta_stock: formValue.afecta_stock ?? true,
-    guia_id: formValue.guia_id ?? null,
-    fecha_vencimiento: formValue.fecha_vencimiento,
-    cot_id: formValue.cot_id ?? null,
+    idSucursal: formValue.suc_id!,
+    idAlmacen: formValue.almacen_id ?? null,
+    idDocumento: formValue.doc_id!,
+    idUsuario: formValue.vendedor_id!,
+    idCliente: formValue.cli_id ?? null,
+    idMoneda: formValue.mon_id ?? null,
+    idSerie: formValue.serie_id ?? null,
+    idMetodoPago: formValue.mp_cod ?? null,
+    idGuia: formValue.guia_id ?? null,
+    idCotizacion: formValue.cot_id ?? null,
+    fechaEmision: formValue.fecha_emision!,
+    afectaStock: formValue.afecta_stock ?? true,
+    descuento: formValue.venta_descuento ?? 0,
+    montoAlCuenta: formValue.monto_acuenta ?? 0,
+    comentarios: formValue.venta_coment || null,
     detalles: (formValue.detalles || []).map((d: any) => ({
-      prod_id: d.prod_id,
-      detv_cant: d.cantidad,
-      prod_pventa: d.precio_unitario ?? d.precio_venta,
-      detv_descuento: d.dscto,
-      detv_total: 0,
-    } as SaleDetailModel)),
+      idProducto: d.prod_id,
+      cantidad: d.cantidad,
+      precioVenta: d.precio_unitario ?? d.precio_venta,
+      descuento: d.dscto ?? 0,
+    })),
   };
 }

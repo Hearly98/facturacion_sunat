@@ -4,4 +4,3 @@ export * from './filter-sort';
 export * from './map-filter-params';
 export * from './map-sale-create-dto';
 export * from './map-sale-update-dto';
-export * from './sale-structure';

@@ -15,5 +15,7 @@ export const buildShippingGuideDetail = (data?: any) => {
     peso_unitario: new FormControl<number>(data?.peso_unitario || 0),
     peso_total: new FormControl<number>(data?.peso_total || 0),
     descripcion: new FormControl<string>(data?.descripcion || '', [Validators.required]),
+    precio_unitario: new FormControl<number | null>(data?.precio_unitario ?? null),
+    descuento: new FormControl<number>(data?.descuento || 0),
   };
 };

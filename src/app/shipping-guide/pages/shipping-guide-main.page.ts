@@ -223,6 +223,11 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
             peso_unitario: detalle.productWeight ?? 0,
             descripcion: detalle.description ?? '',
             und_id: detalle.productUnitId ?? null,
+            // Snapshot del precio de la Cotización: la Guía no muestra precio en su propio
+            // PDF, pero lo lleva consigo para que una Venta que se arme desde esta Guía
+            // pueda leerlo sin un segundo fetch a la Cotización.
+            precio_unitario: detalle.unitPrice ?? null,
+            descuento: detalle.discount ?? 0,
           }),
         );
         this.detailsArray.push(detailForm);
@@ -363,6 +368,8 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
         und_id: v.und_id,
         peso_unitario: v.peso_unitario,
         descripcion: v.descripcion,
+        precio_unitario: v.precio_unitario,
+        descuento: v.descuento,
       })),
     };
 
