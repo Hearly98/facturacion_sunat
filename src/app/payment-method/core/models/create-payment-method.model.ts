@@ -1,3 +1,5 @@
-import { PaymentMethod } from './payment-method.model';
-
-export class CreatePaymentMethodModel extends PaymentMethod {}
+export type CreatePaymentMethod = {
+  code: string;
+  name: string;
+  active: boolean;
+};

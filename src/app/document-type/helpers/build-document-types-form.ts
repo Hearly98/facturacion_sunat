@@ -5,13 +5,11 @@ export const buildDocumentTypeForm = (): {
   [K in keyof DocumentTypeForm]: FormControl<DocumentTypeForm[K]>;
 } => {
   return {
-    tip_id: new FormControl(null),
-    tip_cod: new FormControl(null, Validators.compose([Validators.required])),
-    tip_descr: new FormControl(null),
-    est: new FormControl(true),
-    tip_nom: new FormControl(
+    id: new FormControl(null),
+    name: new FormControl(
       null,
-      Validators.compose([Validators.compose([Validators.required, Validators.minLength(3)])]),
+      Validators.compose([Validators.required, Validators.minLength(3)])
     ),
+    code: new FormControl(null, Validators.compose([Validators.required])),
   };
 };

@@ -1,4 +1,5 @@
 export interface FilterForm {
-    mp_nom: string | null;
-    order: string | null;
+  code: string | null;
+  name: string | null;
+  order: string | null;
 }

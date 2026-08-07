@@ -1,8 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
 // Import styles with default layout.
+// warning/success/danger/info overridden from CoreUI's own defaults: audited for WCAG AA contrast
+// against white badge/button text. $warning (#f9b115) and $info (#3399ff) failed outright
+// (1.85:1 and 2.94:1 — below the 3:1 floor even for large text); $success (#1b9e3e) cleared
+// large-text AA but not the 4.5:1 normal-text minimum; $danger (#e55353) already passed (3.69:1)
+// but was deepened too so the 4 status colors read as one consistent, less saturated set instead
+// of 3 deep tones next to one bright leftover. Same hue family throughout, just deeper/less
+// saturated. $secondary and $primary already passed and stay untouched.
 @use "@coreui/coreui/scss/coreui" as * with (
-  $enable-deprecation-messages: false
+  $enable-deprecation-messages: false,
+  $warning: #8a5a12,
+  $success: #1c6b34,
+  $danger: #a63a3a,
+  $info: #16609e
 );
 
 // Import Chart.js custom tooltips styles

@@ -5,7 +5,7 @@ export const buildAlmacenForm = (): {
   [K in keyof AlmacenForm]: FormControl<AlmacenForm[K] | any>;
 } => {
   return {
-    almacen_id: new FormControl(null),
+    id: new FormControl(null),
     codigo: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(2)]),
@@ -14,8 +14,7 @@ export const buildAlmacenForm = (): {
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    suc_id: new FormControl(null, Validators.required),
+    sucursalId: new FormControl(null, Validators.required),
     descripcion: new FormControl(null),
-    activo: new FormControl(true),
   };
 };

@@ -25,8 +25,8 @@
                     [formControlName]="item.formControlName"
                   >
                     <option [ngValue]="null">Seleccione</option>
-                    @for (item of documentTypes; track $index) {
-                      <option [ngValue]="item.tip_id">{{ item.tip_nom }}</option>
+                    @for (docType of documentTypes; track $index) {
+                      <option [ngValue]="docType.id">{{ docType.name }}</option>
                     }
                   </select>
                   <app-validation-messages

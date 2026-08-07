@@ -15,15 +15,15 @@
     <c-row class="g-3 align-items-end" [formGroup]="form">
       <c-col sm="12" md="6" lg="4">
         <label for="">Nombre</label>
-        <input formControlName="marca_nom" type="text" class="form-control" placeholder="Buscar por nombre..." />
+        <input formControlName="name" type="text" class="form-control" placeholder="Buscar por nombre..." />
       </c-col>
       <c-col>
         <button cButton color="primary" (click)="onSearch()" class="me-2">
           <svg cIcon name="cilSearch"></svg>
           Buscar
         </button>
-        <button cButton color="danger" (click)="onClean()">
-          <svg cIcon name="cilTrash"></svg>
+        <button cButton color="secondary" (click)="onClean()">
+          <svg cIcon name="cilX"></svg>
           Limpiar
         </button>
       </c-col>
@@ -42,21 +42,21 @@
         </tr>
       </thead>
       <tbody>
-        @for (marca of marcas; track $index) {
+        @for (brand of brands; track $index) {
           <tr>
             <td>
-              <button (click)="openModal(marca.marca_id)" size="sm" class="me-2" cButton color="info">
+              <button (click)="openModal(brand.id!)" size="sm" class="me-2" cButton color="info">
                 <svg cIcon name="cilPencil"></svg>
               </button>
-              <button (click)="onDelete(marca.marca_id)" size="sm" cButton color="danger">
+              <button (click)="onDelete(brand.id!)" size="sm" cButton color="danger">
                 <svg cIcon name="cilTrash"></svg>
               </button>
             </td>
-            <td>{{ marca.marca_codigo }}</td>
-            <td>{{ marca.marca_nom }}</td>
+            <td>{{ brand.code }}</td>
+            <td>{{ brand.name }}</td>
           </tr>
         }
-        @if (marcas.length === 0) {
+        @if (brands.length === 0) {
           <tr>
             <td colspan="4">No se encontraron marcas</td>
           </tr>

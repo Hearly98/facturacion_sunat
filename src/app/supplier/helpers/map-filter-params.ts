@@ -2,9 +2,9 @@ import { FilterForm } from "../core/types/filter-form";
 
 export function mapParams(
     form: Partial<FilterForm>
-): Partial<FilterForm> {
+): Record<string, any> {
     return {
-        prov_nom: form.prov_nom?.trim() ?? null,
+        nombre: form.name?.trim() ?? null,
         order: form.order ?? null,
     };
 }

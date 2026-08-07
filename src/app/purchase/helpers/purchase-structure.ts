@@ -2,10 +2,9 @@ import { mapToSelectOption } from '@shared/functions';
 import { SelectOption } from '@shared/types';
 import { NewPurchaseComponent } from '../pages/new-purchase/new-purchase.component';
 import { PurchaseForm } from '../core/purchase.form';
-import { GetCurrencyModel } from 'src/app/currency/core/models/get-currency.model';
-import { GetPaymentMethodModel } from 'src/app/payment-method/core/models';
-import { GetDocumentModel } from 'src/app/document/core/models/get-document.model';
-import { GetDocumentTypeModel } from 'src/app/document-type/core/models';
+import { Currency } from 'src/app/currency/core/models';
+import { PaymentMethod } from 'src/app/payment-method/core/models';
+import { DocumentType } from 'src/app/document-type/core/models';
 
 export type Control<SM extends Record<string, any>> =
   | SelectControl
@@ -46,9 +45,9 @@ export interface PurchaseStructure<SM extends Record<string, any>> {
   controls: Control<SM>[];
 }
 export const purchaseStructure = (
-  CurrencySelectOptions: GetCurrencyModel[] = [],
-  PaymentTypeOptions: GetPaymentMethodModel[] = [],
-  DocumentTypesOptions: GetDocumentTypeModel[] = [],
+  CurrencySelectOptions: Currency[] = [],
+  PaymentTypeOptions: PaymentMethod[] = [],
+  DocumentTypesOptions: DocumentType[] = [],
 ): PurchaseStructure<NewPurchaseComponent['serviceMap']>[] => {
   return [
     {
@@ -72,14 +71,15 @@ export const purchaseStructure = (
           type: 'select',
           col: '4',
           formControlName: 'mp_cod',
-          options: mapToSelectOption(PaymentTypeOptions, 'mp_cod', 'mp_nom'),
+          // El backend espera un id de metodo_pagos (StoreCompraRequest.idMetodoPago), no el code
+          options: mapToSelectOption(PaymentTypeOptions, 'id', 'name'),
         },
         {
           label: 'Moneda',
           type: 'select',
           col: '4',
           formControlName: 'mon_id',
-          options: mapToSelectOption(CurrencySelectOptions, 'mon_id', 'mon_nom'),
+          options: mapToSelectOption(CurrencySelectOptions, 'id', 'name'),
         },
         {
           label: 'Fecha Emisión',
@@ -105,8 +105,8 @@ export const purchaseStructure = (
           col: '4',
           type: 'search-select',
           formControlName: 'prov_id',
-          bindLabel: 'prov_nom',
-          bindValue: 'prov_id',
+          bindLabel: 'name',
+          bindValue: 'id',
           serviceFnName: 'providerSearch',
         },
         {
@@ -114,7 +114,7 @@ export const purchaseStructure = (
           col: '4',
           type: 'select',
           formControlName: 'tip_id',
-          options: mapToSelectOption(DocumentTypesOptions, 'tip_id', 'tip_nom'),
+          options: mapToSelectOption(DocumentTypesOptions, 'id', 'name'),
         },
         {
           label: 'Documento',

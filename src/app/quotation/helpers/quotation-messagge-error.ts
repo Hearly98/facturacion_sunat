@@ -11,4 +11,10 @@ export const messages = {
   mon_id: {
     required: 'La moneda es obligatoria',
   },
+  usu_id: {
+    required: 'El vendedor es obligatorio',
+  },
+  tipo_pago_id: {
+    required: 'El tipo de pago es obligatorio',
+  },
 };

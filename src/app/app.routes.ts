@@ -27,7 +27,7 @@ export const routes: Routes = [
       },
       {
         path: 'categorias',
-        loadComponent: () => import('./category/pages/category/category').then((m) => m.Category),
+        loadComponent: () => import('./category/pages/category/category').then((m) => m.CategoryPage),
         data: {
           title: 'Categoria',
         },
@@ -37,6 +37,13 @@ export const routes: Routes = [
         loadComponent: () => import('./brand/pages/brand/brand').then((m) => m.BrandComponent),
         data: {
           title: 'Marcas',
+        },
+      },
+      {
+        path: 'bancos',
+        loadComponent: () => import('./banco/pages/banco/banco').then((m) => m.BancoComponent),
+        data: {
+          title: 'Bancos',
         },
       },
       {
@@ -80,7 +87,7 @@ export const routes: Routes = [
       },
       {
         path: 'sucursales',
-        loadComponent: () => import('./sucursal/pages/sucursal/sucursal').then((m) => m.Sucursal),
+        loadComponent: () => import('./sucursal/pages/sucursal/sucursal').then((m) => m.SucursalPage),
         data: {
           title: 'Sucursal',
         },
@@ -112,7 +119,7 @@ export const routes: Routes = [
       },
       {
         path: 'rol',
-        loadComponent: () => import('./rol/pages/rol/rol').then((m) => m.Rol),
+        loadComponent: () => import('./rol/pages/rol/rol').then((m) => m.RolPage),
         data: {
           title: 'Rol',
         },
@@ -149,6 +156,16 @@ export const routes: Routes = [
           ),
         data: {
           title: 'Compras',
+        },
+      },
+      {
+        path: 'compras/:id/editar',
+        loadComponent: () =>
+          import('./purchase/pages/purchase-edit/purchase-edit.page').then(
+            (m) => m.PurchaseEditPage,
+          ),
+        data: {
+          title: 'Editar Compra',
         },
       },
       {

@@ -5,15 +5,15 @@ export const buildPaymentMethodForm = (): {
   [K in keyof PaymentMethodForm]: FormControl<PaymentMethodForm[K]>;
 } => {
   return {
-    mp_id: new FormControl(0),
-    mp_nom: new FormControl(
+    id: new FormControl(0),
+    code: new FormControl(
+      null,
+      Validators.compose([Validators.required, Validators.minLength(1)]),
+    ),
+    name: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    mp_cod: new FormControl(
-      null,
-      Validators.compose([Validators.required, Validators.minLength(2)]),
-    ),
-    est: new FormControl(true),
+    active: new FormControl(true),
   };
 };

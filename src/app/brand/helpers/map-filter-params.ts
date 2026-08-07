@@ -1,9 +1,8 @@
-import { FilterForm } from '../core/types/filter-form';
+import { BrandFilterForm } from "../core/types";
 
-export const mapParams = (value: Partial<FilterForm>): Record<string, any> => {
+export const mapParams = (value: Partial<BrandFilterForm>): Record<string, any> => {
   const params: Record<string, any> = {};
-  if (value.marca_nom) params['marca_nom'] = value.marca_nom;
-  if (value.marca_codigo) params['marca_codigo'] = value.marca_codigo;
-  if (value.est !== null) params['est'] = value.est;
+  if (value.name) params['nombre'] = value.name;
+  if (value.code) params['codigo'] = value.code;
   return params;
 };

@@ -6,11 +6,16 @@ export const buildUnitOfMeasureForm = (): {
 } =>
 {
   return {
-    und_id: new FormControl(null),
-    und_nom: new FormControl(null, Validators.compose([
+    id: new FormControl(null),
+    code: new FormControl(null, Validators.compose([
+      Validators.required
+    ])),
+    name: new FormControl(null, Validators.compose([
       Validators.required, Validators.minLength(3)
     ])),
-    est: new FormControl(true)
+    abbreviation: new FormControl(null, Validators.compose([
+      Validators.required, Validators.minLength(2)
+    ]))
   };
 }
 

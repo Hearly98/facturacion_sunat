@@ -50,6 +50,11 @@ export const navItems: INavData[] = [
         icon: 'nav-icon-bullet',
       },
       {
+        name: 'Banco',
+        url: '/bancos',
+        icon: 'nav-icon-bullet',
+      },
+      {
         name: 'Sucursal',
         url: '/sucursales',
         icon: 'nav-icon-bullet',

@@ -3,7 +3,7 @@ import { PurchaseFilterForm } from '../core/types';
 export function filterSort(formValue: Partial<PurchaseFilterForm>) {
   return [
     {
-      property: 'fechaEmision',
+      property: 'fecha_emision',
       direction: formValue.order,
     },
   ];

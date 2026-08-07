@@ -7,7 +7,7 @@ export function mapSaleUpdateDto(formValue: SaleForm) {
     suc_id: formValue.suc_id!,
     doc_id: formValue.doc_id!,
     cli_id: formValue.cli_id!,
-    mp_id: formValue.mp_id!,
+    mp_cod: formValue.mp_cod!,
     mon_id: formValue.mon_id!,
     vendedor_id: formValue.vendedor_id!,
     fecha_emision: formValue.fecha_emision!,

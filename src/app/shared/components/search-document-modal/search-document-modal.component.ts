@@ -139,8 +139,8 @@ export class SearchDocumentModalComponent {
       this.filteredItems.set(
         (this.allItems() as QuotationModel[]).filter(
           (c) =>
-            c.numero_completo?.toLowerCase().includes(term) ||
-            c.cliente?.cli_nom?.toLowerCase().includes(term),
+            c.fullNumber?.toLowerCase().includes(term) ||
+            c.customer?.name?.toLowerCase().includes(term),
         ),
       );
     } else {
@@ -170,8 +170,16 @@ export class SearchDocumentModalComponent {
     this.close();
   }
 
-  selectGuia(item: ShippingGuideModel) {
-    this.itemSelected.emit(item);
+  selectGuia(item: GetShippingGuideModel) {
+    if (item.guia_id == null) return;
+
+    this.#guiaService.getById(item.guia_id).subscribe({
+      next: (response) => {
+        if (response.isValid) {
+          this.itemSelected.emit(response.data);
+        }
+      },
+    });
     this.close();
   }
 
@@ -189,6 +197,16 @@ export class SearchDocumentModalComponent {
 
   asCotizaciones(): QuotationModel[] {
     return this.filteredItems() as QuotationModel[];
+  }
+
+  cotizacionStateColor(code: string | null): string {
+    const colors: Record<string, string> = {
+      '01': 'warning',
+      '02': 'success',
+      '03': 'danger',
+      '04': 'info',
+    };
+    return (code && colors[code]) || 'secondary';
   }
 
   asGuias(): GetShippingGuideModel[] {

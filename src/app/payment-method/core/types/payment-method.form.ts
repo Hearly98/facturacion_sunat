@@ -1,6 +1,6 @@
 export interface PaymentMethodForm {
-  mp_id: number | null;
-  mp_cod: string | null;
-  mp_nom: string | null;
-  est: boolean | null;
+  id: number | null;
+  code: string | null;
+  name: string | null;
+  active: boolean | null;
 }

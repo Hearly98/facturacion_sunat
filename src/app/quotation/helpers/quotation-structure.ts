@@ -1,9 +1,9 @@
 import { mapToSelectOption } from '@shared/functions';
 import { SelectOption } from '@shared/types';
-import { GetCurrencyModel } from 'src/app/currency/core/models/get-currency.model';
-import { GetPaymentMethodModel } from 'src/app/payment-method/core/models';
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
-import { GetUserModel } from 'src/app/user/core/models';
+import { Currency } from 'src/app/currency/core/models';
+import { PaymentMethod } from 'src/app/payment-method/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
+import { User } from 'src/app/user/core/models';
 
 export interface QuotationStructureControl {
   label: string;
@@ -25,15 +25,15 @@ export interface QuotationStructureSection {
 }
 
 export function quotationStructure(
-  currenciesOptions: GetCurrencyModel[] = [],
-  sucursalesOptions: GetSucursalModel[] = [],
-  tipoPagosOptions: GetPaymentMethodModel[] = [],
-  vendedoresOptions: GetUserModel[] = []
+  currenciesOptions: Currency[] = [],
+  sucursalesOptions: Sucursal[] = [],
+  tipoPagosOptions: PaymentMethod[] = [],
+  vendedoresOptions: User[] = []
 ): QuotationStructureSection[] {
-  const currencies = mapToSelectOption(currenciesOptions, 'mon_id', 'mon_nom');
-  const sucursales = mapToSelectOption(sucursalesOptions, 'suc_id', 'suc_nom');
-  const tipoPagos = mapToSelectOption(tipoPagosOptions, 'mp_id', 'mp_nom');
-  const vendedores = mapToSelectOption(vendedoresOptions, 'usu_id', 'usu_nom');
+  const currencies = mapToSelectOption(currenciesOptions, 'id', 'name');
+  const sucursales = mapToSelectOption(sucursalesOptions, 'id', 'name');
+  const tipoPagos = mapToSelectOption(tipoPagosOptions, 'id', 'name');
+  const vendedores = mapToSelectOption(vendedoresOptions, 'id', 'firstName');
   return [
     {
       title: 'Información de la Cotización',
@@ -76,8 +76,8 @@ export function quotationStructure(
           formControlName: 'cli_id',
           type: 'search-select',
           col: 4,
-          bindLabel: 'cli_nom',
-          bindValue: 'cli_id',
+          bindLabel: 'businessName',
+          bindValue: 'id',
           serviceFnName: 'customerSearch',
         },
         {

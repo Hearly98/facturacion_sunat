@@ -13,7 +13,7 @@
                 <div class="row g-3 mb-4" [formGroup]="filterForm">
                     <c-col md="6">
                         <label cLabel>Buscar Producto</label>
-                        <input cFormControl type="text" formControlName="prod_nom"
+                        <input cFormControl type="text" formControlName="nombre"
                             placeholder="Nombre o código del producto..." (input)="onSearch()" />
                     </c-col>
                     <c-col md="4" class="d-flex align-items-end gap-2">
@@ -21,8 +21,8 @@
                             <svg cIcon name="cil-search" class="me-2"></svg>
                             Buscar
                         </button>
-                        <button (click)="clearSearch()" cButton color="danger">
-                            <svg cIcon name="cil-trash"></svg>
+                        <button (click)="clearSearch()" cButton color="secondary">
+                            <svg cIcon name="cilX"></svg>
                             Limpiar
                         </button>
                     </c-col>
@@ -36,23 +36,19 @@
                                 <th>Código</th>
                                 <th>Producto</th>
                                 <th class="text-center">Stock</th>
-                                <th class="text-end">P. Compra</th>
-                                <th class="text-end">P. Venta</th>
                                 <th>Estado</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of filteredProductos; let i = index">
                                 <td>{{ i + 1 }}</td>
-                                <td>{{ item.producto?.prod_cod_interno || 'N/A' }}</td>
-                                <td>{{ item.producto?.prod_nom || 'N/A' }}</td>
+                                <td>{{ item.producto?.internalCode || 'N/A' }}</td>
+                                <td>{{ item.producto?.name || 'N/A' }}</td>
                                 <td class="text-center">
-                                    <span class="badge" [ngClass]="item.stock_actual <= 5 ? 'bg-danger' : 'bg-success'">
-                                        {{ item.stock_actual }}
+                                    <span class="badge" [ngClass]="item.stockActual <= 5 ? 'bg-danger' : 'bg-success'">
+                                        {{ item.stockActual }}
                                     </span>
                                 </td>
-                                <td class="text-end">{{ item.precio_compra_base | currency }}</td>
-                                <td class="text-end">{{ item.precio_venta_base | currency }}</td>
                                 <td>
                                     <span class="badge" [ngClass]="item.activo ? 'bg-success' : 'bg-danger'">
                                         {{ item.activo ? 'Activo' : 'Inactivo' }}
@@ -60,7 +56,7 @@
                                 </td>
                             </tr>
                             <tr *ngIf="filteredProductos.length === 0">
-                                <td colspan="7" class="text-center py-3">
+                                <td colspan="5" class="text-center py-3">
                                     No hay productos vinculados a este almacén
                                 </td>
                             </tr>

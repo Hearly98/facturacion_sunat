@@ -4,6 +4,7 @@ import { TypedFormGroup } from '../../shared/types/types-form';
 import { CurrencyForm } from '../core/types';
 import { buildCurrencyForm, currencyErrorMessages, currencyStructure } from '../helpers';
 import { CurrencyService } from '../core/services/currency.service';
+import { CreateCurrency, UpdateCurrency } from '../core/models';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MODULES } from '../../core/config/permissions/modules';
 import {
@@ -18,8 +19,6 @@ import {
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 import { GlobalNotification } from '../../shared/alerts/global-notification/global-notification';
-import { CreateCurrencyModel } from '../core/models/create-currency.model';
-import { UpdateCurrencyModel } from '../core/models/update-currency.model';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
 @Component({
@@ -91,7 +90,7 @@ export class CurrencyNewEditModalComponent extends BaseComponent implements OnIn
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.mon_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -102,17 +101,14 @@ export class CurrencyNewEditModalComponent extends BaseComponent implements OnIn
   }
 
   create() {
-    const { mon_id, ...body } = this.form.value;
-    const subscription = this.#currencyService.create(body as CreateCurrencyModel).subscribe({
+    const { id, ...body } = this.form.value;
+    const subscription = this.#currencyService.create(body as CreateCurrency).subscribe({
       next: (response) => {
+        this.#globalNotification.openAlert(response);
+        this.isLoading.set(false);
         if (response.isValid) {
-          this.#globalNotification.openAlert(response);
           this.callback(response.data);
           this.onClose();
-          this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
         }
       },
       error: (error) => {
@@ -125,16 +121,14 @@ export class CurrencyNewEditModalComponent extends BaseComponent implements OnIn
 
   update() {
     const subscription = this.#currencyService
-      .update(this.form.value as UpdateCurrencyModel)
+      .update(this.form.value as UpdateCurrency)
       .subscribe({
         next: (response) => {
+          this.#globalNotification.openAlert(response);
+          this.isLoading.set(false);
           if (response.isValid) {
-            this.#globalNotification.openAlert(response);
             this.callback(response.data);
             this.onClose();
-            this.isLoading.set(false);
-          } else {
-            this.#globalNotification.openAlert(response);
           }
         },
         error: (error) => {

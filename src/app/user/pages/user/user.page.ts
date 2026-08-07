@@ -9,7 +9,7 @@ import {
   TableDirective,
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { UserNewEditModalComponent } from '../../components/user-new-edit/user-new-edit-modal.component';
 import { TypedFormGroup } from '@shared/types/types-form';
 import { UserService } from '../../core/services/user.service';
@@ -17,7 +17,7 @@ import { MODULES } from 'src/app/core/config/permissions/modules';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
 import { FilterForm } from '../../core/types';
-import { GetUserModel } from '../../core/models';
+import { User } from '../../core/models';
 import { buildFilterForm, filterSort, mapParams } from '../../helpers';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
@@ -53,7 +53,7 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
         <c-row class="g-3 align-items-end" [formGroup]="form">
           <c-col sm="12" md="6" lg="4">
             <label for="">Nombre</label>
-            <input formControlName="usu_nom" type="text" class="form-control" />
+            <input formControlName="firstName" type="text" class="form-control" />
           </c-col>
           <c-col>
             <button cButton color="primary" (click)="onSearch()" class="me-2">
@@ -85,7 +85,7 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
                 <tr>
                   <td>
                     <button
-                      (click)="openModal(user.usu_id)"
+                      (click)="openModal(user.id ?? 0)"
                       size="sm"
                       class="me-2"
                       cButton
@@ -93,11 +93,11 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
                     >
                       <svg cIcon name="cilPencil"></svg>
                     </button>
-                    <button (click)="onDelete(user.usu_id)" size="sm" cButton color="danger">
+                    <button (click)="onDelete(user.id ?? 0)" size="sm" cButton color="danger">
                       <svg cIcon name="cilTrash"></svg>
                     </button>
                   </td>
-                  <td>{{ user.usu_nom }}</td>
+                  <td>{{ user.firstName }}</td>
                 </tr>
                 }
               </tbody>
@@ -123,7 +123,7 @@ export class UserPage extends BaseSearchComponent {
   #userService = inject(UserService);
   #confirmService = inject(ConfirmService);
   #globalNotification = inject(GlobalNotification);
-  public users: GetUserModel[] = [];
+  public users: User[] = [];
   public roles: any[] = [];
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.USERS, viewContainerRef);

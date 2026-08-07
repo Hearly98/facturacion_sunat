@@ -1,5 +1,6 @@
-import { CurrencyModel } from './currency.model';
-
-export class UpdateCurrencyModel extends CurrencyModel {
-  mon_id: number = 0;
+export interface UpdateCurrency {
+  id: number;
+  name: string;
+  code: string;
+  symbol: string;
 }

@@ -5,10 +5,10 @@ import { BaseService } from '../../../shared/services/base.service';
 import { QueryParamsModel } from '@shared/models/query/query-params.model';
 import { map, Observable } from 'rxjs';
 import { ResponseDto } from '@shared/models/api/response.dto';
-import { GetSupplierModel } from '../models/get-supplier.model';
 import { QueryResultsModel } from '@shared/models/query/query-results.model';
-import { CreateSupplierModel } from '../models';
-import { UpdateSupplierModel } from '../models/update-supplier.model';
+import { CreateSupplier, Supplier, UpdateSupplier } from '../models';
+import { SupplierDto, CreateSupplierDto, UpdateSupplierDto } from '../dto';
+import { SupplierMapper } from '../mappers';
 
 @Injectable({
   providedIn: 'root',
@@ -18,38 +18,73 @@ export class SupplierService extends BaseService {
     super(http, `${environment.apiUrl}/proveedores`);
   }
 
-  getAll(): Observable<ResponseDto<GetSupplierModel[]>> {
-    return this.getRequest('');
-  }
-
-  create(body: CreateSupplierModel): Observable<ResponseDto<GetSupplierModel>> {
-    return this.postRequest<CreateSupplierModel, ResponseDto<GetSupplierModel>>('/', body);
-  }
-
-  update(body: UpdateSupplierModel): Observable<ResponseDto<GetSupplierModel>> {
-    return this.putRequest<UpdateSupplierModel, ResponseDto<GetSupplierModel>>('/', body);
-  }
-
-  getById(id: number): Observable<ResponseDto<GetSupplierModel>> {
-    return this.getRequest<ResponseDto<GetSupplierModel>>(`/${id}`);
-  }
-
-  delete(id: number): Observable<ResponseDto<GetSupplierModel>> {
-    return this.deleteRequest(`/${id}`);
-  }
-
-  search(body: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<GetSupplierModel>>> {
-    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<GetSupplierModel>>>(
-      `/search`,
-      body
+  getAll(): Observable<ResponseDto<Supplier[]>> {
+    return this.getRequest<ResponseDto<SupplierDto[]>>('').pipe(
+      map((response) => ({
+        ...response,
+        data: response.data.map((dto) => SupplierMapper.fromApi(dto)),
+      }))
     );
   }
 
-  searchQuick(term: string): Observable<GetSupplierModel[]> {
+  create(body: CreateSupplier): Observable<ResponseDto<Supplier>> {
+    const dto = SupplierMapper.toApiCreate(body);
+    return this.postRequest<CreateSupplierDto, ResponseDto<SupplierDto>>('/', dto).pipe(
+      map((response) => ({
+        ...response,
+        data: SupplierMapper.fromApi(response.data),
+      }))
+    );
+  }
+
+  update(body: UpdateSupplier): Observable<ResponseDto<Supplier>> {
+    const dto = SupplierMapper.toApiUpdate(body);
+    return this.putRequest<UpdateSupplierDto, ResponseDto<SupplierDto>>('/', dto).pipe(
+      map((response) => ({
+        ...response,
+        data: SupplierMapper.fromApi(response.data),
+      }))
+    );
+  }
+
+  getById(id: number): Observable<ResponseDto<Supplier>> {
+    return this.getRequest<ResponseDto<SupplierDto>>(`/${id}`).pipe(
+      map((response) => ({
+        ...response,
+        data: SupplierMapper.fromApi(response.data),
+      }))
+    );
+  }
+
+  delete(id: number): Observable<ResponseDto<Supplier | null>> {
+    return this.deleteRequest<ResponseDto<SupplierDto>>(`/${id}`).pipe(
+      map((response) => ({
+        ...response,
+        data: response.data ? SupplierMapper.fromApi(response.data) : null,
+      }))
+    );
+  }
+
+  search(body: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<Supplier>>> {
+    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<SupplierDto>>>(
+      `/search`,
+      body
+    ).pipe(
+      map((response) => ({
+        ...response,
+        data: {
+          ...response.data,
+          items: response.data.items.map((dto) => SupplierMapper.fromApi(dto)),
+        },
+      }))
+    );
+  }
+
+  searchQuick(term: string): Observable<Supplier[]> {
     const body = new QueryParamsModel(
-      { prov_nom: term }, // filter
+      { nombre: term }, // filter - using API property name
       { page: 1, pageSize: 10 }, // page
-      [{ property: 'prov_nom', direction: 'asc' }] // sort
+      [{ property: 'nombre', direction: 'asc' }] // sort
     );
 
     return this.search(body).pipe(map((response) => response.data.items));

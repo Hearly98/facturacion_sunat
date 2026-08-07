@@ -16,10 +16,12 @@
     </c-row>
   </c-modal-body>
   <c-modal-footer>
-    <button cButton color="secondary" (click)="hide()">
-      <svg cIcon name="cilX"></svg>
-      {{ cancelText }}
-    </button>
+    @if (cancelText) {
+      <button cButton color="secondary" (click)="hide()">
+        <svg cIcon name="cilX"></svg>
+        {{ cancelText }}
+      </button>
+    }
     <button cButton color="primary" (click)="doConfirm()">
       <svg cIcon name="cilCheck"></svg>
       {{ confirmText }}

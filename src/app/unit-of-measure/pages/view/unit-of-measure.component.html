@@ -17,15 +17,15 @@
             <c-row class="g-3 align-items-end" [formGroup]="form">
               <c-col sm="12" md="3" lg="3">
                 <label for="">Nombre</label>
-                <input formControlName="und_nom" type="text" class="form-control" />
+                <input formControlName="name" type="text" class="form-control" />
               </c-col>
               <c-col>
                 <button cButton color="primary" (click)="onSearch()" class="me-2">
                   <svg cIcon name="cilSearch"></svg>
                   Buscar
                 </button>
-                <button cButton color="danger" (click)="onClean()">
-                  <svg cIcon name="cilTrash"></svg>
+                <button cButton color="secondary" (click)="onClean()">
+                  <svg cIcon name="cilX"></svg>
                   Limpiar
                 </button>
               </c-col>
@@ -42,7 +42,7 @@
                     <tr>
                       <td>
                         <button
-                          (click)="openModal(unit.und_id)"
+                          (click)="openModal(unit.id!)"
                           size="sm"
                           class="me-2"
                           cButton
@@ -50,11 +50,11 @@
                         >
                           <svg cIcon name="cilPencil"></svg>
                         </button>
-                        <button (click)="onDelete(unit.und_id)" size="sm" cButton color="danger">
+                        <button (click)="onDelete(unit.id!)" size="sm" cButton color="danger">
                           <svg cIcon name="cilTrash"></svg>
                         </button>
                       </td>
-                      <td>{{ unit.und_nom }}</td>
+                      <td>{{ unit.name }}</td>
                     </tr>
                     }}@else{
                     <tr>

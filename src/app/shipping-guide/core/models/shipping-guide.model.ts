@@ -8,6 +8,7 @@ export class ShippingGuideModel {
   nro_cotizacion: string = '';
   nro_oc: string = '';
   nro_factura: string = '';
+  cot_id: number = 0;
   fecha_factura: string = '';
   observaciones: string = '';
   cli_id: number = 0;
@@ -30,7 +31,7 @@ export class ShippingGuideModel {
   empresa_transporte_nro_doc: string = '';
   empresa_transporte_razon_social: string = '';
   motivo_traslado: string = '';
-  peso_bruto: number = 0;
+  total_peso_bruto: number = 0;
   est: boolean = false;
   detalles?: ShippingGuideDetailModel[];
 }

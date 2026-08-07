@@ -1,95 +1,101 @@
-import { GetMarcaModel } from 'src/app/brand/core/models';
-import { GetCategoryModel } from 'src/app/category/core/models';
-import { GetCurrencyModel } from 'src/app/currency/core/models/get-currency.model';
-import { GetUnitOfMeasureModel } from 'src/app/unit-of-measure/core/models';
+import { SelectOption } from '@shared/types';
+import { Brand } from 'src/app/brand/core/models';
+import { Category } from 'src/app/category/core/models';
+import { Currency } from 'src/app/currency/core/models';
+import { UnitOfMeasure } from 'src/app/unit-of-measure/core/models';
 
 export const productStructure = (
-  brandOptions?: GetMarcaModel[],
-  unitOfMeasureOptions?: GetUnitOfMeasureModel[],
-  categoryOptions?: GetCategoryModel[],
-  currencyOptions?: GetCurrencyModel[],
-  isEditMode: boolean = false,
+  brandOptions?: Brand[],
+  unitOfMeasureOptions?: UnitOfMeasure[],
+  categoryOptions?: Category[],
+  currencyOptions?: Currency[],
 ) => {
-  let brands: { label: string; value: number }[] = [];
-  let unitOfMeasures: { label: string; value: number }[] = [];
-  let categories: { label: string; value: number }[] = [];
-  let currencies: { label: string; value: number }[] = [];
-  if (brandOptions) brands = brandOptions.map((s) => ({ label: s.marca_nom, value: s.marca_id }));
+  let brands: SelectOption[] = [];
+  let unitOfMeasures: SelectOption[] = [];
+  let categories: SelectOption[] = [];
+  let currencies: SelectOption[] = [];
+  if (brandOptions)
+    brands = brandOptions
+      .filter((s) => s.id !== null)
+      .map((s) => ({ label: s.name, value: s.id as number }));
   if (unitOfMeasureOptions)
-    unitOfMeasures = unitOfMeasureOptions.map((s) => ({ label: s.und_nom, value: s.und_id }));
+    unitOfMeasures = unitOfMeasureOptions
+      .filter((s) => s.id !== null)
+      .map((s) => ({ label: s.name, value: s.id as number }));
   if (categoryOptions)
-    categories = categoryOptions.map((s) => ({ label: s.cat_nom, value: s.cat_id }));
+    categories = categoryOptions
+      .filter((s) => s.id !== null)
+      .map((s) => ({ label: s.name, value: s.id as number }));
   if (currencyOptions)
-    currencies = currencyOptions.map((s) => ({ label: s.mon_nom, value: s.mon_id }));
+    currencies = currencyOptions.map((s) => ({ label: s.name, value: s.id as number }));
   return [
     {
       label: 'Nombre',
-      formControlName: 'prod_nom',
+      formControlName: 'name',
       type: 'text',
       col: '12',
     },
     {
       label: 'Descripción',
-      formControlName: 'prod_descrip',
+      formControlName: 'description',
       type: 'text',
       col: '12',
     },
     {
       label: 'Código Interno',
-      formControlName: 'prod_cod_interno',
+      formControlName: 'internalCode',
       type: 'text',
       col: '6',
     },
     {
       label: 'Código Fabricante',
-      formControlName: 'cod_fabricante',
+      formControlName: 'manufacturerCode',
       type: 'text',
       col: '6',
     },
     {
       label: 'Categoría',
-      formControlName: 'cat_id',
+      formControlName: 'categoryId',
       type: 'select',
       col: '3',
       options: categories,
     },
     {
       label: 'Unidad',
-      formControlName: 'und_id',
+      formControlName: 'unitId',
       type: 'select',
       col: '3',
       options: unitOfMeasures,
     },
     {
       label: 'Moneda',
-      formControlName: 'mon_id',
+      formControlName: 'currencyId',
       type: 'select',
       col: '3',
       options: currencies,
     },
     {
       label: 'Marca',
-      formControlName: 'marca_id',
+      formControlName: 'brandId',
       type: 'select',
       col: '3',
       options: brands,
     },
-    ...(isEditMode ? [] : [
     {
       label: 'Precio Compra Base',
-      formControlName: 'precio_compra_base',
+      formControlName: 'basePurchasePrice',
       type: 'number',
       col: '6',
     },
     {
       label: 'Precio Venta Base',
-      formControlName: 'precio_venta_base',
+      formControlName: 'baseSalePrice',
       type: 'number',
       col: '6',
-    }]),
+    },
     {
       label: 'Imagen',
-      formControlName: 'prod_img',
+      formControlName: 'image',
       type: 'file',
       col: '12',
     },

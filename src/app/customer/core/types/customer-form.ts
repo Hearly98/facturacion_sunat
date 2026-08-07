@@ -1,11 +1,13 @@
 export interface CustomerForm {
-  cli_id: number | null;
-  tip_id: number | null;
-  cli_nom: string | null;
-  cli_documento: string | null;
-  cli_telf: string | null;
-  cli_direcc: string | null;
-  cli_correo: string | null;
-  est: boolean | null;
-  emp_id: number | null;
+  id: number | null;
+  companyId: number | null;
+  documentTypeId: number | null;
+  firstName: string | null;
+  lastName: string | null;
+  businessName: string | null;
+  document: string | null;
+  phone: string | null;
+  address: string | null;
+  email: string | null;
+  ubigeoCode: string | null;
 }

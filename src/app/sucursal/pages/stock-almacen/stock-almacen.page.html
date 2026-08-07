@@ -8,10 +8,10 @@
   <c-card-body>
     <c-row class="g-3 align-items-end" [formGroup]="form">
       <c-col sm="12" md="4">
-        <label for="suc_id">Sucursal</label>
-        <select formControlName="suc_id" cSelect class="form-select" (change)="onSearch()">
-          @for (suc of sucursales; track suc.suc_id) {
-            <option [value]="suc.suc_id">{{ suc.suc_nom }}</option>
+        <label for="sucursalId">Sucursal</label>
+        <select formControlName="sucursalId" cSelect class="form-select" (change)="onSearch()">
+          @for (sucursal of sucursales; track sucursal.id) {
+            <option [value]="sucursal.id">{{ sucursal.name }}</option>
           }
         </select>
       </c-col>
@@ -34,7 +34,7 @@
     } @else if (stockData) {
       <c-row class="mb-3">
         <c-col>
-          <strong>Sucursal:</strong> {{ stockData.suc_nom }}
+          <strong>Sucursal:</strong> {{ stockData.nombre }}
         </c-col>
         <c-col class="text-end">
           <strong>Stock Total:</strong> {{ getTotalStock() }}
@@ -52,19 +52,19 @@
             </tr>
           </thead>
           <tbody>
-            @for (producto of filteredProductos; track producto.prod_id) {
+            @for (producto of filteredProductos; track producto.productoId) {
               <tr>
-                <td>{{ producto.prod_cod_interno || '-' }}</td>
-                <td>{{ producto.prod_nom }}</td>
-                <td class="text-end">{{ producto.stock_total }}</td>
+                <td>{{ producto.codigoInterno || '-' }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td class="text-end">{{ producto.stockTotal }}</td>
                 <td>
-                  @if (producto.por_almacen && producto.por_almacen.length > 0) {
+                  @if (producto.totalPorAlmacen && producto.totalPorAlmacen.length > 0) {
                     <ul class="mb-0 ps-3">
-                      @for (alm of producto.por_almacen; track alm.almacen_id) {
+                      @for (almacen of producto.totalPorAlmacen; track almacen.almacenId) {
                         <li>
                           <small>
-                            <strong>{{ alm.almacen_codigo }}</strong> - {{ alm.almacen_nombre }}:
-                            {{ alm.stock_actual }}
+                            <strong>{{ almacen.codigo }}</strong> - {{ almacen.nombre }}:
+                            {{ almacen.stockActual }}
                           </small>
                         </li>
                       }

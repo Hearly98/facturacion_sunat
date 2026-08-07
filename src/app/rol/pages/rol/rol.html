@@ -15,15 +15,15 @@
     <c-row class="g-3 align-items-end" [formGroup]="form">
       <c-col sm="12" md="6" lg="4">
         <label for="">Nombre</label>
-        <input formControlName="rol_nom" type="text" class="form-control" />
+        <input formControlName="name" type="text" class="form-control" />
       </c-col>
       <c-col>
         <button cButton color="primary" (click)="onSearch()" class="me-2">
           <svg cIcon name="cilSearch"></svg>
           Buscar
         </button>
-        <button cButton color="danger" (click)="onClean()">
-          <svg cIcon name="cilTrash"></svg>
+        <button cButton color="secondary" (click)="onClean()">
+          <svg cIcon name="cilX"></svg>
           Limpiar
         </button>
       </c-col>
@@ -43,27 +43,33 @@
             </tr>
           </thead>
           <tbody>
-            @if(roles.length > 0){ @for (rol of roles; track $index) {
-            <tr>
-              <td>
-                <button (click)="openModal(rol.rol_id)" size="sm" class="me-2" cButton color="info">
-                  <svg cIcon name="cilPencil"></svg>
-                </button>
-                <button (click)="onDelete(rol.rol_id)" size="sm" cButton color="danger">
-                  <svg cIcon name="cilTrash"></svg>
-                </button>
-              </td>
-              <td>{{ rol.rol_nom }}</td>
-            </tr>
-            } } @else {
-            <tr>
-              <td colspan="3">No hay datos</td>
-            </tr>
+            @if (roles.length > 0) {
+              @for (rol of roles; track $index) {
+                <tr>
+                  <td>
+                    <button (click)="openModal(rol.id)" size="sm" class="me-2" cButton color="info">
+                      <svg cIcon name="cilPencil"></svg>
+                    </button>
+                    <button (click)="onDelete(rol.id)" size="sm" cButton color="danger">
+                      <svg cIcon name="cilTrash"></svg>
+                    </button>
+                  </td>
+                  <td>{{ rol.name }}</td>
+                </tr>
+              }
+            } @else {
+              <tr>
+                <td colspan="3">No hay datos</td>
+              </tr>
             }
           </tbody>
         </table>
-        <app-paginator [(page)]="page.page" [pageSize]="page.pageSize" [total]="total"
-          (pageChange)="onPageChange($event)"></app-paginator>
+        <app-paginator
+          [(page)]="page.page"
+          [pageSize]="page.pageSize"
+          [total]="total"
+          (pageChange)="onPageChange($event)"
+        ></app-paginator>
       </c-col>
     </c-row>
   </c-card-body>

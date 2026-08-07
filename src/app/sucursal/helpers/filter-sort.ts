@@ -1,10 +1,8 @@
-import { FilterForm } from '../core/types';
-
-export function filterSort(formValue: Partial<FilterForm>) {
-    return [
-        {
-            property: "suc_nom",
-            direction: formValue.order,
-        },
-    ];
-}
+export function filterSort() {
+  return [
+    {
+      property: 'nombre',
+      direction: 'desc'
+    }
+  ]
+};

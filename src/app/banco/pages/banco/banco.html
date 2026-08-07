@@ -1,0 +1,86 @@
+<c-row class="mb-3">
+  <c-col>
+    <h4>{{ title }}</h4>
+  </c-col>
+  <c-col class="text-end">
+    <button cButton color="primary" (click)="openModal()">
+      <svg cIcon name="cilPlus"></svg>
+      Nuevo Banco
+    </button>
+  </c-col>
+</c-row>
+
+<c-card class="mb-3">
+  <c-card-body>
+    <c-row class="g-3 align-items-end" [formGroup]="form">
+      <c-col sm="12" md="6" lg="4">
+        <label for="name">Nombre</label>
+        <input formControlName="name" type="text" class="form-control" placeholder="Buscar por nombre..." />
+      </c-col>
+      <c-col sm="12" md="6" lg="4">
+        <label for="accountNumber">Número de Cuenta</label>
+        <input
+          formControlName="accountNumber"
+          type="text"
+          class="form-control"
+          placeholder="Buscar por número de cuenta..."
+        />
+      </c-col>
+      <c-col>
+        <button cButton color="primary" (click)="onSearch()" class="me-2">
+          <svg cIcon name="cilSearch"></svg>
+          Buscar
+        </button>
+        <button cButton color="secondary" (click)="onClean()">
+          <svg cIcon name="cilX"></svg>
+          Limpiar
+        </button>
+      </c-col>
+    </c-row>
+  </c-card-body>
+</c-card>
+
+<c-card>
+  <c-card-body>
+    <table cTable striped="true">
+      <thead>
+        <tr>
+          <th>Acciones</th>
+          <th>Nombre</th>
+          <th>Número de Cuenta</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (banco of bancos; track $index) {
+          <tr>
+            <td>
+              <button (click)="openModal(banco.id!)" size="sm" class="me-2" cButton color="info">
+                <svg cIcon name="cilPencil"></svg>
+              </button>
+              <button (click)="onDelete(banco.id!)" size="sm" cButton color="danger">
+                <svg cIcon name="cilTrash"></svg>
+              </button>
+            </td>
+            <td>{{ banco.name }}</td>
+            <td>{{ banco.accountNumber }}</td>
+            <td>{{ banco.accountType }}</td>
+          </tr>
+        }
+        @if (bancos.length === 0) {
+          <tr>
+            <td colspan="4">No se encontraron bancos</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    <app-paginator
+      [(page)]="page.page"
+      [pageSize]="page.pageSize"
+      [total]="total"
+      (pageChange)="onPageChange($event)"
+    ></app-paginator>
+  </c-card-body>
+</c-card>
+
+<app-banco-new-edit-modal #bancoNewEditModal></app-banco-new-edit-modal>

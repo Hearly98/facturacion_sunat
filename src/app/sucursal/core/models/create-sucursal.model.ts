@@ -1,3 +1,9 @@
-import { SucursalModel } from './sucursal.model';
-
-export class CreateSucursalModel extends SucursalModel {}
+export interface CreateSucursal {
+  name: string;
+  code: string;
+  address: string;
+  zip: string;
+  department: string;
+  province: string;
+  district: string;
+}

@@ -4,14 +4,13 @@ import { OrganizationForm } from '../core/types/organization.form';
 export const buildOrganizationForm = (): {
   [K in keyof OrganizationForm]: FormControl<OrganizationForm[K]>;
 } => ({
-  emp_id: new FormControl(null),
-  emp_nom: new FormControl(null, Validators.required),
-  emp_ruc: new FormControl(null, Validators.required),
-  emp_correo: new FormControl(null),
-  emp_direcc: new FormControl(null, Validators.required),
-  emp_telf: new FormControl(null),
-  emp_pag: new FormControl(null),
-  emp_logo: new FormControl(null),
-  com_id: new FormControl(1),
-  est: new FormControl(true),
+  id: new FormControl(null),
+  name: new FormControl(null, Validators.required),
+  ruc: new FormControl(null, Validators.required),
+  email: new FormControl(null),
+  address: new FormControl(null, Validators.required),
+  phone: new FormControl(null),
+  website: new FormControl(null),
+  logo: new FormControl(null),
+  status: new FormControl(true),
 });

@@ -1,5 +1,5 @@
-export * from "./rol.model"
-export * from "./create-rol.model"
-export * from "./get-rol.model"
-export * from "./update-rol.model"
+export * from "./rol.model";
+export type * from "./create-rol.model";
+export type * from "./get-rol.model";
+export type * from "./update-rol.model";
 

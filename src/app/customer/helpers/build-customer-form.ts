@@ -5,17 +5,16 @@ export const buildCustomerForm = (): {
   [K in keyof CustomerForm]: FormControl<CustomerForm[K]>;
 } => {
   return {
-    cli_id: new FormControl(null),
-    cli_nom: new FormControl(
-      null,
-      Validators.compose([Validators.required, Validators.minLength(3)]),
-    ),
-    tip_id: new FormControl(null, Validators.required),
-    cli_documento: new FormControl(null, Validators.required),
-    cli_telf: new FormControl(null, Validators.required),
-    cli_direcc: new FormControl(null),
-    cli_correo: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
-    est: new FormControl(true),
-    emp_id: new FormControl(1),
+    id: new FormControl(null),
+    companyId: new FormControl(null),
+    firstName: new FormControl(null),
+    lastName: new FormControl(null),
+    businessName: new FormControl(null),
+    documentTypeId: new FormControl(null, Validators.required),
+    document: new FormControl(null, Validators.required),
+    phone: new FormControl(null, Validators.required),
+    address: new FormControl(null),
+    email: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
+    ubigeoCode: new FormControl(null),
   };
 };

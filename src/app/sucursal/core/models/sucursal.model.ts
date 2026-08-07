@@ -1,5 +1,11 @@
-export class SucursalModel {
-  suc_nom: string = '';
-  emp_id: number = 0;
-  est: boolean = true;
+export interface Sucursal {
+  id: number | null;
+  companyId: number;
+  name: string;
+  code: string;
+  address: string;
+  zip: string;
+  department: string;
+  province: string;
+  district: string;
 }

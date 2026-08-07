@@ -24,8 +24,8 @@
                     [formControlName]="item.formControlName"
                   >
                     <option [ngValue]="null">Seleccione</option>
-                    @for (item of roles; track $index) {
-                      <option [ngValue]="item.rol_id">{{ item.rol_nom }}</option>
+                    @for (rol of roles; track $index) {
+                      <option [ngValue]="rol.id">{{ rol.name }}</option>
                     }
                   </select>
                   <app-validation-messages
@@ -55,6 +55,23 @@
               }
             </c-col>
           }
+          <c-col [md]="12">
+            <label for="idSucursales" class="form-label">Sucursales</label>
+            <select
+              class="form-control form-select"
+              id="idSucursales"
+              multiple
+              formControlName="idSucursales"
+            >
+              @for (sucursal of sucursales; track sucursal.id) {
+                <option [ngValue]="sucursal.id">{{ sucursal.name }}</option>
+              }
+            </select>
+            <small class="text-body-secondary">
+              Ctrl/Cmd + clic para elegir varias. Dejalo vacío si el usuario todavía no está
+              asignado a ninguna.
+            </small>
+          </c-col>
         </c-row>
       </c-card-body>
     </c-card>

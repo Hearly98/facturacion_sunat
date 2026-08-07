@@ -8,7 +8,7 @@ export const almacenErrorMessages = () => {
       required: 'El nombre es obligatorio.',
       minLength: 'Debe tener un mínimo de 3 caracteres.',
     },
-    suc_id: {
+    sucursalId: {
       required: 'La sucursal es requerida.',
     },
   };

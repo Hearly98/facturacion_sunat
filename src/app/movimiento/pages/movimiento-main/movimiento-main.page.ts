@@ -32,7 +32,7 @@ import { PageParamsModel } from '../../../shared/models/query/page-params.model'
 import { CommonModule } from '@angular/common';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
 import { MovimientoService } from '../../core/services/movimiento.service';
 import { AlmacenService } from 'src/app/almacen/core/services/almacen.service';
@@ -302,7 +302,6 @@ export class MovimientoMainPage extends BaseSearchComponent implements OnInit {
   }
 
   onSubmit() {
-    debugger
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

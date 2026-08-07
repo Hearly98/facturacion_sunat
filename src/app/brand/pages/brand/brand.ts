@@ -11,17 +11,21 @@ import { IconDirective } from '@coreui/icons-angular';
 import { BrandService } from '../../core/services/brand.service';
 import { TypedFormGroup } from '../../../shared/types/types-form';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { buildFilterForm, filterSort, mapParams } from '../../helpers';
-import { FilterForm } from '../../core/types/filter-form';
 import { BaseSearchComponent } from '../../../shared/base/search-base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { BrandNewEditModal } from '../../components/brand-new-edit-modal/brand-new-edit-modal';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
-import { GetMarcaModel } from '../../core/models';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
+import { Brand } from '../../core/models';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { CommonModule } from '@angular/common';
+import {
+  buildBrandFilterForm,
+  brandMapFilterParams,
+  brandFilterSort,
+} from '../../helpers';
+import { BrandFilterForm } from '../../core/types';
 
 @Component({
   selector: 'app-brand',
@@ -44,13 +48,13 @@ import { CommonModule } from '@angular/common';
 })
 export class BrandComponent extends BaseSearchComponent implements OnInit {
   @ViewChild('brandNewEditModal') brandNewEditModal!: BrandNewEditModal;
-  public form!: TypedFormGroup<FilterForm>;
+  public form!: TypedFormGroup<BrandFilterForm>;
   readonly #formBuilder = inject(FormBuilder);
   public title = 'Marcas';
   readonly #brandService = inject(BrandService);
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
-  public marcas: GetMarcaModel[] = [];
+  public brands: Brand[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.MARCA, viewContainerRef);
@@ -62,12 +66,12 @@ export class BrandComponent extends BaseSearchComponent implements OnInit {
   }
 
   createForm() {
-    this.form = this.#formBuilder.group(buildFilterForm());
+    this.form = buildBrandFilterForm(this.#formBuilder);
   }
 
   onSearch(filter = null, page = 1) {
-    const sort = filterSort(this.form.value);
-    const filterToUse = filter ?? mapParams(this.form.value);
+    const sort = brandFilterSort();
+    const filterToUse = filter ?? brandMapFilterParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);
@@ -77,7 +81,7 @@ export class BrandComponent extends BaseSearchComponent implements OnInit {
     const subscription = this.#brandService.search(params).subscribe({
       next: (response) => {
         if (response.isValid) {
-          this.marcas = response.data.items || [];
+          this.brands = response.data.items || [];
           this.total = response.data.total;
         }
       },
@@ -93,7 +97,7 @@ export class BrandComponent extends BaseSearchComponent implements OnInit {
   }
 
   onClean() {
-    this.form.reset({ order: 'desc' });
+    this.form.reset();
     this.onSearch();
   }
 

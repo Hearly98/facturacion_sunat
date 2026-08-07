@@ -1,4 +1,4 @@
-import { Component, Inject, inject, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, Inject, inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import {
   ButtonDirective,
   CardBodyComponent,
@@ -10,14 +10,14 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { TypedFormGroup } from '../../../shared/types/types-form';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { buildFilterForm, filterSort, mapParams } from '../../helpers';
-import { FilterForm } from '../../core/types/filter-form';
+import { buildDocumentTypeFilterForm, documentTypeFilterSort, documentTypeMapFilterParams } from '../../helpers';
+import { DocumentTypeFilterForm } from '../../core/types/filter-form';
 import { BaseSearchComponent } from '../../../shared/base/search-base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { DocumentTypeNewEditModalComponent } from '../../components/document-type-new-edit/document-type-new-edit-modal.component';
-import { GetDocumentTypeModel } from '../../core/models';
+import { DocumentType } from '../../core/models';
 import { DocumentTypeService } from '../../core/services/document-type.service';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
@@ -37,101 +37,19 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
     PaginatorComponent,
     DocumentTypeNewEditModalComponent,
   ],
-  template: `
-    <c-row>
-      <c-col>
-        <h4>{{ title }}</h4>
-      </c-col>
-      <c-col class="text-end">
-        <button cButton color="primary" (click)="openModal()">
-          <svg cIcon name="cilPlus"></svg>
-          Nuevo Registro
-        </button>
-      </c-col>
-    </c-row>
-
-    <c-card class="mt-3">
-      <c-card-body>
-        <c-row class="g-3 align-items-end" [formGroup]="form">
-          <c-col sm="12" md="6" lg="4">
-            <label for="">Nombre</label>
-            <input formControlName="tip_nom" type="text" class="form-control" />
-          </c-col>
-          <c-col>
-            <button cButton color="primary" (click)="onSearch()" class="me-2">
-              <svg cIcon name="cilSearch"></svg>
-              Buscar
-            </button>
-            <button cButton color="danger" (click)="onClean()">
-              <svg cIcon name="cilTrash"></svg>
-              Limpiar
-            </button>
-          </c-col>
-        </c-row>
-      </c-card-body>
-    </c-card>
-
-    <c-card class="mt-3">
-      <c-card-body>
-        <c-row>
-          <c-col sm="12" md="12" lg="12">
-            <table cTable striped="true">
-              <thead>
-                <tr>
-                  <th>Acciones</th>
-                  <th>Nombre</th>
-                </tr>
-              </thead>
-              <tbody>
-                @if(documentTypes.length === 0){
-                <tr>
-                  <td colspan="2">No hay datos</td>
-                </tr>
-                }@else{ @for (type of documentTypes; track $index) {
-                <tr>
-                  <td>
-                    <button
-                      (click)="openModal(type.tip_id)"
-                      size="sm"
-                      class="me-2"
-                      cButton
-                      color="info"
-                    >
-                      <svg cIcon name="cilPencil"></svg>
-                    </button>
-                    <button (click)="onDelete(type.tip_id)" size="sm" cButton color="danger">
-                      <svg cIcon name="cilTrash"></svg>
-                    </button>
-                  </td>
-                  <td>{{ type.tip_nom }}</td>
-                </tr>
-                } }
-              </tbody>
-            </table>
-            <app-paginator
-              [(page)]="page.page"
-              [pageSize]="page.pageSize"
-              [total]="total"
-              (pageChange)="onPageChange($event)"
-            ></app-paginator>
-          </c-col>
-        </c-row>
-      </c-card-body>
-    </c-card>
-    <app-document-type-new-edit-modal #documentTypeNewEditModal></app-document-type-new-edit-modal>
-  `,
+  templateUrl: `./document-type.component.html`,
   styles: ``,
 })
-export class DocumentTypeComponent extends BaseSearchComponent {
+export class DocumentTypeComponent extends BaseSearchComponent implements OnInit {
   @ViewChild('documentTypeNewEditModal')
   documentTypeNewEditModal!: DocumentTypeNewEditModalComponent;
-  public form!: TypedFormGroup<FilterForm>;
-  #formBuilder = inject(FormBuilder);
+  public form!: TypedFormGroup<DocumentTypeFilterForm>;
+  readonly #formBuilder = inject(FormBuilder);
   public title = 'Tipo Documentos';
-  #documentTypeService = inject(DocumentTypeService);
-  public documentTypes: GetDocumentTypeModel[] = [];
-  #confirmService = inject(ConfirmService);
-  #globalNotification = inject(GlobalNotification);
+  readonly #documentTypeService = inject(DocumentTypeService);
+  public documentTypes: DocumentType[] = [];
+  readonly #confirmService = inject(ConfirmService);
+  readonly #globalNotification = inject(GlobalNotification);
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ADMINISTRATION, viewContainerRef);
   }
@@ -142,12 +60,12 @@ export class DocumentTypeComponent extends BaseSearchComponent {
   }
 
   createForm() {
-    this.form = this.#formBuilder.group(buildFilterForm());
+    this.form = this.#formBuilder.group(buildDocumentTypeFilterForm());
   }
 
   onSearch(filter = null, page = 1) {
-    const sort = filterSort(this.form.value);
-    const filterToUse = filter || mapParams(this.form.value);
+    const sort = documentTypeFilterSort(this.form.value);
+    const filterToUse = filter ?? documentTypeMapFilterParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);

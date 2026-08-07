@@ -10,11 +10,11 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.stories.ts",
-    ".storybook/**/*",
   ],
   "exclude": [
     "src/**/*.spec.ts",
-    "./schematics/**/*"
+    "src/**/*.stories.ts",
+    "./schematics/**/*",
+    ".storybook/**/*"
   ]
 }

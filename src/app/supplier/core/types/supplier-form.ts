@@ -1,11 +1,13 @@
 export interface SupplierForm {
-  prov_id: number | null;
-  emp_id: number | null;
-  prov_nom: string | null;
-  tip_id: number | null;
-  prov_documento: string | null;
-  prov_telf: string | null;
-  prov_direcc: string | null;
-  prov_correo: string | null;
-  est: boolean | null;
+  id: number | null;
+  companyId: number | null;
+  name: string | null;
+  documentTypeId: number | null;
+  document: string | null;
+  phone: string | null;
+  address: string | null;
+  email: string | null;
+  bank: string | null;
+  account: string | null;
+  active: boolean | null;
 }

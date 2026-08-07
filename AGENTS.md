@@ -136,3 +136,9 @@ src/app/<feature>/
 - Lazy loading via `loadComponent` with dynamic imports
 - Auth guards: `authGuard`, `guestGuard`
 - Route data includes `title` for breadcrumbs/nav
+
+## Skills
+
+| Skill | Description | Path |
+|-------|-------------|------|
+| `ux-flow-review` | On-demand UX/flow + color-palette audit, delegated to sub-agents. Separate, opt-in track — never runs automatically as part of the regular fix/test workflow. | [SKILL.md](.claude/skills/ux-flow-review/SKILL.md) |

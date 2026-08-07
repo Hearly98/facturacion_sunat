@@ -1,11 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, computed } from '@angular/core';
 import { ColComponent, RowComponent } from '@coreui/angular';
-import { NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-paginator',
   standalone: true,
-  imports: [RowComponent, ColComponent, NgbPagination],
+  imports: [RowComponent, ColComponent, CommonModule],
   templateUrl: './paginator.component.html',
   styleUrls: ['./paginator.component.scss'],
 })
@@ -14,6 +14,15 @@ export class PaginatorComponent {
   @Input() pageSize!: number;
   @Input() total!: number;
   @Output() pageChange = new EventEmitter<number>();
+
+  totalPages = computed(() => Math.ceil(this.total / this.pageSize) || 1);
+
+  firstItem = computed(() => {
+    if (this.total === 0) return 0;
+    return (this.page - 1) * this.pageSize + 1;
+  });
+
+  lastItem = computed(() => Math.min(this.page * this.pageSize, this.total));
 
   onPageChange(page: number): void {
     this.pageChange.emit(page);

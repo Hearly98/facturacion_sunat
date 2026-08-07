@@ -1,5 +1,10 @@
 export interface CategoryForm {
-    cat_id: number | null;
-    cat_nom: string | null;
-    est: boolean | null;
+  id: number | null;
+  code: string | null;
+  name: string | null;
+}
+
+export interface CategoryFilterForm {
+  code?: string | null;
+  name?: string | null;
 }

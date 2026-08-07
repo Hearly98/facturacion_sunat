@@ -1,8 +1,15 @@
-import { FilterForm } from '../core/types/filter-form';
+import { DocumentTypeFilterForm } from '../core/types/filter-form';
 
-export function mapParams(form: Partial<FilterForm>): Partial<FilterForm> {
-  return {
-    tip_nom: form.tip_nom?.trim() ?? null,
-    order: form.order ?? null,
-  };
+export function documentTypeMapFilterParams(form: Partial<DocumentTypeFilterForm>): Record<string, any> {
+  const params: Record<string, any> = {};
+
+  if (form.name?.trim()) {
+    params['nombre'] = form.name;
+  }
+
+  if (form.order) {
+    params['order'] = form.order;
+  }
+
+  return params;
 }

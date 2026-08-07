@@ -15,15 +15,15 @@
     <c-row class="g-3 align-items-end" [formGroup]="form">
       <c-col sm="12" md="6" lg="4">
         <label for="">Nombre</label>
-        <input formControlName="suc_nom" type="text" class="form-control" />
+        <input formControlName="name" type="text" class="form-control" />
       </c-col>
       <c-col>
         <button cButton color="primary" (click)="onSearch()" class="me-2">
           <svg cIcon name="cilSearch"></svg>
           Buscar
         </button>
-        <button cButton color="danger" (click)="onClean()">
-          <svg cIcon name="cilTrash"></svg>
+        <button cButton color="secondary" (click)="onClean()">
+          <svg cIcon name="cilX"></svg>
           Limpiar
         </button>
       </c-col>
@@ -47,7 +47,7 @@
               <tr>
                 <td>
                   <button
-                    (click)="openModal(sucursal.suc_id)"
+                    (click)="openModal(sucursal.id!)"
                     size="sm"
                     class="me-2"
                     cButton
@@ -55,11 +55,11 @@
                   >
                     <svg cIcon name="cilPencil"></svg>
                   </button>
-                  <button (click)="onDelete(sucursal.suc_id)" size="sm" cButton color="danger">
+                  <button (click)="onDelete(sucursal.id!)" size="sm" cButton color="danger">
                     <svg cIcon name="cilTrash"></svg>
                   </button>
                 </td>
-                <td>{{ sucursal.suc_nom }}</td>
+                <td>{{ sucursal.name }}</td>
               </tr>
             }
             @if (sucursals.length === 0) {

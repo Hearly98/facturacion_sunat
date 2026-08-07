@@ -4,7 +4,7 @@ import { StockFilterForm } from '../core/types/stock-filter-form';
 export const buildStockFilterForm = (): {
   [K in keyof StockFilterForm]: FormControl<StockFilterForm[K]>;
 } => ({
-  suc_id: new FormControl(null),
-  prod_nom: new FormControl(null),
-  prod_cod_interno: new FormControl(null),
+  sucursalId: new FormControl(null),
+  nombre: new FormControl(null),
+  codigoInterno: new FormControl(null),
 });

@@ -1,12 +1,13 @@
-// Tokens con sufijo -rgb generados por Style Dictionary
-$color-primary-rgb: 29, 101, 168;
+// Documentan la paleta real (ver src/styles.scss @use ... with (...) y la nota en
+// tokens/hex/_tokens-hex.scss) — no un archivo generado activo, hand-edited para que coincida.
+$color-primary-rgb: 88, 86, 214;
 $color-primary-dark-rgb: 38, 81, 130;
 $color-secondary-rgb: 107, 119, 133;
-$color-info-rgb: 103, 147, 161;
-$color-success-rgb: 34, 151, 65;
+$color-info-rgb: 22, 96, 158;
+$color-success-rgb: 28, 107, 52;
 $color-success-dark-rgb: 157, 180, 88;
-$color-warning-rgb: 249, 177, 21;
-$color-danger-rgb: 229, 83, 83;
+$color-warning-rgb: 138, 90, 18;
+$color-danger-rgb: 166, 58, 58;
 $color-gray-100-rgb: 246, 247, 248;
 $color-gray-200-rgb: 229, 233, 236;
 $color-gray-300-rgb: 212, 220, 224;

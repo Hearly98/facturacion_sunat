@@ -5,11 +5,11 @@ export const buildRolForm = (): {
   [K in keyof RolForm]: FormControl<RolForm[K]>;
 } => {
   return {
-    rol_id: new FormControl(null),
-    rol_nom: new FormControl(
+    id: new FormControl(null),
+    name: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    est: new FormControl(true),
+    active: new FormControl(true),
   };
 };

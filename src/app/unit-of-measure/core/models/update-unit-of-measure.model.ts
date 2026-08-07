@@ -1,5 +1,6 @@
-import { UnitOfMeasureModel } from './unit-of-measure.model';
-
-export class UpdateUnitOfMeasureModel extends UnitOfMeasureModel {
-  und_id: number = 0;
+export interface UpdateUnitOfMeasure {
+  id: number;
+  code: string;
+  name: string;
+  abbreviation: string;
 }

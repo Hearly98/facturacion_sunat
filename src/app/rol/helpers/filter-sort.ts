@@ -1,10 +1,10 @@
-import { FilterForm } from "../core/types/filter-form";
+import { FilterForm } from '../core/types/filter-form';
 
-export function filterSort(formValue: Partial<FilterForm>) {
-    return [
-        {
-            property: "cat_nom",
-            direction: formValue.order,
-        },
-    ];
+export function rolFilterSort(formValue: Partial<FilterForm>) {
+  return [
+    {
+      property: 'createdAt',
+      direction: formValue.order,
+    },
+  ];
 }

@@ -1,9 +1,11 @@
-import { GetSucursalModel } from 'src/app/sucursal/core/models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 
-export const AlmacenStructure = (sucursales?: GetSucursalModel[]) => {
+export const AlmacenStructure = (sucursales?: Sucursal[]) => {
   let sucursalOptions: { label: string; value: number }[] = [];
   if (sucursales) {
-    sucursalOptions = sucursales.map((s) => ({ label: s.suc_nom, value: s.suc_id }));
+    sucursalOptions = sucursales
+      .filter((s) => s.id != null)
+      .map((s) => ({ label: s.name, value: s.id! }));
   }
   return [
     {
@@ -26,7 +28,7 @@ export const AlmacenStructure = (sucursales?: GetSucursalModel[]) => {
     },
     {
       label: 'Sucursal',
-      formControlName: 'suc_id',
+      formControlName: 'sucursalId',
       type: 'select',
       col: '12',
       options: sucursalOptions,

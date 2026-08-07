@@ -11,13 +11,13 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { TypedFormGroup } from '@shared/types/types-form';
 import { MODULES } from 'src/app/core/config/permissions/modules';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
-import { buildFilterForm, filterSort, mapParams } from '../helpers';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
+import { buildCustomerFilterForm, customerFilterSort, customerMapFilterParams } from '../helpers';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
-import { FilterForm } from '../core/types/filter-form';
+import { CustomerFilterForm } from '../core/types/filter-form';
 import { CustomerService } from '../core/services/customer.service';
-import { GetCustomerModel } from '../core/models';
+import { GetCustomer } from '../core/models';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { CustomerNewEditModalComponent } from '../components/customer-new-edit-modal.component';
@@ -44,7 +44,7 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
       <c-col class="text-end">
         <button cButton color="primary" (click)="openModal()">
           <svg cIcon name="cilPlus"></svg>
-          Nuevo Registro
+          Nuevo Cliente
         </button>
       </c-col>
     </c-row>
@@ -54,7 +54,7 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
         <c-row class="g-3 align-items-end" [formGroup]="form">
           <c-col sm="12" md="6" lg="4">
             <label for="">Nombre</label>
-            <input formControlName="cli_nom" type="text" class="form-control" />
+            <input formControlName="firstName" type="text" class="form-control" />
           </c-col>
           <c-col>
             <button cButton color="primary" (click)="onSearch()" class="me-2">
@@ -78,7 +78,7 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
               <thead>
                 <tr>
                   <th>Acciones</th>
-                  <th>Nombre</th>
+                  <th>Razon Social</th>
                   <th>Documento</th>
                   <th>Teléfono</th>
                 </tr>
@@ -89,7 +89,7 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                     <tr>
                       <td>
                         <button
-                          (click)="openModal(customer.cli_id)"
+                          (click)="openModal(customer.id)"
                           size="sm"
                           class="me-2"
                           cButton
@@ -97,18 +97,13 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                         >
                           <svg cIcon name="cilPencil"></svg>
                         </button>
-                        <button
-                          (click)="onDelete(customer.cli_id)"
-                          size="sm"
-                          cButton
-                          color="danger"
-                        >
+                        <button (click)="onDelete(customer.id)" size="sm" cButton color="danger">
                           <svg cIcon name="cilTrash"></svg>
                         </button>
                       </td>
-                      <td>{{ customer.cli_nom }}</td>
-                      <td>{{ customer.cli_documento }}</td>
-                      <td>{{ customer.cli_telf }}</td>
+                      <td>{{ customer.businessName }}</td>
+                      <td>{{ customer.document }}</td>
+                      <td>{{ customer.phone }}</td>
                     </tr>
                   }
                 } @else {
@@ -134,11 +129,11 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
 })
 export class CustomerPage extends BaseSearchComponent implements OnInit {
   @ViewChild('customerNewEditModal') customerNewEditModal!: CustomerNewEditModalComponent;
-  public form!: TypedFormGroup<FilterForm>;
+  public form!: TypedFormGroup<CustomerFilterForm>;
   readonly #formBuilder = inject(FormBuilder);
   public title = 'Clientes';
   readonly #customerService = inject(CustomerService);
-  public customers: GetCustomerModel[] = [];
+  public customers: GetCustomer[] = [];
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
 
@@ -152,12 +147,12 @@ export class CustomerPage extends BaseSearchComponent implements OnInit {
   }
 
   createForm() {
-    this.form = this.#formBuilder.group(buildFilterForm());
+    this.form = this.#formBuilder.group(buildCustomerFilterForm());
   }
 
   onSearch(filter = null, page = 1) {
-    const sort = filterSort(this.form.value);
-    const filterToUse = filter ?? mapParams(this.form.value);
+    const sort = customerFilterSort(this.form.value);
+    const filterToUse = filter ?? customerMapFilterParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);

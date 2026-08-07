@@ -1,15 +1,16 @@
 import { PurchaseDetailCreteDTOForm } from 'src/app/purchase-detail/core/types';
 
 export interface PurchaseCreateDto {
-  suc_id: number;
-  almacen_id: number;
-  doc_id: number;
-  prov_id: number;
-  mp_cod: number;
-  mon_id: number;
-  numero: string;
-  fechaEmision: Date;
-  compr_coment: string;
-  afecta_stock: boolean;
+  idSucursal: number;
+  idUsuario: number;
+  idAlmacen: number | null;
+  idDocumento: number | null;
+  idProveedor: number | null;
+  idMetodoPago: number | null;
+  idMoneda: number | null;
+  numero: string | null;
+  fechaEmision: Date | null;
+  comentario: string | null;
+  afectaStock: boolean;
   detalles: PurchaseDetailCreteDTOForm[];
 }

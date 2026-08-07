@@ -1,16 +1,19 @@
 export const brandStructure = [
   {
     label: 'Código',
-    formControlName: 'marca_codigo',
+    formControlName: 'code',
     type: 'text',
     col: '12',
-    placeholder: 'Ej: MRC-001',
+    required: true,
+    maxLength: 50,
+    pattern: '^[A-Za-z0-9\-_]+$',
   },
   {
     label: 'Nombre',
-    formControlName: 'marca_nom',
+    formControlName: 'name',
     type: 'text',
     col: '12',
-    placeholder: 'Ej: Samsung',
+    required: true,
+    maxLength: 100,
   },
 ];

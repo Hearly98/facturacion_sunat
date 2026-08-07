@@ -11,10 +11,10 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { TypedFormGroup } from '@shared/types/types-form';
 import { MODULES } from 'src/app/core/config/permissions/modules';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
 import { BaseSearchComponent } from '@shared/base/search-base.component';
-import { GetSupplierModel } from '../core/models/get-supplier.model';
+import { Supplier } from '../core/models';
 import { SupplierService } from '../core/services/supplier.service';
 import { FilterForm } from '../core/types/filter-form';
 import { buildFilterForm, filterSort, mapParams } from '../helpers';
@@ -53,7 +53,7 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
         <c-row class="g-3 align-items-end" [formGroup]="form">
           <c-col sm="12" md="6" lg="4">
             <label for="">Nombre</label>
-            <input formControlName="prov_nom" type="text" class="form-control" />
+            <input formControlName="name" type="text" class="form-control" />
           </c-col>
           <c-col>
             <button cButton color="primary" (click)="onSearch()" class="me-2">
@@ -82,29 +82,31 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
                 </tr>
               </thead>
               <tbody>
-                @if(suppliers.length > 0){ @for (supplier of suppliers; track $index) {
-                <tr>
-                  <td>
-                    <button
-                      (click)="openModal(supplier.prov_id)"
-                      size="sm"
-                      class="me-2"
-                      cButton
-                      color="info"
-                    >
-                      <svg cIcon name="cilPencil"></svg>
-                    </button>
-                    <button (click)="onDelete(supplier.prov_id)" size="sm" cButton color="danger">
-                      <svg cIcon name="cilTrash"></svg>
-                    </button>
-                  </td>
-                  <td>{{ supplier.prov_nom }}</td>
-                  <td>{{ supplier.prov_ruc }}</td>
-                </tr>
-                } }@else {
-                <tr>
-                  <td colspan="2">No hay datos</td>
-                </tr>
+                @if (suppliers.length > 0) {
+                  @for (supplier of suppliers; track $index) {
+                    <tr>
+                      <td>
+                        <button
+                          (click)="openModal(supplier.id)"
+                          size="sm"
+                          class="me-2"
+                          cButton
+                          color="info"
+                        >
+                          <svg cIcon name="cilPencil"></svg>
+                        </button>
+                        <button (click)="onDelete(supplier.id)" size="sm" cButton color="danger">
+                          <svg cIcon name="cilTrash"></svg>
+                        </button>
+                      </td>
+                      <td>{{ supplier.name }}</td>
+                      <td>{{ supplier.document }}</td>
+                    </tr>
+                  }
+                } @else {
+                  <tr>
+                    <td colspan="2">No hay datos</td>
+                  </tr>
                 }
               </tbody>
             </table>
@@ -130,7 +132,7 @@ export class SupplierPage extends BaseSearchComponent {
   #supplierService = inject(SupplierService);
   #confirmService = inject(ConfirmService);
   #globalNotification = inject(GlobalNotification);
-  public suppliers: GetSupplierModel[] = [];
+  public suppliers: Supplier[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.CUSTOMER, viewContainerRef);
@@ -200,11 +202,9 @@ export class SupplierPage extends BaseSearchComponent {
         if (confirmed) {
           this.#supplierService.delete(id).subscribe({
             next: (response) => {
+              this.#globalNotification.openAlert(response);
               if (response.isValid) {
-                this.#globalNotification.openAlert(response);
                 this.onSearch();
-              } else {
-                this.#globalNotification.openAlert(response);
               }
             },
             error: (response) => {

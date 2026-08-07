@@ -1,5 +1,6 @@
-export class PaymentMethod {
-  mp_cod: string = '';
-  mp_nom: string = '';
-  est: boolean = false;
-}
+export type PaymentMethod = {
+  id: number;
+  code: string;
+  name: string;
+  active: boolean;
+};

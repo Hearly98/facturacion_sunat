@@ -1,19 +1,13 @@
-import { BrandForm } from '../core/types/brand.form';
-import { FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BrandForm } from '../core/types/brand-form';
 
-export const buildBrandForm = (): {
-  [K in keyof BrandForm]: FormControl<BrandForm[K]>;
-} => {
-  return {
-    marca_id: new FormControl<number | null>(null),
-    marca_codigo: new FormControl<string | null>(
-      null,
-      Validators.compose([Validators.required, Validators.minLength(2)]),
-    ),
-    marca_nom: new FormControl<string | null>(
-      null,
-      Validators.compose([Validators.required, Validators.minLength(3)]),
-    ),
-    est: new FormControl<boolean>(true),
-  };
-};
+export function buildBrandForm(fb: FormBuilder, data?: BrandForm): FormGroup {
+  return fb.group({
+    id: [data?.id ?? null],
+    name: [data?.name ?? null, [Validators.required, Validators.maxLength(100)]],
+    code: [
+      data?.code ?? null,
+      [Validators.required, Validators.maxLength(50), Validators.pattern('^[A-Za-z0-9\-_]+$')],
+    ],
+  });
+}

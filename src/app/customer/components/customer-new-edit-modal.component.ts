@@ -12,7 +12,7 @@ import {
   SpinnerComponent,
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BaseComponent } from '@shared/base/base.component';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { TypedFormGroup } from '@shared/types/types-form';
@@ -20,8 +20,8 @@ import { CustomerForm } from '../core/types/customer-form';
 import { buildCustomerForm, customerErrorMessages, customerStructure } from '../helpers';
 import { CustomerService } from '../core/services/customer.service';
 import { MODULES } from 'src/app/core/config/permissions/modules';
-import { CreateCustomerModel, UpdateCustomerModel } from '../core/models';
-import { GetDocumentTypeModel } from 'src/app/document-type/core/models';
+import { CreateCustomer, UpdateCustomer } from '../core/models';
+import { DocumentType } from 'src/app/document-type/core/models';
 import { DocumentTypeService } from 'src/app/document-type/core/services/document-type.service';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 
@@ -48,7 +48,8 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
   form!: TypedFormGroup<CustomerForm>;
   visible = false;
   structure = customerStructure;
-  documentTypes: GetDocumentTypeModel[] = [];
+  documentTypes: DocumentType[] = [];
+  selectedDocumentType: DocumentType | null = null;
   readonly #documentTypeService = inject(DocumentTypeService);
   readonly #globalNotification = inject(GlobalNotification);
   readonly #customerService = inject(CustomerService);
@@ -70,9 +71,18 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
     this.form = this.#formBuilder.group(buildCustomerForm());
   }
 
+  get isDni(): boolean {
+    return this.selectedDocumentType?.code === '1';
+  }
+
+  get isRuc(): boolean {
+    return this.selectedDocumentType?.code === '6';
+  }
+
   openModal(idCustomer?: number, callback: any = null) {
     this.title.set('Crear Cliente');
     this.createForm();
+    this.setupFormListeners();
     this.visible = true;
     this.callback = callback;
     if (idCustomer) {
@@ -81,11 +91,62 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
     }
   }
 
+  setupFormListeners() {
+    const documentTypeControl = this.form.get('documentTypeId');
+    const firstNameControl = this.form.get('firstName');
+    const lastNameControl = this.form.get('lastName');
+    const businessNameControl = this.form.get('businessName');
+
+    if (documentTypeControl) {
+      const subscription = documentTypeControl.valueChanges.subscribe((typeId) => {
+        this.selectedDocumentType = this.documentTypes.find((type) => type.id === typeId) || null;
+
+        if (this.isDni) {
+          firstNameControl?.setValidators([Validators.required, Validators.minLength(3)]);
+          lastNameControl?.setValidators(Validators.required);
+          businessNameControl?.clearValidators();
+          businessNameControl?.setValue('', { emitEvent: false });
+        } else if (this.isRuc) {
+          firstNameControl?.clearValidators();
+          lastNameControl?.clearValidators();
+          businessNameControl?.setValidators(Validators.required);
+          firstNameControl?.setValue('', { emitEvent: false });
+          lastNameControl?.setValue('', { emitEvent: false });
+        }
+
+        firstNameControl?.updateValueAndValidity({ emitEvent: false });
+        lastNameControl?.updateValueAndValidity({ emitEvent: false });
+        businessNameControl?.updateValueAndValidity({ emitEvent: false });
+      });
+      this.subscriptions.push(subscription);
+    }
+
+    if (firstNameControl && lastNameControl && businessNameControl) {
+      const updateBusinessName = () => {
+        if (this.isDni) {
+          const firstName = firstNameControl.value || '';
+          const lastName = lastNameControl.value || '';
+          const combined = `${firstName} ${lastName}`.trim();
+          if (combined) {
+            businessNameControl.setValue(combined, { emitEvent: false });
+          }
+        }
+      };
+
+      const firstNameSub = firstNameControl.valueChanges.subscribe(updateBusinessName);
+      const lastNameSub = lastNameControl.valueChanges.subscribe(updateBusinessName);
+      this.subscriptions.push(firstNameSub, lastNameSub);
+    }
+  }
+
   loadData(idCustomer: number) {
     this.#customerService.getById(idCustomer).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.form.patchValue(response.data);
+          const documentTypeId = response.data.documentTypeId;
+          this.selectedDocumentType =
+            this.documentTypes.find((type) => type.id === documentTypeId) || null;
         }
       },
     });
@@ -101,7 +162,7 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
 
   onSubmit() {
     if (this.form.valid) {
-      if (this.form.value.cli_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -113,8 +174,8 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
 
   create() {
     this.isLoading.set(true);
-    const { cli_id, ...body } = this.form.value;
-    const subscription = this.#customerService.create(body as CreateCustomerModel).subscribe({
+    const { id, ...body } = this.form.value;
+    const subscription = this.#customerService.create(body as CreateCustomer).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
@@ -136,25 +197,23 @@ export class CustomerNewEditModalComponent extends BaseComponent implements OnIn
 
   update() {
     this.isLoading.set(true);
-    const subscription = this.#customerService
-      .update(this.form.value as UpdateCustomerModel)
-      .subscribe({
-        next: (response) => {
-          if (response.isValid) {
-            this.#globalNotification.openAlert(response);
-            this.callback(response.data);
-            this.onClose();
-            this.isLoading.set(false);
-          } else {
-            this.#globalNotification.openAlert(response);
-            this.isLoading.set(false);
-          }
-        },
-        error: (error) => {
-          this.#globalNotification.openAlert(error.error);
+    const subscription = this.#customerService.update(this.form.value as UpdateCustomer).subscribe({
+      next: (response) => {
+        if (response.isValid) {
+          this.#globalNotification.openAlert(response);
+          this.callback(response.data);
+          this.onClose();
           this.isLoading.set(false);
-        },
-      });
+        } else {
+          this.#globalNotification.openAlert(response);
+          this.isLoading.set(false);
+        }
+      },
+      error: (error) => {
+        this.#globalNotification.openAlert(error.error);
+        this.isLoading.set(false);
+      },
+    });
     this.subscriptions.push(subscription);
   }
 }

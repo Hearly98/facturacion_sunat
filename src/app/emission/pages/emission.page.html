@@ -1,0 +1,92 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>{{ title }}</strong>
+      </c-card-header>
+      <c-card-body>
+        <form [formGroup]="form" (ngSubmit)="search()">
+          <c-row>
+            <c-col xs="12" md="6">
+              <div class="mb-3">
+                <label cFormLabel for="status">Estado</label>
+                <select
+                  cFormSelect
+                  id="status"
+                  formControlName="status"
+                  class="form-select"
+                >
+                  <option *ngFor="let option of statusOptions" [value]="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+              </div>
+            </c-col>
+            <c-col xs="12" md="6">
+              <div class="mb-3">
+                <label cFormLabel for="searchTerm">Búsqueda</label>
+                <input
+                  cFormControl
+                  type="text"
+                  id="searchTerm"
+                  formControlName="searchTerm"
+                  placeholder="Búscar por serie, correlativo o cliente"
+                  class="form-control"
+                />
+              </div>
+            </c-col>
+          </c-row>
+
+          <c-row class="mt-3">
+            <c-col xs="12">
+              <button
+                type="submit"
+                cButton
+                color="primary"
+                class="me-2"
+              >
+                <svg cIcon name="cilSearch" class="me-1"></svg>
+                Buscar
+              </button>
+              <button
+                type="button"
+                cButton
+                color="secondary"
+                (click)="reset()"
+              >
+                <svg cIcon name="cilReload" class="me-1"></svg>
+                Limpiar
+              </button>
+            </c-col>
+          </c-row>
+        </form>
+      </c-card-body>
+    </c-card>
+
+    <c-card>
+      <c-card-header>
+        <strong>Listado de Emisiones</strong>
+      </c-card-header>
+      <c-card-body>
+        <div class="table-responsive">
+          <app-emission-list
+            [emissions]="emissions"
+            [loading]="loading"
+            (refresh)="search()"
+          ></app-emission-list>
+        </div>
+
+        <c-row class="mt-4" *ngIf="emissions.length > 0">
+          <c-col xs="12">
+            <app-paginator
+              [total]="totalRecords"
+              [pageSize]="form.value.limit || 10"
+              [page]="form.value.page || 1"
+              (pageChange)="onPageChange($event)"
+            ></app-paginator>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

@@ -1,4 +1,3 @@
 import { RolModel } from "./rol.model";
 
-export class CreateRolModel extends RolModel {
-}
+export type CreateRol = Omit<RolModel, 'id'>;

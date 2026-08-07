@@ -5,18 +5,17 @@ export const buildSucursalForm = (): {
   [K in keyof SucursalForm]: FormControl<SucursalForm[K]>;
 } => {
   return {
-    suc_id: new FormControl(null),
-    emp_id: new FormControl(null),
-    suc_cod: new FormControl(null),
-    suc_nom: new FormControl(
+    id: new FormControl(null),
+    companyId: new FormControl(null),
+    code: new FormControl(null),
+    name: new FormControl(
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    ubigeo: new FormControl(null),
-    direccion: new FormControl(null),
-    departamento: new FormControl(null),
-    provincia: new FormControl(null),
-    distrito: new FormControl(null),
-    est: new FormControl(true),
+    zip: new FormControl(null),
+    address: new FormControl(null),
+    department: new FormControl(null),
+    province: new FormControl(null),
+    district: new FormControl(null),
   };
 };

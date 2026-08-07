@@ -14,16 +14,20 @@
   <c-card-body>
     <c-row class="g-3 align-items-end" [formGroup]="form">
       <c-col sm="12" md="6" lg="4">
+        <label for="">Código</label>
+        <input formControlName="code" type="text" class="form-control" />
+      </c-col>
+      <c-col sm="12" md="6" lg="4">
         <label for="">Nombre</label>
-        <input formControlName="cat_nom" type="text" class="form-control" />
+        <input formControlName="name" type="text" class="form-control" />
       </c-col>
       <c-col>
         <button cButton color="primary" (click)="onSearch()" class="me-2">
           <svg cIcon name="cilSearch"></svg>
           Buscar
         </button>
-        <button cButton color="danger" (click)="onClean()">
-          <svg cIcon name="cilTrash"></svg>
+        <button cButton color="secondary" (click)="onClean()">
+          <svg cIcon name="cilX"></svg>
           Limpiar
         </button>
       </c-col>
@@ -39,6 +43,7 @@
           <thead>
             <tr>
               <th>Acciones</th>
+              <th>Código</th>
               <th>Nombre</th>
             </tr>
           </thead>
@@ -47,14 +52,15 @@
             @for (category of categories; track $index) {
             <tr>
               <td>
-                <button (click)="openModal(category.cat_id)" size="sm" class="me-2" cButton color="info">
+                <button (click)="openModal(category.id!)" size="sm" class="me-2" cButton color="info">
                   <svg cIcon name="cilPencil"></svg>
                 </button>
-                <button (click)="onDelete(category.cat_id)" size="sm" cButton color="danger">
+                <button (click)="onDelete(category.id!)" size="sm" cButton color="danger">
                   <svg cIcon name="cilTrash"></svg>
                 </button>
               </td>
-              <td>{{ category.cat_nom }}</td>
+              <td>{{ category.code }}</td>
+              <td>{{ category.name }}</td>
             </tr>
             }
             }@else {

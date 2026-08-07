@@ -15,10 +15,10 @@ import { TypedFormGroup } from '../../shared/types/types-form';
 import { FilterForm } from '../core/types/filter-form';
 import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { CurrencyService } from '../core/services/currency.service';
+import { Currency } from '../core/models';
 import { PageParamsModel } from '../../shared/models/query/page-params.model';
-import { PaginatorComponent } from '../../paginator/paginator.component';
+import { PaginatorComponent } from '../../shared/components/paginator/paginator.component';
 import { CurrencyNewEditModalComponent } from '../components/currency-new-edit-modal.component';
-import { GetCurrencyModel } from '../core/models/get-currency.model';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 
@@ -37,104 +37,18 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
     PaginatorComponent,
     CurrencyNewEditModalComponent,
   ],
-  template: `
-    <c-row>
-      <c-col>
-        <h4>{{ title }}</h4>
-      </c-col>
-      <c-col class="text-end">
-        <button cButton color="primary" (click)="openModal()">
-          <svg cIcon name="cilPlus"></svg>
-          Nuevo Registro
-        </button>
-      </c-col>
-    </c-row>
-
-    <c-card class="mt-3">
-      <c-card-body>
-        <c-row class="g-3 align-items-end" [formGroup]="form">
-          <c-col sm="12" md="6" lg="4">
-            <label for="">Nombre</label>
-            <input formControlName="mon_nom" type="text" class="form-control" />
-          </c-col>
-          <c-col>
-            <button cButton color="primary" (click)="onSearch()" class="me-2">
-              <svg cIcon name="cilSearch"></svg>
-              Buscar
-            </button>
-            <button cButton color="danger" (click)="onClean()">
-              <svg cIcon name="cilTrash"></svg>
-              Limpiar
-            </button>
-          </c-col>
-        </c-row>
-      </c-card-body>
-    </c-card>
-
-    <c-card class="mt-3">
-      <c-card-body>
-        <c-row>
-          <c-col sm="12" md="12" lg="12">
-            <table cTable striped="true">
-              <thead>
-                <tr>
-                  <th>Acciones</th>
-                  <th>Código</th>
-                  <th>Nombre</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (item of currencies; track $index) {
-                  <tr>
-                    <td>
-                      <button
-                        (click)="openModal(item.mon_id)"
-                        size="sm"
-                        class="me-2"
-                        cButton
-                        color="info"
-                      >
-                        <svg cIcon name="cilPencil"></svg>
-                      </button>
-                      <button (click)="onDelete(item.mon_id)" size="sm" cButton color="danger">
-                        <svg cIcon name="cilTrash"></svg>
-                      </button>
-                    </td>
-                    <td>{{ item.mon_cod }}</td>
-                    <td>{{ item.mon_nom }}</td>
-                  </tr>
-                }
-                @if (currencies.length === 0) {
-                  <tr>
-                    <td colspan="3">No se encontraron datos</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-            <app-paginator
-              [(page)]="page.page"
-              [pageSize]="page.pageSize"
-              [total]="total"
-              (pageChange)="onPageChange($event)"
-            ></app-paginator>
-          </c-col>
-        </c-row>
-      </c-card-body>
-    </c-card>
-
-    <app-currency-new-edit-modal #currencyNewEditModal></app-currency-new-edit-modal>
-  `,
+  templateUrl: './currency.page.html',
   styles: ``,
 })
 export class CurrencyPage extends BaseSearchComponent implements OnInit {
   @ViewChild('currencyNewEditModal') currencyNewEditModal!: CurrencyNewEditModalComponent;
   public form!: TypedFormGroup<FilterForm>;
   public title = 'Monedas';
-  public currencies: GetCurrencyModel[] = [];
-  #formBuilder = inject(FormBuilder);
-  #service = inject(CurrencyService);
-  #confirmService = inject(ConfirmService);
-  #globalNotification = inject(GlobalNotification);
+  public currencies: Currency[] = [];
+  readonly #formBuilder = inject(FormBuilder);
+  readonly #service = inject(CurrencyService);
+  readonly #confirmService = inject(ConfirmService);
+  readonly #globalNotification = inject(GlobalNotification);
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.COMPANY, viewContainerRef);
   }
@@ -178,9 +92,7 @@ export class CurrencyPage extends BaseSearchComponent implements OnInit {
   }
 
   onClean() {
-    this.form.reset({
-      order: 'desc',
-    });
+    this.form.reset();
     this.onSearch();
   }
 

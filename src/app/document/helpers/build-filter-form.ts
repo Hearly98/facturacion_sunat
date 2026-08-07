@@ -4,7 +4,5 @@ import { FilterForm } from '../core/types/filter-form';
 export const buildFilterForm = (): {
   [K in keyof FilterForm]: FormControl<FilterForm[K]>;
 } => ({
-  doc_nom: new FormControl(null),
-  est: new FormControl(true),
-  order: new FormControl('desc'),
+  name: new FormControl(null),
 });

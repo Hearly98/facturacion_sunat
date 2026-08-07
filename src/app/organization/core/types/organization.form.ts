@@ -1,12 +1,11 @@
-export interface OrganizationForm {
-  emp_id: number | null;
-  emp_nom: string | null;
-  emp_ruc: string | null;
-  emp_correo: string | null;
-  emp_direcc: string | null;
-  emp_telf: string | null;
-  emp_pag: string | null;
-  emp_logo: string | null;
-  com_id: number | null;
-  est: boolean | null;
-}
+export type OrganizationForm = {
+  id: number | null;
+  name: string | null;
+  ruc: string | null;
+  email: string | null;
+  address: string | null;
+  phone: string | null;
+  website: string | null;
+  logo: string | null;
+  status: boolean | null;
+};

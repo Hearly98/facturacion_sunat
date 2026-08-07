@@ -20,14 +20,14 @@ import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { FilterForm } from '../../core/types';
 import { GetAlmacenModel } from '../../core/models';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { AlmacenService } from '../../core/services/almacen.service';
 import { SucursalService } from '../../../sucursal/core/services/sucursal.service';
 import { TypedFormGroup } from '../../../shared/types/types-form';
 import { CommonModule } from '@angular/common';
-import { GetSucursalModel } from '../../../sucursal/core/models';
+import { Sucursal } from '../../../sucursal/core/models';
 import { buildFilterForm, filterSort, mapParams } from '../../helpers';
 import { Router } from '@angular/router';
 
@@ -65,7 +65,7 @@ export class AlmacenComponent extends BaseSearchComponent implements OnInit{
   readonly #router = inject(Router);
 
   public almacenes: GetAlmacenModel[] = [];
-  public sucursales: GetSucursalModel[] = [];
+  public sucursales: Sucursal[] = [];
   public viewMode: 'cards' | 'table' = 'cards';
 
   readonly #confirmService = inject(ConfirmService);
@@ -134,7 +134,7 @@ export class AlmacenComponent extends BaseSearchComponent implements OnInit{
   }
 
   viewStock(almacen: GetAlmacenModel) {
-    this.#router.navigate(['/almacen-stock', almacen.almacen_id]);
+    this.#router.navigate(['/almacen-stock', almacen.id]);
   }
 
   onActivate(id: number) {

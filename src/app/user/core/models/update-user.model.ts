@@ -1,5 +1,12 @@
-import { UserModel } from './user.model';
-
-export class UpdateUserModel extends UserModel {
-  usu_id: number = 0;
+export interface UpdateUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string;
+  dni: string;
+  phone: string;
+  roleId: number;
+  image?: string;
+  idSucursales: number[];
 }

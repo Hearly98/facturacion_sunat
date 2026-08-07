@@ -1,9 +1,15 @@
-export class CustomerModel {
-  emp_id: number = 0;
-  cli_nom: string = '';
-  cli_documento: string = '';
-  cli_telf: string = '';
-  cli_direcc: string = '';
-  cli_correo: string = '';
-  est: boolean = false;
+export interface Customer {
+  id: number;
+  companyId: number;
+  firstName: string;
+  lastName: string;
+  businessName: string;
+  document: string;
+  phone: string;
+  address: string;
+  email: string;
+  ubigeoCode: string;
+  documentTypeId: number;
 }
+
+export type CustomerType = Customer;

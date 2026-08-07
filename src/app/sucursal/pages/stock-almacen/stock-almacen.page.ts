@@ -15,10 +15,8 @@ import { BaseComponent } from '../../../shared/base/base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import {
   SucursalService,
-  StockBySucursalModel,
-  StockProductoModel,
 } from '../../core/services/sucursal.service';
-import { GetSucursalModel } from '../../core/models';
+import { Sucursal, StockBySucursalModel, StockProductoModel } from '../../core/models';
 import { CommonModule } from '@angular/common';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { buildStockFilterForm } from '../../helpers';
@@ -48,12 +46,12 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
   public title = 'Stock por Almacén';
   public stockData?: StockBySucursalModel;
   public filteredProductos: StockProductoModel[] = [];
-  public sucursales: GetSucursalModel[] = [];
+  public sucursales: Sucursal[] = [];
   public loading = false;
 
-  #sucursalService = inject(SucursalService);
-  #formBuilder = inject(FormBuilder);
-  #globalNotification = inject(GlobalNotification);
+  readonly #sucursalService = inject(SucursalService);
+  readonly #formBuilder = inject(FormBuilder);
+  readonly #globalNotification = inject(GlobalNotification);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ALMACEN, viewContainerRef);
@@ -74,7 +72,7 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
         if (response.isValid) {
           this.sucursales = response.data;
           if (this.sucursales.length > 0) {
-            this.form.patchValue({ suc_id: this.sucursales[0].suc_id });
+            this.form.patchValue({ sucursalId: this.sucursales[0].id });
             this.onSearch();
           }
         }
@@ -90,7 +88,7 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
   }
 
   onSearch() {
-    const sucId = this.form.value.suc_id;
+    const sucId = this.form.value.sucursalId;
     if (!sucId) {
       return;
     }
@@ -122,6 +120,6 @@ export class StockAlmacenPage extends BaseComponent implements OnInit {
   }
 
   getTotalStock(): number {
-    return this.filteredProductos.reduce((sum, p) => sum + p.stock_total, 0);
+    return this.filteredProductos.reduce((sum, p) => sum + p.stockTotal, 0);
   }
 }

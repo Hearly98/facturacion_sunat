@@ -1,6 +1,5 @@
-export interface FilterForm {
-  marca_nom: string | null;
-  marca_codigo: string | null;
-  est: boolean | null;
+export interface BrandFilterForm {
+  nombre: string | null;
+  codigo: string | null;
   order: string | null;
 }

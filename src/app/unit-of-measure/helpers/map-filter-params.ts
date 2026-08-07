@@ -1,8 +1,7 @@
-import { FilterForm } from '../core/types/filter-form';
+import { UnitOfMeasureFilterForm } from '../core/types/filter-form';
 
-export function mapParams(form: Partial<FilterForm>): Partial<FilterForm> {
-  return {
-    und_nom: form.und_nom?.trim() ?? null,
-    order: form.order ?? null,
-  };
-}
+export const unitOfMeasureMapFilterParams = (value: Partial<UnitOfMeasureFilterForm>): Record<string, any> => {
+  const params: Record<string, any> = {};
+  if (value.name) params['nombre'] = value.name;
+  return params;
+};

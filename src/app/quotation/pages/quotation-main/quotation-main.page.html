@@ -71,6 +71,11 @@
                                     ? searchSelectLabels[control.formControlName]
                                     : ''
                                 "
+                                [showError]="
+                                  !!form.get(control.formControlName)?.invalid &&
+                                  !!form.get(control.formControlName)?.touched
+                                "
+                                [errorMessage]="fieldErrorMessage(control.formControlName)"
                               ></app-search-select>
                             }
                             @case ('select') {
@@ -129,7 +134,7 @@
                           }
                           @if (control.showControlName) {
                             <div class="mt-1 d-flex gap-2 align-items-center">
-                              <span class="text-muted small">¿Mostrar?</span>
+                              <span class="text-muted small" title="Controla si este dato aparece en el PDF de la cotización">Mostrar en PDF</span>
                               <input
                                 class="form-check-input mt-0"
                                 type="checkbox"
@@ -172,7 +177,7 @@
                     type="button"
                     cButton
                     color="secondary"
-                    (click)="resetForm()"
+                    (click)="onCancel()"
                   >
                     Cancelar
                   </button>
@@ -211,8 +216,8 @@
                     <label for="suc_id" class="form-label">Sucursal</label>
                     <select cSelect formControlName="suc_id" id="suc_id">
                       <option [value]="null">Todas</option>
-                      @for (sucursal of sucursales; track sucursal.suc_id) {
-                        <option [value]="sucursal.suc_id">{{ sucursal.suc_nom }}</option>
+                      @for (sucursal of sucursales; track sucursal.id) {
+                        <option [value]="sucursal.id">{{ sucursal.name }}</option>
                       }
                     </select>
                   </c-col>
@@ -256,8 +261,8 @@
                       <svg cIcon name="cilSearch"></svg>
                       Buscar
                     </button>
-                    <button cButton color="danger" (click)="onClean()">
-                      <svg cIcon name="cilTrash"></svg>
+                    <button cButton color="secondary" (click)="onClean()">
+                      <svg cIcon name="cilX"></svg>
                       Limpiar
                     </button>
                   </c-col>
@@ -287,34 +292,42 @@
                         </thead>
                         <tbody>
                           @if (quotations.length > 0) {
-                            @for (quotation of quotations; track quotation.cot_id) {
+                            @for (quotation of quotations; track quotation.id) {
                               <tr>
                                 <td>
-                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                  @if (quotation.stateCode !== '03') {
                                     <button
                                       size="sm"
                                       class="me-2"
                                       cButton
                                       color="secondary"
-                                      (click)="onPrint(quotation.cot_id)"
+                                      (click)="onPrint(quotation.id)"
                                     >
                                       <svg cIcon name="cilPrint"></svg>
                                     </button>
                                   }
-                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                  @if (quotation.stateCode !== '03') {
                                     <button
                                       size="sm"
                                       class="me-2"
                                       cButton
-                                      color="info"
-                                      (click)="onEdit(quotation.cot_id)"
+                                      color="primary"
+                                      (click)="onEdit(quotation.id)"
                                     >
                                       <svg cIcon name="cilPencil"></svg>
                                     </button>
                                   }
-                                  @if (quotation.estado_cotizacion?.codigo !== '03') {
+                                  <button
+                                    size="sm"
+                                    class="me-2 btn-clone"
+                                    cButton
+                                    (click)="onClone(quotation.id)"
+                                  >
+                                    <svg cIcon name="cilCopy"></svg>
+                                  </button>
+                                  @if (quotation.stateCode === '01') {
                                     <button
-                                      (click)="onDelete(quotation.cot_id)"
+                                      (click)="onDelete(quotation.id)"
                                       size="sm"
                                       cButton
                                       color="danger"
@@ -323,27 +336,19 @@
                                     </button>
                                   }
                                 </td>
-                                <td>{{ quotation.numero_completo }}</td>
-                                <td>{{ quotation.fecha_emision | date: 'dd/MM/yyyy' }}</td>
-                                <td>{{ quotation.cliente?.cli_nom }}</td>
-                                <td>{{ quotation.cot_total | currency: 'S/. ' }}</td>
+                                <td>{{ quotation.fullNumber }}</td>
+                                <td>{{ quotation.issueDate | date: 'dd/MM/yyyy' }}</td>
+                                <td>{{ quotation.customer?.name }}</td>
+                                <td>{{ quotation.total | currency: 'S/. ' }}</td>
                                 <td>
                                   <span
                                     class="badge"
-                                    [class.bg-warning]="
-                                      quotation.estado_cotizacion?.color === 'warning'
-                                    "
-                                    [class.bg-success]="
-                                      quotation.estado_cotizacion?.color === 'success'
-                                    "
-                                    [class.bg-danger]="
-                                      quotation.estado_cotizacion?.color === 'danger'
-                                    "
-                                   [class.bg-info]="
-                                      quotation.estado_cotizacion?.color === 'info'
-                                    "
+                                    [class.bg-warning]="stateColor(quotation.stateCode) === 'warning'"
+                                    [class.bg-success]="stateColor(quotation.stateCode) === 'success'"
+                                    [class.bg-danger]="stateColor(quotation.stateCode) === 'danger'"
+                                    [class.bg-info]="stateColor(quotation.stateCode) === 'info'"
                                   >
-                                    {{ quotation.estado_cotizacion?.nombre }}
+                                    {{ quotation.stateName }}
                                   </span>
                                 </td>
                               </tr>

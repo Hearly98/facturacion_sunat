@@ -1,9 +1,9 @@
-import { FilterForm } from "../core/types/filter-form";
+import { CustomerFilterForm } from "../core/types/filter-form";
 
-export function filterSort(formValue: Partial<FilterForm>) {
+export function customerFilterSort(formValue: Partial<CustomerFilterForm>) {
     return [
         {
-            property: "cli_nom",
+            property: "nombre",
             direction: formValue.order,
         },
     ];

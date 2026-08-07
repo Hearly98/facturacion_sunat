@@ -1,5 +1,6 @@
 export interface UnitOfMeasureForm {
-  und_id: number | null;
-  und_nom: string | null;
-  est: boolean | null;
+  id: number | null;
+  code: string | null;
+  name: string | null;
+  abbreviation: string | null;
 }

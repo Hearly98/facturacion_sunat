@@ -13,14 +13,14 @@ import { BrandService } from '../../core/services/brand.service';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { buildBrandForm, brandStructure, brandErrorMessages } from '../../helpers';
 import { TypedFormGroup } from '../../../shared/types/types-form';
-import { BrandForm } from '../../core/types/brand.form';
+import { BrandForm } from '../../core/types';
 import { BaseComponent } from '../../../shared/base/base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
-import { CreateMarcaModel, UpdateMarcaModel } from '../../core/models';
 import { GlobalNotification } from '../../../shared/alerts/global-notification/global-notification';
 import { CommonModule } from '@angular/common';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 import { IconDirective } from '@coreui/icons-angular';
+import { CreateBrand, UpdateBrand } from '../../core/models';
 @Component({
   selector: 'app-brand-new-edit-modal',
   imports: [
@@ -49,7 +49,7 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
   title = signal('');
   isLoading = signal(false);
   callback: any;
-  messages = brandErrorMessages();
+  messages = brandErrorMessages;
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.MARCA, viewContainerRef);
@@ -60,7 +60,7 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
   }
 
   createForm() {
-    this.form = this.#formBuilder.group(buildBrandForm());
+    this.form = buildBrandForm(this.#formBuilder) as TypedFormGroup<BrandForm>;
   }
 
   openModal(idBrand?: number, callback: any = null) {
@@ -91,7 +91,7 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
   onSubmit() {
     if (this.form.valid) {
       this.isLoading.set(true);
-      if (this.form.value.marca_id) {
+      if (this.form.value.id) {
         this.update();
       } else {
         this.create();
@@ -102,16 +102,13 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
   }
 
   create() {
-    const subscription = this.#brandService.create(this.form.value as CreateMarcaModel).subscribe({
+    const subscription = this.#brandService.create(this.form.value as CreateBrand).subscribe({
       next: (response) => {
+        this.#globalNotification.openAlert(response);
+        this.isLoading.set(false);
         if (response.isValid) {
-          this.#globalNotification.openAlert(response);
           this.callback(response.data);
           this.onClose();
-          this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
         }
       },
       error: (error) => {
@@ -123,16 +120,14 @@ export class BrandNewEditModal extends BaseComponent implements OnInit {
   }
 
   update() {
-    const subscription = this.#brandService.update(this.form.value as UpdateMarcaModel).subscribe({
+    const value = this.form.getRawValue();
+    const subscription = this.#brandService.update(value as UpdateBrand).subscribe({
       next: (response) => {
+        this.#globalNotification.openAlert(response);
+        this.isLoading.set(false);
         if (response.isValid) {
-          this.#globalNotification.openAlert(response);
           this.callback(response.data);
           this.onClose();
-          this.isLoading.set(false);
-        } else {
-          this.#globalNotification.openAlert(response);
-          this.isLoading.set(false);
         }
       },
       error: (error) => {

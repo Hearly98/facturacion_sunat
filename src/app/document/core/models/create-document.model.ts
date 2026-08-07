@@ -1,3 +1,4 @@
-import { DocumentModel } from './document.model';
-
-export class CreateDocumentModel extends DocumentModel {}
+export type CreateDocument = {
+  code: string;
+  name: string;
+};

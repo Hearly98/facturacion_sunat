@@ -12,9 +12,11 @@ import { BaseComponent } from '../../shared/base/base.component';
 import { MODULES } from '../../core/config/permissions/modules';
 import { buildOrganizationForm, organizationStructure } from '../helpers';
 import { OrganizationService } from '../core/services/organization.service';
+import { OrganizationMapper } from '../core/mappers';
 import { GlobalNotification } from '../../shared/alerts/global-notification/global-notification';
 import { ImageCompressionService } from '../../shared/services/image-compression.service';
-import { GetOrganizationModel } from '../core/models/get-organization.model';
+import { GetOrganization } from '../core/models/get-organization.model';
+import { UpdateOrganization } from '../core/models/update-organization.model';
 import { ButtonDirective } from '@coreui/angular';
 
 @Component({
@@ -139,15 +141,16 @@ import { ButtonDirective } from '@coreui/angular';
 export class OrganizationProfileComponent extends BaseComponent implements OnInit {
   form!: FormGroup;
   #formBuilder = inject(FormBuilder);
-  structure = organizationStructure.filter((item) => item.formControlName !== 'emp_logo');
+  structure = organizationStructure.filter((item) => item.formControlName !== 'logo');
   selectedFile: File | null = null;
   imagePreview = signal<string | null>(null);
   isCompressing = signal<boolean>(false);
   isLoading = signal<boolean>(true);
   #organizationService = inject(OrganizationService);
+  #organizationMapper = inject(OrganizationMapper);
   #globalNotification = inject(GlobalNotification);
   #imageCompressionService = inject(ImageCompressionService);
-  originalData: GetOrganizationModel | null = null;
+  originalData: GetOrganization | null = null;
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ORGANIZATION, viewContainerRef);
@@ -169,9 +172,9 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
         if (response.isValid) {
           this.originalData = response.data;
           this.form.patchValue(response.data);
-          this.form.patchValue({ emp_id: response.data.emp_id });
-          if (response.data.logo_url) {
-            this.imagePreview.set(response.data.logo_url);
+          this.form.patchValue({ id: response.data.id });
+          if (response.data.logoUrl) {
+            this.imagePreview.set(response.data.logoUrl);
           }
         } else {
           this.#globalNotification.openAlert(response);
@@ -194,7 +197,7 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   resetForm() {
     if (this.originalData) {
       this.form.patchValue(this.originalData);
-      this.imagePreview.set(this.originalData.logo_url || null);
+      this.imagePreview.set(this.originalData.logoUrl || null);
       this.selectedFile = null;
     }
   }
@@ -274,22 +277,21 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   removeImage() {
     if (this.isCompressing()) return;
     this.selectedFile = null;
-    this.imagePreview.set(this.originalData?.logo_url || null);
-    this.form.patchValue({ emp_logo: null });
+    this.imagePreview.set(this.originalData?.logoUrl || null);
+    this.form.patchValue({ logo: null });
   }
 
-  private buildFormData(): FormData {
+  private buildFormData(dto: Record<string, unknown>): FormData {
     const formData = new FormData();
-    const formValues = this.form.value;
 
-    Object.keys(formValues).forEach((key) => {
-      if (key !== 'emp_logo' && formValues[key] !== null && formValues[key] !== undefined) {
-        formData.append(key, formValues[key]);
+    Object.entries(dto).forEach(([key, value]) => {
+      if (key !== 'logo' && value !== null && value !== undefined) {
+        formData.append(key, value as string);
       }
     });
 
     if (this.selectedFile) {
-      formData.append('emp_logo', this.selectedFile);
+      formData.append('logo', this.selectedFile);
     }
 
     return formData;
@@ -304,7 +306,8 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   }
 
   update() {
-    const body = this.buildFormData();
+    const dto = this.#organizationMapper.toApiUpdate(this.form.value as UpdateOrganization);
+    const body = this.buildFormData(dto);
     body.append('_method', 'PUT');
 
     const subscription = this.#organizationService.create(body).subscribe({
@@ -312,8 +315,8 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
         if (response.isValid) {
           this.#globalNotification.openAlert(response);
           this.originalData = response.data;
-          if (response.data.logo_url) {
-            this.imagePreview.set(response.data.logo_url);
+          if (response.data.logoUrl) {
+            this.imagePreview.set(response.data.logoUrl);
           }
           this.selectedFile = null;
         } else {

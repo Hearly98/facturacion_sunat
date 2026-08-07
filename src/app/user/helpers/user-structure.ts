@@ -1,13 +1,13 @@
 export const userStructure = [
   {
     label: 'Nombre',
-    formControlName: 'usu_nom',
+    formControlName: 'firstName',
     type: 'text',
     col: 12,
   },
   {
     label: 'Apellidos',
-    formControlName: 'usu_ape',
+    formControlName: 'lastName',
     type: 'text',
     col: 12,
   },
@@ -25,19 +25,19 @@ export const userStructure = [
   },
   {
     label: 'Documento',
-    formControlName: 'usu_dni',
+    formControlName: 'dni',
     type: 'text',
     col: 6,
   },
   {
     label: 'Teléfono',
-    formControlName: 'usu_telf',
+    formControlName: 'phone',
     type: 'text',
     col: 6,
   },
   {
     label: 'Rol',
-    formControlName: 'rol_id',
+    formControlName: 'roleId',
     type: 'select',
     col: 6,
     options: []

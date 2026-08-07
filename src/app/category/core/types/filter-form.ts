@@ -1,5 +1,4 @@
-export interface FilterForm {
-    cat_nom: string | null;
-    est: boolean | null;
-    order: string | null;
+export interface CategoryFilterForm {
+  code?: string | null;
+  name?: string | null;
 }

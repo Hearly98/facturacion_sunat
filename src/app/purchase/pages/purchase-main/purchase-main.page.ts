@@ -1,7 +1,7 @@
 import { Component, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   ButtonDirective,
   CardBodyComponent,
@@ -24,7 +24,7 @@ import { SearchSelectComponent } from '@shared/components/search-select.componen
 import { PurchaseDetailTableComponent } from 'src/app/purchase-detail/components/purchase-detail-table.component';
 import { PurchaseDetailForm } from 'src/app/purchase-detail/core/types';
 import { buildPurchaseDetailForm } from 'src/app/purchase-detail/helpers';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { mapToSelectOption } from '@shared/functions';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
@@ -41,7 +41,9 @@ import { PaymentMethodService } from 'src/app/payment-method/core/services/payme
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
 import { AlmacenService } from 'src/app/almacen/core/services/almacen.service';
 import { DateRangePickerComponent } from '@shared/components/date-range-picker/date-range-picker.component';
+import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { forkJoin } from 'rxjs';
+import { PurchaseModel } from '../../core/models/purchase.model';
 
 @Component({
   selector: 'app-purchase-main',
@@ -73,14 +75,13 @@ import { forkJoin } from 'rxjs';
 export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   public activeTab = signal<'create' | 'history'>('create');
   public isLoadingList = signal(false);
-  public purchases: any[] = [];
+  public purchases: PurchaseModel[] = [];
   public totalList = 0;
   public pageList = new PageParamsModel(1, 10);
 
   public isLoadingForm = signal(false);
   public form!: FormGroup;
   public selectedProduct: any = null;
-  public purchaseId = signal<number | null>(null);
   public sucursalOptions = signal<SelectOption[]>([]);
   public almacenOptions = signal<SelectOption[]>([]);
   public almacenError = signal(false);
@@ -90,9 +91,10 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   public title = signal<string>('Historial de Compras');
 
   availableStates = [
-    { id: 2, nombre: 'Pagados', color: 'success' },
     { id: 1, nombre: 'Pendientes', color: 'warning' },
+    { id: 2, nombre: 'Pagados', color: 'success' },
     { id: 3, nombre: 'Anulados', color: 'danger' },
+    { id: 4, nombre: 'En Pago', color: 'info' },
   ];
 
   readonly #formBuilder = inject(FormBuilder);
@@ -106,7 +108,9 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   readonly #almacenService = inject(AlmacenService);
   readonly #globalNotification = inject(GlobalNotification);
   readonly #confirmService = inject(ConfirmService);
-  readonly #route = inject(ActivatedRoute);
+  readonly #authService = inject(AuthService);
+  readonly #router = inject(Router);
+  readonly #activatedRoute = inject(ActivatedRoute);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.PURCHASE, viewContainerRef);
@@ -115,12 +119,12 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   ngOnInit(): void {
     this.loadSelectCombos();
     this.loadForm();
-    const id = this.#route.snapshot.params['id'];
-    if (id) {
-      this.purchaseId.set(Number(id));
-      this.activeTab.set('create');
-    }
     this.loadListData();
+    // Al volver de la vista de edición de Compra (ruta independiente), aterrizar en Historial
+    // en vez del tab "Nueva Compra" por defecto.
+    if (this.#activatedRoute.snapshot.queryParams['tab'] === 'history') {
+      this.activeTab.set('history');
+    }
   }
 
   loadForm() {
@@ -130,9 +134,6 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
         this.loadAlmacenesBySucursal(value);
       }
     });
-    if (this.purchaseId()) {
-      // TODO: Load existing purchase for edit
-    }
   }
 
   loadListData() {
@@ -168,18 +169,18 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
 
   patchSupplier(item: any) {
     this.form.patchValue({
-      prov_documento: item.prov_documento,
-      tip_id: item.tip_id,
-      prov_direcc: item.prov_direcc,
-      prov_correo: item.prov_correo,
-      prov_telf: item.prov_telf,
+      prov_documento: item.document,
+      tip_id: item.documentTypeId,
+      prov_direcc: item.address,
+      prov_correo: item.email,
+      prov_telf: item.phone,
     });
   }
 
   loadAlmacenesBySucursal(sucId: number) {
     this.#almacenService.getBySucursal(sucId).subscribe({
       next: (response) => {
-        const almacenOptions = mapToSelectOption(response.data, 'almacen_id', 'nombre');
+        const almacenOptions = mapToSelectOption(response.data, 'id', 'nombre');
         this.almacenOptions.set(almacenOptions);
       },
     });
@@ -196,10 +197,16 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
 
     if (formControlName === 'prod_id') {
       this.form.patchValue({
-        prod_id: item.prod_id,
+        prod_id: item.id,
       });
       this.selectedProduct = item;
       this.selectedProductStock.set(item.stock);
+      return;
+    }
+
+    if (formControlName === 'prov_id') {
+      this.form.patchValue({ prov_id: item.id });
+      this.patchSupplier(item);
       return;
     }
 
@@ -207,17 +214,13 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     if (control) {
       control.setValue(item[formControlName]);
     }
-
-    if (formControlName === 'prov_id') {
-      this.patchSupplier(item);
-    }
   }
 
   addProductToDetail() {
     if (!this.selectedProduct) return;
 
     const exists = this.detailsArray.controls.some(
-      (control) => control.value.prod_id === this.selectedProduct.prod_id,
+      (control) => control.value.prod_id === this.selectedProduct.id,
     );
 
     if (exists) {
@@ -230,10 +233,10 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     }
 
     const detailForm = buildPurchaseDetailForm({
-      prod_id: this.selectedProduct.prod_id,
+      prod_id: this.selectedProduct.id,
       cantidad: 1,
-      prod_nom: this.selectedProduct.prod_nom,
-      prod_cod_interno: this.selectedProduct.prod_cod,
+      prod_nom: this.selectedProduct.nombre,
+      prod_cod_interno: this.selectedProduct.codigo,
       unidad: this.selectedProduct.unidad,
       costo_unitario: this.selectedProduct.pcompra,
       precio_compra: null,
@@ -260,7 +263,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
       sucursales: this.#sucursalService.getAll(),
     }).subscribe(({ currencies, paymentMethods, documentTypes, sucursales }) => {
       this.sucursalOptions.set(
-        sucursales.data.map((item: any) => ({ value: item.suc_id, label: item.suc_nom })),
+        sucursales.data.map((item: any) => ({ value: item.id, label: item.name })),
       );
       this.structure.set(
         purchaseStructure(currencies.data, paymentMethods.data, documentTypes.data),
@@ -279,33 +282,30 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     }
 
     const purchaseData: PurchaseCreateDto = {
-      fechaEmision: this.form.value.fechaEmision,
+      idSucursal: this.form.value.suc_id,
+      idUsuario: this.#authService.user()?.id ?? 0,
+      idAlmacen: this.form.value.almacen_id,
+      idDocumento: this.form.value.doc_id,
+      idProveedor: this.form.value.prov_id,
+      idMetodoPago: this.form.value.mp_cod ? Number(this.form.value.mp_cod) : null,
+      idMoneda: this.form.value.mon_id,
       numero: this.form.value.numero,
-      compr_coment: this.form.value.compr_coment,
-      suc_id: this.form.value.suc_id,
-      almacen_id: this.form.value.almacen_id,
-      prov_id: this.form.value.prov_id,
-      doc_id: this.form.value.doc_id,
-      mon_id: this.form.value.mon_id,
-      mp_cod: this.form.value.mp_cod,
-      afecta_stock: this.form.value.afecta_stock,
+      fechaEmision: this.form.value.fechaEmision,
+      comentario: this.form.value.compr_coment,
+      afectaStock: this.form.value.afecta_stock,
       detalles: this.detailsArray.getRawValue().map((v) => {
         return {
-          detc_cant: v.cantidad,
-          prod_id: v.prod_id,
-          prod_nom: v.prod_nom,
-          prod_pcompra: v.precio_compra,
+          idProducto: v.prod_id,
+          cantidad: v.cantidad,
+          precioCompra: v.precio_compra,
+          descuento: v.dscto,
         };
       }),
     };
 
     this.isLoadingForm.set(true);
 
-    const request = this.purchaseId()
-      ? this.#purchaseService.update({ ...purchaseData, compr_id: this.purchaseId() })
-      : this.#purchaseService.create(purchaseData);
-
-    request.subscribe({
+    this.#purchaseService.create(purchaseData).subscribe({
       next: (response) => {
         this.isLoadingForm.set(false);
         if (response.isValid) {
@@ -327,7 +327,6 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   resetForm() {
     this.form.reset();
     this.detailsArray.clear();
-    this.purchaseId.set(null);
     this.selectedProduct = null;
     this.selectedProductStock.set(null);
   }
@@ -449,8 +448,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   }
 
   onEdit(id: number) {
-    this.activeTab.set('create');
-    this.purchaseId.set(id);
+    this.#router.navigate(['/compras', id, 'editar']);
   }
 
   onDateRangeChange(range: { start: Date | null; end: Date | null }) {

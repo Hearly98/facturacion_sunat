@@ -369,8 +369,8 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
     this.#almacenService.getAll().subscribe({
       next: (response) => {
         const filteredAlmacenes = response.data
-          .filter((a: any) => a.suc_id === sucId)
-          .map((item: any) => ({ value: item.almacen_id, label: item.nombre }));
+          .filter((a) => a.sucursalId === sucId)
+          .map((item) => ({ value: item.id, label: item.nombre }));
         this.almacenOptions.set(filteredAlmacenes);
       },
     });
@@ -428,7 +428,7 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
     this.#productoAlmacenService.getByProducto(productId).subscribe({
       next: (response) => {
         const stockInfo = response.data.find((s: any) => s.almacen_id === almacen_id);
-        this.selectedProductStock.set(stockInfo?.stock_actual ?? 0);
+        this.selectedProductStock.set(stockInfo?.stockActual ?? 0);
       },
       error: () => {
         this.selectedProductStock.set(null);
@@ -496,22 +496,23 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
       return;
     }
     const purchaseData: PurchaseCreateDto = {
-      fechaEmision: this.form.value.fechaEmision,
+      idSucursal: this.form.value.suc_id,
+      idUsuario: 0,
+      idAlmacen: this.form.value.almacen_id,
+      idDocumento: this.form.value.doc_id,
+      idProveedor: this.form.value.prov_id,
+      idMetodoPago: this.form.value.mp_cod ? Number(this.form.value.mp_cod) : null,
+      idMoneda: this.form.value.mon_id,
       numero: this.form.value.numero,
-      compr_coment: this.form.value.compr_coment,
-      suc_id: this.form.value.suc_id,
-      almacen_id: this.form.value.almacen_id,
-      prov_id: this.form.value.prov_id,
-      doc_id: this.form.value.doc_id,
-      mon_id: this.form.value.mon_id,
-      mp_cod: this.form.value.mp_cod,
-      afecta_stock: this.form.value.afecta_stock,
+      fechaEmision: this.form.value.fechaEmision,
+      comentario: this.form.value.compr_coment,
+      afectaStock: this.form.value.afecta_stock,
       detalles: this.detailsArray.getRawValue().map((v) => {
         return {
-          prod_id: v.prod_id,
-          detc_cant: v.cantidad,
-          prod_pcompra: v.precio_compra,
-          prod_nom: v.prod_nom,
+          idProducto: v.prod_id,
+          cantidad: v.cantidad,
+          precioCompra: v.precio_compra,
+          descuento: v.dscto,
         };
       }),
     };

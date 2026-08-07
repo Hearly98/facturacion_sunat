@@ -11,14 +11,14 @@ import { IconDirective } from '@coreui/icons-angular';
 import { CategoryService } from '../../core/services/category.service';
 import { TypedFormGroup } from '../../../shared/types/types-form';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { buildFilterForm, filterSort, mapParams } from '../../helpers';
-import { FilterForm } from '../../core/types/filter-form';
+import { buildCategoryFilterForm, categoryFilterSort, categoryMapFilterParams } from '../../helpers';
+import { CategoryFilterForm } from '../../core/types';
 import { BaseSearchComponent } from '../../../shared/base/search-base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { CategoryNewEditModal } from '../../components/category-new-edit-modal/category-new-edit-modal';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
-import { GetCategoryModel } from '../../core/models';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
+import { Category } from '../../core/models';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 
@@ -39,15 +39,15 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
   templateUrl: './category.html',
   styleUrl: './category.scss',
 })
-export class Category extends BaseSearchComponent implements OnInit {
+export class CategoryPage extends BaseSearchComponent implements OnInit {
   @ViewChild('categoryNewEditModal') categoryNewEditModal!: CategoryNewEditModal;
-  public form!: TypedFormGroup<FilterForm>;
+  public form!: TypedFormGroup<CategoryFilterForm>;
   readonly #confirmService = inject(ConfirmService);
   readonly #formBuilder = inject(FormBuilder);
   public title = 'Categorias';
   readonly #categoryService = inject(CategoryService);
   readonly #globalNotification = inject(GlobalNotification);
-  public categories: GetCategoryModel[] = [];
+  public categories: Category[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.MARCA, viewContainerRef);
@@ -59,12 +59,12 @@ export class Category extends BaseSearchComponent implements OnInit {
   }
 
   createForm() {
-    this.form = this.#formBuilder.group(buildFilterForm());
+    this.form = this.#formBuilder.group(buildCategoryFilterForm());
   }
 
   onSearch(filter = null, page = 1) {
-    const sort = filterSort(this.form.value);
-    const filterToUse = filter ?? mapParams(this.form.value);
+    const sort = categoryFilterSort();
+    const filterToUse = filter ?? categoryMapFilterParams(this.form.value);
     const pageSize = 10;
     const pageParams = new PageParamsModel(page, pageSize);
     this.updateFilter(filterToUse);

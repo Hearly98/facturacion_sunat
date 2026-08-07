@@ -1,7 +1,10 @@
 export const categoryErrorMessages = () => {
   return {
-    cat_nom: {
-      required: "El nombre es obligatorio."
-    }
-  }
-}
+    code: {
+      required: 'El código es obligatorio.',
+    },
+    name: {
+      required: 'El nombre es obligatorio.',
+    },
+  };
+};

@@ -1,7 +1,6 @@
 export interface CurrencyForm {
-  mon_id: number | null;
-  mon_nom: string | null;
-  mon_cod: string | null;
-  mon_simbolo: string | null;
-  est: boolean | null;
+  id: number | null;
+  name: string | null;
+  code: string | null;
+  symbol: string | null;
 }

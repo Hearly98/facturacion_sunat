@@ -1,10 +1,15 @@
-import { FilterForm } from "../core/types/filter-form";
+import { CategoryFilterForm } from '../core/types';
 
-export function mapParams(
-    form: Partial<FilterForm>
-): Partial<FilterForm> {
-    return {
-        cat_nom: form.cat_nom?.trim() ?? null,
-        est: form.est ?? null,
-    };
+export function categoryMapFilterParams(formValue: CategoryFilterForm): Record<string, any> {
+  const params: Record<string, any> = {};
+
+  if (formValue.code?.trim()) {
+    params['codigo'] = formValue.code;
+  }
+
+  if (formValue.name?.trim()) {
+    params['nombre'] = formValue.name;
+  }
+
+  return params;
 }

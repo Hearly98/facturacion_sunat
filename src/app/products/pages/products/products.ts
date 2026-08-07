@@ -17,12 +17,12 @@ import { BaseSearchComponent } from '../../../shared/base/search-base.component'
 import { MODULES } from '../../../core/config/permissions/modules';
 import { PageParamsModel } from '../../../shared/models/query/page-params.model';
 import { ProductNewEditModal } from '../../components/product-new-edit-modal/product-new-edit-modal';
-import { PaginatorComponent } from '../../../paginator/paginator.component';
-import { GetProductModel } from '../../core/models';
+import { PaginatorComponent } from '../../../shared/components/paginator/paginator.component';
+import { Product } from '../../core/models';
 import { CategoryService } from '../../../category/core/services/category.service';
-import { GetCategoryModel } from '../../../category/core/models';
+import { Category } from '../../../category/core/models';
 import { SucursalService } from '../../../sucursal/core/services/sucursal.service';
-import { GetSucursalModel } from '../../../sucursal/core/models';
+import { Sucursal } from '../../../sucursal/core/models';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 
@@ -53,9 +53,9 @@ export class Products extends BaseSearchComponent implements OnInit {
   readonly #sucursalService = inject(SucursalService);
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
-  public products: GetProductModel[] = [];
-  public categorias: GetCategoryModel[] = [];
-  public sucursales: GetSucursalModel[] = [];
+  public products: Product[] = [];
+  public categories: Category[] = [];
+  public sucursales: Sucursal[] = [];
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.PRODUCT, viewContainerRef);
@@ -72,7 +72,7 @@ export class Products extends BaseSearchComponent implements OnInit {
   }
 
   loadSelectCombos() {
-    this.fetchData(this.#categoryService.getAll(), this.categorias);
+    this.fetchData(this.#categoryService.getAll(), this.categories);
     this.fetchData(this.#sucursalService.getAll(), this.sucursales);
   }
 

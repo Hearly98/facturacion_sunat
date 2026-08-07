@@ -4,7 +4,10 @@ import { environment } from '@environments/environment';
 import { ResponseDto } from '@shared/models/api/response.dto';
 import { BaseService } from '@shared/services/base.service';
 import { Observable } from 'rxjs';
-import { CreateDocumentTypeModel, GetDocumentTypeModel, UpdateDocumentTypeModel } from '../models';
+import { map } from 'rxjs/operators';
+import { DocumentTypeDto, CreateDocumentTypeDto, UpdateDocumentTypeDto } from '../dto';
+import { DocumentType, CreateDocumentType, UpdateDocumentType } from '../models';
+import { DocumentTypeMapper } from '../mappers';
 import { QueryParamsModel } from '@shared/models/query/query-params.model';
 import { QueryResultsModel } from '@shared/models/query/query-results.model';
 
@@ -16,30 +19,65 @@ export class DocumentTypeService extends BaseService {
     super(http, `${environment.apiUrl}/tipo_documentos`);
   }
 
-  getAll(): Observable<ResponseDto<GetDocumentTypeModel[]>> {
-    return this.getRequest('');
+  getAll(): Observable<ResponseDto<DocumentType[]>> {
+    return this.getRequest<ResponseDto<DocumentTypeDto[]>>('').pipe(
+      map(response => ({
+        ...response,
+        data: response.data.map(dto => DocumentTypeMapper.fromApi(dto)),
+      }))
+    );
   }
 
-  create(body: CreateDocumentTypeModel): Observable<ResponseDto<GetDocumentTypeModel>> {
-    return this.postRequest<CreateDocumentTypeModel, ResponseDto<GetDocumentTypeModel>>('/', body);
+  create(body: CreateDocumentType): Observable<ResponseDto<DocumentType>> {
+    const dto = DocumentTypeMapper.toApiCreate(body);
+    return this.postRequest<CreateDocumentTypeDto, ResponseDto<DocumentTypeDto>>('/', dto).pipe(
+      map(response => ({
+        ...response,
+        data: DocumentTypeMapper.fromApi(response.data),
+      }))
+    );
   }
 
-  update(body: UpdateDocumentTypeModel): Observable<ResponseDto<GetDocumentTypeModel>> {
-    return this.putRequest<UpdateDocumentTypeModel, ResponseDto<GetDocumentTypeModel>>('/', body);
+  update(body: UpdateDocumentType): Observable<ResponseDto<DocumentType>> {
+    const dto = DocumentTypeMapper.toApiUpdate(body);
+    return this.putRequest<UpdateDocumentTypeDto, ResponseDto<DocumentTypeDto>>('/', dto).pipe(
+      map(response => ({
+        ...response,
+        data: DocumentTypeMapper.fromApi(response.data),
+      }))
+    );
   }
 
-  getById(id: number): Observable<ResponseDto<GetDocumentTypeModel>> {
-    return this.getRequest<ResponseDto<GetDocumentTypeModel>>(`/${id}`);
+  getById(id: number): Observable<ResponseDto<DocumentType>> {
+    return this.getRequest<ResponseDto<DocumentTypeDto>>(`/${id}`).pipe(
+      map(response => ({
+        ...response,
+        data: DocumentTypeMapper.fromApi(response.data),
+      }))
+    );
   }
 
-  delete(id: number): Observable<ResponseDto<GetDocumentTypeModel>> {
-    return this.deleteRequest(`/${id}`);
+  delete(id: number): Observable<ResponseDto<DocumentType | null>> {
+    return this.deleteRequest<ResponseDto<DocumentTypeDto>>(`/${id}`).pipe(
+      map(response => ({
+        ...response,
+        data: response.data ? DocumentTypeMapper.fromApi(response.data) : null,
+      }))
+    );
   }
 
-  search(body: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<GetDocumentTypeModel>>> {
-    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<GetDocumentTypeModel>>>(
+  search(body: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<DocumentType>>> {
+    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<DocumentTypeDto>>>(
       `/search`,
       body
+    ).pipe(
+      map(response => ({
+        ...response,
+        data: {
+          ...response.data,
+          items: response.data.items.map(dto => DocumentTypeMapper.fromApi(dto)),
+        },
+      }))
     );
   }
 }

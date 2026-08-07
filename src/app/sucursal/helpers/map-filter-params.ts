@@ -1,8 +1,11 @@
 import { FilterForm } from '../core/types';
 
-export function mapParams(form: Partial<FilterForm>): Partial<FilterForm> {
-  return {
-    suc_nom: form.suc_nom?.trim() ?? null,
-    est: form.est ?? null,
-  };
+export function mapParams(form: Partial<FilterForm>): Record<string, any> {
+  const params: Record<string, any> = {};
+
+  if (form.name?.trim()) {
+    params['nombre'] = form.name.trim();
+  }
+
+  return params;
 }

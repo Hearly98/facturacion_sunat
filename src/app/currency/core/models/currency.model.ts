@@ -1,5 +1,7 @@
-export class CurrencyModel {
-  mon_nom: string = '';
-  mon_cod: string = '';
-  est: boolean = false;
+export interface Currency {
+  id: number | null;
+  name: string;
+  code: string;
+  symbol: string;
+  active: boolean;
 }

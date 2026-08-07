@@ -33,13 +33,12 @@ import { TypedFormGroup } from '@shared/types/types-form';
 import { SearchSelectComponent } from '@shared/components/search-select.component';
 import { SaleDetailTableComponent } from 'src/app/sale-detail/components/sale-detail-table.component';
 import { SaleDetailForm } from 'src/app/sale-detail/core/types';
-import { PaginatorComponent } from 'src/app/paginator/paginator.component';
+import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { SaleService } from '../../core/services/sale.service';
 import { SaleModel } from '../../core/models/sale.model';
 import { SaleForm } from '../../core/types';
-import { saleStructure } from '../../helpers/sale-structure';
 import { buildSaleForm } from '../../helpers/build-sale-form';
 import { buildFilterForm, filterSort, mapParams } from '../../helpers';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
@@ -99,6 +98,10 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   public linkedGuia = signal<GetShippingGuideModel | null>(null);
   public isClientReadonly = computed(() => !!(this.linkedCotizacion() || this.linkedGuia()));
 
+  // Modal state
+  isSearchModalVisible = signal(false);
+  searchDocumentType = signal<SearchDocumentType>('cotizacion');
+
   public isLoadingList = signal(false);
   public sales: SaleModel[] = [];
   public totalList = 0;
@@ -110,11 +113,16 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   public saleId = signal<number | null>(null);
   public showFechaVencimiento = signal(false);
 
-  public structure = signal(saleStructure());
   public title = signal<string>('Historial de Ventas');
+
+  // Opciones de combos
+  public currencyOptions = signal<SelectOption[]>([]);
+  public documentOptions = signal<SelectOption[]>([]);
+  public paymentMethodOptions = signal<SelectOption[]>([]);
+  public documentTypeOptions = signal<SelectOption[]>([]);
   public sucursalOptions = signal<SelectOption[]>([]);
+  public companyOptions = signal<SelectOption[]>([]);
   public almacenOptions = signal<SelectOption[]>([]);
-  public almacenError = signal(false);
 
   availableStates = [
     { id: 2, nombre: 'Pagados', color: 'success' },
@@ -157,7 +165,10 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   loadForm() {
     this.form = this.#formBuilder.group(buildSaleForm());
     this.loadSelectCombos();
-    this.setupPaymentMethodListener();
+
+    this.form.get('mp_cod')?.valueChanges.subscribe((value) => {
+      this.showFechaVencimiento.set(value === 'CRDT');
+    });
 
     this.form.get('suc_id')?.valueChanges.subscribe((value) => {
       if (value) {
@@ -205,22 +216,46 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   openDocumentSearch(type: SearchDocumentType) {
-    /* this.searchDocumentModal.openModal(type, (doc) => {
-      if (type === 'cotizacion') {
-        this.onSelectCotizacion(doc as QuotationModel);
-      } else {
-        this.onSelectGuia(doc as GetShippingGuideModel);
-      }
-    }); */
+    this.searchDocumentType.set(type);
+    this.isSearchModalVisible.set(true);
+  }
+
+  onSelectDocument(doc: QuotationModel | GetShippingGuideModel | any) {
+    if (this.searchDocumentType() === 'cotizacion') {
+      this.onSelectCotizacion(doc as QuotationModel);
+    } else {
+      this.onSelectGuia(doc as GetShippingGuideModel);
+    }
   }
 
   onSelectCotizacion(cotizacion: QuotationModel) {
     this.linkedCotizacion.set(cotizacion);
-    this.form.patchValue({ cot_id: cotizacion.cot_id });
-    if (cotizacion.cliente) {
-      this.form.patchValue({ cli_id: cotizacion.cli_id });
-      this.patchCustomer(cotizacion.cliente);
+    this.form.patchValue({ cot_id: cotizacion.id });
+    if (cotizacion.customer) {
+      this.form.patchValue({ cli_id: cotizacion.customer.id });
+      this.patchCustomer({
+        cli_documento: cotizacion.customer.document,
+        tip_id: cotizacion.customer.documentTypeId,
+        cli_direcc: cotizacion.customer.address,
+        cli_correo: cotizacion.customer.email,
+        cli_telf: cotizacion.customer.phone,
+      });
     }
+
+    this.detailsArray.clear();
+    (cotizacion.details ?? []).forEach((detalle) => {
+      const detailForm = this.#formBuilder.group({
+        prod_id: [detalle.productId],
+        cantidad: [detalle.quantity],
+        prod_nom: [{ value: detalle.productName, disabled: true }],
+        prod_cod_interno: [detalle.productCode],
+        unidad: [detalle.productUnit],
+        precio_unitario: [{ value: detalle.unitPrice, disabled: true }],
+        precio_venta: [{ value: null, disabled: true }],
+        dscto: [detalle.discount ?? 0],
+      });
+      this.detailsArray.push(detailForm as any);
+    });
   }
 
   onSelectGuia(guia: GetShippingGuideModel) {
@@ -230,11 +265,30 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
       this.form.patchValue({ cli_id: guia.cliente.cli_id });
       this.patchCustomer(guia.cliente);
     }
+
+    this.detailsArray.clear();
+    (guia.detalles ?? []).forEach((detalle) => {
+      const detailForm = this.#formBuilder.group({
+        prod_id: [detalle.prod_id],
+        cantidad: [detalle.cantidad],
+        prod_nom: [{ value: detalle.producto?.prod_nom ?? '', disabled: true }],
+        prod_cod_interno: [detalle.producto?.prod_cod_interno ?? ''],
+        unidad: [null],
+        // El precio viene de la Cotización que la Guía tenía vinculada al crearse
+        // (snapshot guardado en guia_remision_detalles); si la Guía no nació de una
+        // Cotización, no hay precio y el vendedor lo completa a mano.
+        precio_unitario: [{ value: detalle.precio_unitario ?? null, disabled: !!detalle.precio_unitario }],
+        precio_venta: [{ value: null, disabled: true }],
+        dscto: [detalle.descuento ?? 0],
+      });
+      this.detailsArray.push(detailForm as any);
+    });
   }
 
   unlinkCotizacion() {
     this.linkedCotizacion.set(null);
     this.form.patchValue({ cot_id: null });
+    this.detailsArray.clear();
     if (!this.linkedGuia()) {
       this.clearClientFields();
     }
@@ -243,6 +297,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   unlinkGuia() {
     this.linkedGuia.set(null);
     this.form.patchValue({ guia_id: null });
+    this.detailsArray.clear();
     if (!this.linkedCotizacion()) {
       this.clearClientFields();
     }
@@ -251,7 +306,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   getClientInitialValue(formControlName: string): string {
     if (formControlName !== 'cli_id') return '';
     const cot = this.linkedCotizacion();
-    if (cot?.cliente) return cot.cliente.cli_nom;
+    if (cot?.customer) return cot.customer.name;
     const guia = this.linkedGuia();
     if (guia?.cliente) return guia.cliente.cli_nom;
     return '';
@@ -327,152 +382,59 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   loadSelectCombos() {
-    const currencies: SelectOption[] = [];
-    const documents: SelectOption[] = [];
-    const paymentType: SelectOption[] = [];
-    const documentTypes: SelectOption[] = [];
-    const sucursalOptions: SelectOption[] = [];
-    const companyOptions: SelectOption[] = [];
-
     this.#currencyService.getAll().subscribe({
-      next: (response) =>
-        response.data.map((item) => {
-          currencies.push({ value: item.mon_id, label: item.mon_nom });
-        }),
+      next: (response) => {
+        this.currencyOptions.set(
+          response.data.map((item) => ({ value: item.id!, label: item.name }))
+        );
+      },
     });
 
     this.#documentService.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          documents.push({ value: item.doc_id, label: item.doc_nom });
-        });
+        this.documentOptions.set(
+          response.data.map((item) => ({ value: item.id, label: item.name }))
+        );
       },
     });
 
     this.#documentTypeService.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          documentTypes.push({ value: item.tip_id, label: item.tip_nom });
-        });
+        this.documentTypeOptions.set(
+          response.data.map((item) => ({ value: item.id, label: item.name }))
+        );
       },
     });
 
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          sucursalOptions.push({ value: item.suc_id, label: item.suc_nom });
-        });
+        this.sucursalOptions.set(
+          response.data.map((item) => ({ value: item.id!, label: item.name }))
+        );
       },
     });
 
     this.#paymentMethod.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          paymentType.push({ value: item.mp_id, label: item.mp_nom });
-        });
+        this.paymentMethodOptions.set(
+          response.data.map((item) => ({ value: item.id, label: item.name }))
+        );
       },
     });
 
     this.#organizationService.getAll().subscribe({
       next: (response) => {
-        response.data.forEach((item) => {
-          companyOptions.push({ value: item.emp_id, label: item.emp_nom });
-        });
+        this.companyOptions.set(
+          response.data.map((item) => ({ value: item.id, label: item.name }))
+        );
       },
     });
-
-    this.updateStructure(
-      currencies,
-      paymentType,
-      documents,
-      documentTypes,
-      sucursalOptions,
-      companyOptions,
-      this.almacenOptions(),
-    );
-  }
-
-  setupPaymentMethodListener() {
-    this.form.get('mp_id')?.valueChanges.subscribe((mpId) => {
-      const isCredito = mpId === 2;
-      this.showFechaVencimiento.set(isCredito);
-
-      const currencies: SelectOption[] = [];
-      const documents: SelectOption[] = [];
-      const paymentType: SelectOption[] = [];
-      const documentTypes: SelectOption[] = [];
-      const sucursalOptions: SelectOption[] = [];
-      const companyOptions: SelectOption[] = [];
-
-      const currentStructure = this.structure();
-      currentStructure.forEach((section) => {
-        section.controls.forEach((control) => {
-          if (control.type === 'select' && 'options' in control) {
-            switch (control.formControlName) {
-              case 'mon_id':
-                currencies.push(...control.options);
-                break;
-              case 'mp_id':
-                paymentType.push(...control.options);
-                break;
-              case 'doc_id':
-                documents.push(...control.options);
-                break;
-              case 'tip_id':
-                documentTypes.push(...control.options);
-                break;
-              case 'suc_id':
-                sucursalOptions.push(...control.options);
-                break;
-              case 'emp_id':
-                companyOptions.push(...control.options);
-                break;
-              case 'almacen_id':
-                break;
-            }
-          }
-        });
-      });
-
-      this.updateStructure(
-        currencies,
-        paymentType,
-        documents,
-        documentTypes,
-        sucursalOptions,
-        companyOptions,
-        this.almacenOptions(),
-      );
-    });
-  }
-
-  updateStructure(
-    currencies: SelectOption[],
-    paymentType: SelectOption[],
-    documents: SelectOption[],
-    documentTypes: SelectOption[],
-    sucursalOptions: SelectOption[],
-    companyOptions: SelectOption[],
-    almacenOptions: SelectOption[],
-  ) {
-    this.structure.set(
-      saleStructure(
-        currencies,
-        paymentType,
-        documents,
-        documentTypes,
-        sucursalOptions,
-        companyOptions,
-        almacenOptions,
-        this.showFechaVencimiento(),
-      ),
-    );
   }
 
   loadAlmacenesBySucursal(sucId: number) {
     this.#almacenService.getBySucursal(sucId).subscribe({
       next: (response) => {
-        this.almacenOptions.set(mapToSelectOption(response.data, 'almacen_id', 'nombre'));
+        this.almacenOptions.set(mapToSelectOption(response.data, 'id', 'nombre'));
         this.form.patchValue({ almacen_id: null });
       },
     });

@@ -1,13 +1,11 @@
-import { FilterForm } from '../core/types/filter-form';
 import { FormControl } from '@angular/forms';
+import { BrandFilterForm } from '../core/types';
 
-export const buildFilterForm = (): {
-  [K in keyof FilterForm]: FormControl<FilterForm[K]>;
+export const builBrandFilterForm = (): {
+  [K in keyof BrandFilterForm]: FormControl<BrandFilterForm[K]>;
 } => {
   return {
-    marca_nom: new FormControl<string | null>(null),
-    marca_codigo: new FormControl<string | null>(null),
-    est: new FormControl<boolean | null>(true),
-    order: new FormControl<string>('desc'),
+    name: new FormControl<string | null>(null),
+    code: new FormControl<string | null>(null),
   };
 };
