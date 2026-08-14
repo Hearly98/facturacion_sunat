@@ -3,13 +3,6 @@ import { authGuard, guestGuard } from './core/auth/guards/auth.guard';
 
 export const routes: Routes = [
   {
-    path: '#',
-    loadComponent: () => import('./landing/landing.component').then((m) => m.LandingComponent),
-    data: {
-      title: 'FactuLink - Facturación para tu PyME',
-    },
-  },
-  {
     path: '',
     canActivate: [authGuard],
     loadComponent: () => import('./layout').then((m) => m.DefaultLayoutComponent),
@@ -259,5 +252,13 @@ export const routes: Routes = [
       title: 'Login Page',
     },
   },
-  { path: '**', redirectTo: 'app/dashboard' },
+  {
+    path: 'registro',
+    canActivate: [guestGuard],
+    loadComponent: () => import('./register/register.component').then((m) => m.RegisterComponent),
+    data: {
+      title: 'Crear cuenta',
+    },
+  },
+  { path: '**', redirectTo: 'dashboard' },
 ];

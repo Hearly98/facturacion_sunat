@@ -46,11 +46,11 @@ export class AuthService extends BaseService {
     );
   }
 
-  register(data: any): Observable<AuthResponse> {
-    return this.postRequest<any, AuthResponse>('/register', data).pipe(
+  register(data: any): Observable<ResponseDto<AuthResponse>> {
+    return this.postRequest<any, ResponseDto<AuthResponse>>('/register', data).pipe(
       tap((res) => {
-        this.setToken(res.access_token);
-        this.setUser(res.user);
+        this.setToken(res.data.access_token);
+        this.setUser(res.data.user);
       }),
     );
   }
