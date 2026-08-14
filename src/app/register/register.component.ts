@@ -6,7 +6,7 @@ import {
   CardComponent,
   SpinnerComponent
 } from '@coreui/angular';
-import { buildLoginForm, loginStructure } from './helpers';
+import { buildRegisterForm, passwordsMatchValidator, registerStructure } from './helpers';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { AuthService } from '../core/auth/services/auth.service';
 import { Router, RouterLink } from '@angular/router';
@@ -15,9 +15,9 @@ import { MenuOptionsNavService } from '../menu-options/services/menu-options-nav
 import { switchMap } from 'rxjs';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss',
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.scss',
   imports: [
     CardComponent,
     CardBodyComponent,
@@ -28,12 +28,12 @@ import { switchMap } from 'rxjs';
     RouterLink,
   ]
 })
-export class LoginComponent {
-  public loginStructure = loginStructure();
+export class RegisterComponent {
+  public registerStructure = registerStructure();
   public form!: FormGroup;
   public globalNotification = inject(GlobalNotification);
   public isLoading = signal(false);
-  public showPassword = signal(false);
+  public visiblePasswords = signal<Set<string>>(new Set());
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
@@ -41,30 +41,29 @@ export class LoginComponent {
 
   constructor() {
     this.createForm();
-    this.updateStructure();
-  }
-
-  private updateStructure() {
-    this.loginStructure.title = 'Bienvenido';
-    this.loginStructure.description = 'Inicia sesión para acceder al sistema';
-    this.loginStructure.forms[0].placeholder = 'correo@empresa.com';
-    this.loginStructure.forms[0].icon = 'cilEnvelopeOpen';
-    this.loginStructure.forms[1].placeholder = '••••••••';
   }
 
   private createForm() {
-    this.form = this.fb.group(buildLoginForm());
+    this.form = this.fb.group(buildRegisterForm(), { validators: passwordsMatchValidator });
   }
 
-  toggleShowPassword() {
-    this.showPassword.update((value) => !value);
+  isPasswordVisible(fieldName: string): boolean {
+    return this.visiblePasswords().has(fieldName);
   }
 
-  onLogin() {
+  togglePasswordVisibility(fieldName: string) {
+    this.visiblePasswords.update((current) => {
+      const next = new Set(current);
+      next.has(fieldName) ? next.delete(fieldName) : next.add(fieldName);
+      return next;
+    });
+  }
+
+  onRegister() {
     if (this.form.invalid) return;
 
     this.isLoading.set(true);
-    this.authService.login(this.form.value).pipe(
+    this.authService.register(this.form.value).pipe(
       switchMap(() => {
         return this.menuOptionsNavService.loadUserPermissions();
       })
@@ -75,10 +74,10 @@ export class LoginComponent {
       },
       error: (err) => {
         this.isLoading.set(false);
-        console.error('Login error', err);
+        console.error('Register error', err);
         this.globalNotification.openToastAlert(
           'Error',
-          err.message || 'Error al iniciar sesión',
+          err.error?.message || 'Error al crear la cuenta',
           'danger');
       }
     });
