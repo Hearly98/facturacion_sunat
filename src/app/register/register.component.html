@@ -5,29 +5,29 @@
       <img src="logo-factulink.png" alt="FactuLink Logo" />
     </div>
 
-    <!-- Card de Login -->
+    <!-- Card de Registro -->
     <c-card class="login-card animate__animated animate__fadeInUp">
       <c-card-body class="login-card-body">
         <div class="login-header">
-          <h1>{{ loginStructure.title }}</h1>
-          <p>{{ loginStructure.description }}</p>
+          <h1>{{ registerStructure.title }}</h1>
+          <p>{{ registerStructure.description }}</p>
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="onLogin()" class="login-form">
-          @for (item of loginStructure.forms; track $index) {
+        <form [formGroup]="form" (ngSubmit)="onRegister()" class="login-form">
+          @for (item of registerStructure.forms; track $index) {
           <div class="form-group">
             <label class="form-label" [for]="item.formControlName">
-              {{ item.name === 'usuario' ? 'Correo electrónico' : 'Contraseña' }}
+              {{ item.label }}
             </label>
             <div class="input-container">
               <svg cIcon [name]="item.icon" class="input-icon"></svg>
               <input [id]="item.formControlName" [formControlName]="item.formControlName"
-                [type]="item.formControlName === 'password' && showPassword() ? 'text' : item.formControlType"
+                [type]="item.formControlType === 'password' && isPasswordVisible(item.formControlName) ? 'text' : item.formControlType"
                 class="form-control" [placeholder]="item.placeholder" autocomplete="on" />
-              @if (item.formControlName === 'password') {
-              <button type="button" class="toggle-password" [class.active]="showPassword()"
-                [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
-                (click)="toggleShowPassword()">
+              @if (item.formControlType === 'password') {
+              <button type="button" class="toggle-password" [class.active]="isPasswordVisible(item.formControlName)"
+                [attr.aria-label]="isPasswordVisible(item.formControlName) ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                (click)="togglePasswordVisibility(item.formControlName)">
                 <svg cIcon name="cilLowVision"></svg>
               </button>
               }
@@ -35,21 +35,24 @@
           </div>
           }
 
+          @if (form.errors?.['passwordsMismatch'] && form.get('password_confirmation')?.touched) {
+          <p class="form-error">Las contraseñas no coinciden</p>
+          }
+
           <button cButton class="btn-login" type="submit" [disabled]="form.invalid || isLoading()">
             @if (!isLoading()) {
             <ng-container>
-              Ingresar
+              Crear cuenta
             </ng-container>
-
             }@else {
               <c-spinner size="sm" class="me-2"></c-spinner>
-              Ingresando...
+              Creando cuenta...
             }
           </button>
         </form>
 
         <p class="login-switch">
-          ¿No tenés cuenta? <a routerLink="/registro">Registrate</a>
+          ¿Ya tenés cuenta? <a routerLink="/login">Iniciá sesión</a>
         </p>
       </c-card-body>
     </c-card>
