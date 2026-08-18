@@ -12,6 +12,12 @@ export type AlmacenDto = {
   nombre: string;
   descripcion?: string | null;
   activo: boolean;
+  // Solo viene en AlmacenController::search() (relación eager-cargada, cruda, snake_case) --
+  // index/store/show/update/activate/deactivate no la incluyen.
+  sucursal?: {
+    id: number;
+    nombre: string;
+  };
 };
 
 export type CreateAlmacenDto = {

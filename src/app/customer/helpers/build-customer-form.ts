@@ -12,9 +12,9 @@ export const buildCustomerForm = (): {
     businessName: new FormControl(null),
     documentTypeId: new FormControl(null, Validators.required),
     document: new FormControl(null, Validators.required),
-    phone: new FormControl(null, Validators.required),
+    phone: new FormControl(null),
     address: new FormControl(null),
-    email: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
+    email: new FormControl(null, Validators.email),
     ubigeoCode: new FormControl(null),
   };
 };

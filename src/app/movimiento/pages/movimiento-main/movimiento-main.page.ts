@@ -273,7 +273,7 @@ export class MovimientoMainPage extends BaseSearchComponent implements OnInit {
     }
 
     const exists = this.detailsArray.controls.some(
-      (c) => c.get('idProducto')?.value === this.selectedProduct?.prod_id,
+      (c) => c.get('idProducto')?.value === this.selectedProduct?.id,
     );
     if (exists) {
       this.#globalNotification.openToastAlert(
@@ -285,10 +285,10 @@ export class MovimientoMainPage extends BaseSearchComponent implements OnInit {
     }
 
     const detailGroup = this.#formBuilder.group({
-      idProducto: [this.selectedProduct.prod_id, Validators.required],
+      idProducto: [this.selectedProduct.id, Validators.required],
       cantidad: [1, [Validators.required, Validators.min(0.0001)]],
-      nombreProducto: [this.selectedProduct.prod_nom],
-      codigoProducto: [this.selectedProduct.prod_cod],
+      nombreProducto: [this.selectedProduct.nombre],
+      codigoProducto: [this.selectedProduct.codigo],
       costoUnitario: [this.selectedProduct.pcompra],
     });
 
