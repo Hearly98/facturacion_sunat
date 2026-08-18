@@ -51,6 +51,7 @@ import { MovimientoDetailForm } from '../core/types/movement-detail-form';
               <th style="width: 25%">Codigo</th>
               <th style="width: 50%">Producto</th>
               <th style="width: 15%">Cantidad</th>
+              <th style="width: 15%">Costo Unitario</th>
               @if (showActions) {
               <th style="width: 5%"></th>
               }
@@ -59,7 +60,7 @@ import { MovimientoDetailForm } from '../core/types/movement-detail-form';
           <tbody>
             @if (detailsArray.length === 0) {
             <tr>
-              <td colspan="5" class="text-center text-muted py-4">No hay productos agregados</td>
+              <td colspan="6" class="text-center text-muted py-4">No hay productos agregados</td>
             </tr>
             } @for (detail of detailsArray.controls; track $index) {
             <tr [formGroup]="detail">
@@ -75,6 +76,15 @@ import { MovimientoDetailForm } from '../core/types/movement-detail-form';
                   type="number"
                   class="form-control form-control-sm"
                   formControlName="cantidad"
+                  min="0.0001"
+                  step="0.0001"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  class="form-control form-control-sm"
+                  formControlName="costoUnitario"
                   min="0.0001"
                   step="0.0001"
                 />
