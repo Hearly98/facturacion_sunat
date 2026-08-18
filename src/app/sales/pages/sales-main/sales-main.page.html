@@ -262,8 +262,8 @@
                       <label for="cli_id" class="form-label">Buscar Cliente</label>
                       <app-search-select
                         [placeholder]="'Buscar cliente...'"
-                        [bindLabel]="'cli_nom'"
-                        [bindValue]="'cli_id'"
+                        [bindLabel]="'businessName'"
+                        [bindValue]="'id'"
                         [serviceFn]="serviceMap['customerSearch']"
                         [disabled]="isClientReadonly()"
                         [initialValue]="getClientInitialValue('cli_id')"
@@ -312,8 +312,8 @@
                       <label for="prod_id" class="form-label">Producto</label>
                       <app-search-select
                         [placeholder]="'Buscar producto...'"
-                        [bindLabel]="'prod_nom'"
-                        [bindValue]="'prod_id'"
+                        [bindLabel]="'label'"
+                        [bindValue]="'id'"
                         [serviceFn]="serviceMap['productSearch']"
                         [disabled]="!form.get('suc_id')?.value"
                         (itemSelected)="onSelectItem('prod_id', $event)"

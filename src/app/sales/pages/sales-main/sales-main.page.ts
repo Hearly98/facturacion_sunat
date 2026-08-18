@@ -190,7 +190,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   serviceMap: Record<string, (term: string) => any> = {
-    customerSearch: (term: string) => this.#customerService.getAll(),
+    customerSearch: (term: string) => this.#customerService.searchQuick(term),
     productSearch: (term: string) =>
       this.#productService.searchQuick({
         term,
@@ -200,11 +200,11 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
   patchCustomer(item: any) {
     this.form.patchValue({
-      cli_documento: item.cli_documento,
-      tip_id: item.tip_id,
-      cli_direcc: item.cli_direcc,
-      cli_correo: item.cli_correo,
-      cli_telf: item.cli_telf,
+      cli_documento: item.documento,
+      tip_id: item.tipoDocumentoId,
+      cli_direcc: item.direccion,
+      cli_correo: item.email,
+      cli_telf: item.telefono,
     });
   }
 
@@ -328,9 +328,15 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
     if (formControlName === 'prod_id') {
       this.form.patchValue({
-        prod_id: item.prod_id,
+        prod_id: item.id,
       });
       this.selectedProduct = item;
+      return;
+    }
+
+    if (formControlName === 'cli_id') {
+      this.form.get('cli_id')?.setValue(item.id);
+      this.patchCustomer(item);
       return;
     }
 
@@ -338,17 +344,13 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     if (control) {
       control.setValue(item[formControlName]);
     }
-
-    if (formControlName === 'cli_id') {
-      this.patchCustomer(item);
-    }
   }
 
   addProductToDetail() {
     if (!this.selectedProduct) return;
 
     const exists = this.detailsArray.controls.some(
-      (control) => control.value.prod_id === this.selectedProduct.prod_id,
+      (control) => control.value.prod_id === this.selectedProduct.id,
     );
 
     if (exists) {
@@ -361,10 +363,10 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     }
 
     const detailForm = this.#formBuilder.group({
-      prod_id: [this.selectedProduct.prod_id],
+      prod_id: [this.selectedProduct.id],
       cantidad: [1],
-      prod_nom: [{ value: this.selectedProduct.prod_nom, disabled: true }],
-      prod_cod_interno: [this.selectedProduct.prod_cod],
+      prod_nom: [{ value: this.selectedProduct.nombre, disabled: true }],
+      prod_cod_interno: [this.selectedProduct.codigo],
       unidad: [this.selectedProduct.unidad],
       precio_unitario: [{ value: this.selectedProduct.pventa ?? null }],
       precio_venta: [{ value: null, disabled: true }],

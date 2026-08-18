@@ -110,8 +110,8 @@
                     <label for="temp_prod_id" class="form-label">Producto</label>
                     <app-search-select
                       placeholder="Buscar producto..."
-                      bindLabel="prod_nom"
-                      bindValue="prod_id"
+                      bindLabel="label"
+                      bindValue="id"
                       [serviceFn]="getProductSearchFn()"
                       [showError]="almacenError()"
                       [errorMessage]="almacenError() ? 'Seleccione un almacén primero' : ''"
@@ -238,7 +238,7 @@
                         </thead>
                         <tbody>
                           @if (movimientos.length > 0) {
-                            @for (item of movimientos; track item.doc_id) {
+                            @for (item of movimientos; track item.id) {
                               <tr>
                                 <td>
                                   <button
@@ -246,26 +246,26 @@
                                     class="me-2"
                                     cButton
                                     color="secondary"
-                                    (click)="onPrint(item.doc_id, item.doc_numero_completo)"
+                                    (click)="onPrint(item.id, item.numero_completo)"
                                   >
                                     <svg cIcon name="cilPrint"></svg>
                                   </button>
                                 </td>
-                                <td>{{ item.doc_numero_completo }}</td>
+                                <td>{{ item.numero_completo }}</td>
                                 <td>{{ item.almacen_origen?.nombre || '-' }}</td>
-                                <td>{{ item.doc_fecha_emision | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
+                                <td>{{ item.fecha_emision | date: 'yyyy-MM-dd HH:mm:ss' }}</td>
                                 <td>
                                   <span
                                     class="badge"
                                     [ngClass]="{
                                       'bg-info':
-                                        item.doc_tipo_movimiento === 'Transferencia Salida' ||
-                                        item.doc_tipo_movimiento === 'Transferencia Ingreso',
-                                      'bg-success': item.doc_tipo_movimiento === 'Ingreso',
-                                      'bg-danger': item.doc_tipo_movimiento === 'Salida',
+                                        item.tipo_movimiento === 'Transferencia Salida' ||
+                                        item.tipo_movimiento === 'Transferencia Ingreso',
+                                      'bg-success': item.tipo_movimiento === 'Ingreso',
+                                      'bg-danger': item.tipo_movimiento === 'Salida',
                                     }"
                                   >
-                                    {{ item.doc_tipo_movimiento }}
+                                    {{ item.tipo_movimiento }}
                                   </span>
                                 </td>
                                 <td>{{ item.usuario_nombre }}</td>
