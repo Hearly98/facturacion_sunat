@@ -21,7 +21,10 @@ export type AlmacenDto = {
 };
 
 export type CreateAlmacenDto = {
-  suc_id: number;
+  // AlmacenController::store() valida "sucursal_id" (fix de hoy: la validación vieja pedía
+  // suc_id contra una columna que sucursales nunca tuvo). No confundir con el "suc_id" que
+  // ese mismo endpoint devuelve en la respuesta -- ver el comentario en AlmacenDto arriba.
+  sucursal_id: number;
   codigo: string;
   nombre: string;
   descripcion?: string | null;

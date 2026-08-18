@@ -29,7 +29,7 @@ export class AlmacenMapper {
 
   toApiCreate(model: CreateAlmacenModel): CreateAlmacenDto {
     return {
-      suc_id: model.sucursalId,
+      sucursal_id: model.sucursalId,
       codigo: model.codigo,
       nombre: model.nombre,
       descripcion: model.descripcion,
