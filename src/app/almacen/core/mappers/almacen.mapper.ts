@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AlmacenDto, CreateAlmacenDto, UpdateAlmacenDto } from '../dtos';
 import { GetAlmacenModel, CreateAlmacenModel, UpdateAlmacenModel } from '../models';
+import { Sucursal } from 'src/app/sucursal/core/models';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,10 @@ export class AlmacenMapper {
     model.nombre = dto.nombre;
     model.descripcion = dto.descripcion ?? '';
     model.activo = dto.activo;
+    // dto.sucursal solo viene de search() -- ver el comentario en AlmacenDto.
+    if (dto.sucursal) {
+      model.sucursal = { name: dto.sucursal.nombre } as Sucursal;
+    }
     return model;
   }
 
