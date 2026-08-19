@@ -1,4 +1,5 @@
 import { Component, Inject, inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   ButtonDirective,
   CardBodyComponent,
@@ -29,6 +30,7 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
 @Component({
   selector: 'app-products',
   imports: [
+    RouterLink,
     RowComponent,
     ColComponent,
     CardComponent,

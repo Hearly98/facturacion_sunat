@@ -79,6 +79,14 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'productos/importar',
+        loadComponent: () =>
+          import('./products/pages/product-import/product-import').then((m) => m.ProductImport),
+        data: {
+          title: 'Importar productos',
+        },
+      },
+      {
         path: 'sucursales',
         loadComponent: () => import('./sucursal/pages/sucursal/sucursal').then((m) => m.SucursalPage),
         data: {
