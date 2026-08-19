@@ -1,0 +1,181 @@
+<c-row class="mb-3">
+  <c-col>
+    <h4>Importar productos desde Excel</h4>
+    <p class="text-medium-emphasis">
+      Cargá un catálogo en lote sin perder el control de Kardex: cada producto se crea con los
+      mismos casos de uso del alta manual, y el stock inicial queda registrado como un movimiento
+      de ingreso auditable.
+    </p>
+  </c-col>
+  <c-col class="text-end">
+    <a routerLink="/productos" cButton color="secondary">Volver a Productos</a>
+  </c-col>
+</c-row>
+
+<c-card class="mb-3">
+  <c-card-body>
+    <c-row class="g-3 align-items-end">
+      <c-col sm="12" md="4">
+        <button cButton color="secondary" (click)="descargarPlantilla()">
+          <svg cIcon name="cilCloudDownload"></svg>
+          Descargar plantilla
+        </button>
+      </c-col>
+
+      <c-col sm="12" md="4">
+        <label for="archivo">Archivo (.xlsx, .xls, .csv)</label>
+        <input
+          id="archivo"
+          type="file"
+          class="form-control"
+          accept=".xlsx,.xls,.csv"
+          (change)="onArchivoSeleccionado($event)"
+        />
+      </c-col>
+
+      <c-col sm="12" md="4">
+        <button
+          cButton
+          color="primary"
+          [disabled]="!archivoSeleccionado || cargandoPreview"
+          (click)="verVistaPrevia()"
+        >
+          <svg cIcon name="cilSearch"></svg>
+          {{ cargandoPreview ? 'Analizando...' : 'Vista previa' }}
+        </button>
+      </c-col>
+    </c-row>
+  </c-card-body>
+</c-card>
+
+@if (preview) {
+<c-card class="mb-3">
+  <c-card-body>
+    <c-row class="mb-3">
+      <c-col sm="12" md="3"><strong>Total filas:</strong> {{ preview.total_filas }}</c-col>
+      <c-col sm="12" md="3" class="text-success"
+        ><strong>Válidas:</strong> {{ preview.total_validas }}</c-col
+      >
+      <c-col sm="12" md="3" class="text-danger"
+        ><strong>Con error:</strong> {{ preview.total_con_error }}</c-col
+      >
+    </c-row>
+
+    @if (preview.categorias_a_crear.length > 0) {
+    <p>
+      <strong>Categorías nuevas que se crearán:</strong>
+      {{ preview.categorias_a_crear.join(', ') }}
+    </p>
+    } @if (preview.unidades_a_crear.length > 0) {
+    <p>
+      <strong>Unidades nuevas que se crearán:</strong>
+      {{ preview.unidades_a_crear.join(', ') }}
+    </p>
+    }
+
+    <div class="table-responsive">
+      <table cTable striped small>
+        <thead>
+          <tr>
+            <th>Fila</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Unidad</th>
+            <th>Stock inicial</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of preview.filas; track fila.fila) {
+          <tr [class.table-danger]="!fila.valida">
+            <td>{{ fila.fila }}</td>
+            <td>{{ fila.codigo_interno || '—' }}</td>
+            <td>{{ fila.nombre || '—' }}</td>
+            <td>{{ fila.categoria || '—' }}</td>
+            <td>{{ fila.unidad || '—' }}</td>
+            <td>{{ fila.stock_inicial ?? 0 }}</td>
+            <td>
+              @if (fila.valida) {
+              <span class="text-success">Válida</span>
+              } @else {
+              <span class="text-danger">{{ fila.errores.join('; ') }}</span>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <c-row class="g-3 align-items-end mt-2">
+      <c-col sm="12" md="4">
+        <label for="almacenDestino">Almacén destino para el stock inicial</label>
+        <select
+          id="almacenDestino"
+          class="form-control form-select"
+          [(ngModel)]="almacenDestinoId"
+          [ngModelOptions]="{ standalone: true }"
+        >
+          <option [ngValue]="null">Seleccioná un almacén</option>
+          @for (almacen of almacenes; track almacen.id) {
+          <option [ngValue]="almacen.id">{{ almacen.nombre }}</option>
+          }
+        </select>
+      </c-col>
+      <c-col sm="12" md="4">
+        <button
+          cButton
+          color="success"
+          [disabled]="
+            !almacenDestinoId || preview.total_validas === 0 || cargandoConfirmacion
+          "
+          (click)="confirmarImportacion()"
+        >
+          <svg cIcon name="cilCheckCircle"></svg>
+          {{ cargandoConfirmacion ? 'Importando...' : 'Confirmar importación' }}
+        </button>
+      </c-col>
+    </c-row>
+  </c-card-body>
+</c-card>
+}
+
+@if (resultado) {
+<c-card>
+  <c-card-body>
+    <h5>Resultado de la importación</h5>
+    <p>
+      <span class="text-success">{{ resultado.total_creados }} creados</span> ·
+      <span class="text-danger">{{ resultado.total_con_error }} con error</span>
+    </p>
+
+    <div class="table-responsive">
+      <table cTable striped small>
+        <thead>
+          <tr>
+            <th>Fila</th>
+            <th>Nombre</th>
+            <th>Resultado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of resultado.resultados; track item.fila) {
+          <tr [class.table-danger]="!item.exito">
+            <td>{{ item.fila }}</td>
+            <td>{{ item.nombre || '—' }}</td>
+            <td>
+              @if (item.exito) {
+              <span class="text-success">Creado (#{{ item.producto_id }})</span>
+              } @else {
+              <span class="text-danger">{{ item.error }}</span>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </c-card-body>
+</c-card>
+}
