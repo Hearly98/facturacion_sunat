@@ -94,18 +94,18 @@ export class ProductMapper {
   static toFormDataCreate(model: CreateProduct, imageFile?: File): FormData {
     const formData = new FormData();
 
-    formData.append('categoria_id', model.categoryId.toString());
-    formData.append('marca_id', model.brandId.toString());
+    ProductMapper.appendIfPresent(formData, 'categoria_id', model.categoryId);
+    ProductMapper.appendIfPresent(formData, 'marca_id', model.brandId);
     formData.append('nombre', model.name);
-    formData.append('descripcion', model.description);
-    formData.append('unidad_id', model.unitId.toString());
-    formData.append('codigo_interno', model.internalCode);
-    formData.append('codigo_fabricante', model.manufacturerCode);
-    formData.append('peso', model.weight.toString());
-    formData.append('sucursal_id', model.branchId.toString());
-    formData.append('moneda_id', model.currencyId.toString());
-    formData.append('precio_compra_base', model.basePurchasePrice.toString());
-    formData.append('precio_venta_base', model.baseSalePrice.toString());
+    ProductMapper.appendIfPresent(formData, 'descripcion', model.description);
+    ProductMapper.appendIfPresent(formData, 'unidad_id', model.unitId);
+    ProductMapper.appendIfPresent(formData, 'codigo_interno', model.internalCode);
+    ProductMapper.appendIfPresent(formData, 'codigo_fabricante', model.manufacturerCode);
+    ProductMapper.appendIfPresent(formData, 'peso', model.weight);
+    ProductMapper.appendIfPresent(formData, 'sucursal_id', model.branchId);
+    ProductMapper.appendIfPresent(formData, 'moneda_id', model.currencyId);
+    ProductMapper.appendIfPresent(formData, 'precio_compra_base', model.basePurchasePrice);
+    ProductMapper.appendIfPresent(formData, 'precio_venta_base', model.baseSalePrice);
 
     if (model.branches && model.branches.length > 0) {
       model.branches.forEach((branch, index) => {
@@ -128,18 +128,18 @@ export class ProductMapper {
     const formData = new FormData();
 
     formData.append('id', model.id.toString());
-    formData.append('categoria_id', model.categoryId.toString());
-    formData.append('marca_id', model.brandId.toString());
+    ProductMapper.appendIfPresent(formData, 'categoria_id', model.categoryId);
+    ProductMapper.appendIfPresent(formData, 'marca_id', model.brandId);
     formData.append('nombre', model.name);
-    formData.append('descripcion', model.description);
-    formData.append('unidad_id', model.unitId.toString());
-    formData.append('codigo_interno', model.internalCode);
-    formData.append('codigo_fabricante', model.manufacturerCode);
-    formData.append('peso', model.weight.toString());
-    formData.append('sucursal_id', model.branchId.toString());
-    formData.append('moneda_id', model.currencyId.toString());
-    formData.append('precio_compra_base', model.basePurchasePrice.toString());
-    formData.append('precio_venta_base', model.baseSalePrice.toString());
+    ProductMapper.appendIfPresent(formData, 'descripcion', model.description);
+    ProductMapper.appendIfPresent(formData, 'unidad_id', model.unitId);
+    ProductMapper.appendIfPresent(formData, 'codigo_interno', model.internalCode);
+    ProductMapper.appendIfPresent(formData, 'codigo_fabricante', model.manufacturerCode);
+    ProductMapper.appendIfPresent(formData, 'peso', model.weight);
+    ProductMapper.appendIfPresent(formData, 'sucursal_id', model.branchId);
+    ProductMapper.appendIfPresent(formData, 'moneda_id', model.currencyId);
+    ProductMapper.appendIfPresent(formData, 'precio_compra_base', model.basePurchasePrice);
+    ProductMapper.appendIfPresent(formData, 'precio_venta_base', model.baseSalePrice);
 
     if (model.branches && model.branches.length > 0) {
       model.branches.forEach((branch, index) => {
@@ -152,5 +152,16 @@ export class ProductMapper {
     }
 
     return formData;
+  }
+
+  // categoryId/brandId/unitId/weight/branchId/currencyId/description/codes/prices are all
+  // nullable per StoreProductoRequest/UpdateProductoRequest -- calling .toString() on them
+  // unconditionally crashed with "can't access property toString, x is null" the moment a user
+  // left any of them empty (e.g. no brand selected).
+  private static appendIfPresent(formData: FormData, key: string, value: unknown): void {
+    if (value === null || value === undefined || value === '') {
+      return;
+    }
+    formData.append(key, String(value));
   }
 }

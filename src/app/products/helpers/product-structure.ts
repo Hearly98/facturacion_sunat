@@ -94,6 +94,12 @@ export const productStructure = (
       col: '6',
     },
     {
+      label: 'Peso',
+      formControlName: 'weight',
+      type: 'number',
+      col: '6',
+    },
+    {
       label: 'Imagen',
       formControlName: 'image',
       type: 'file',
