@@ -246,7 +246,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
 
     if (formControlName === 'prod_id') {
       this.form.patchValue({
-        prod_id: item.prod_id,
+        prod_id: item.id,
       });
       this.selectedProduct = item;
       return;
@@ -259,17 +259,21 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
   }
 
   addProductToDetail() {
-    debugger;
     if (!this.selectedProduct) return;
     const detailForm = this.#formBuilder.group(
       buildShippingGuideDetail({
-        prod_id: this.selectedProduct.prod_id,
-        prod_nom: this.selectedProduct.prod_nom,
-        prod_cod: this.selectedProduct.prod_cod,
+        prod_id: this.selectedProduct.id,
+        prod_nom: this.selectedProduct.nombre,
+        prod_cod: this.selectedProduct.codigo,
         cantidad: 1,
-        peso_unitario: this.selectedProduct.prod_peso || 0,
-        peso_total: (this.selectedProduct.prod_peso || 0) * 1,
-        descripcion: '',
+        peso_unitario: this.selectedProduct.peso || 0,
+        peso_total: (this.selectedProduct.peso || 0) * 1,
+        // descripcion es obligatoria pero no hay ningún input en la tabla de detalle para
+        // llenarla -- sin esto, agregar cualquier producto deja el form inválido en silencio
+        // (el toast de "faltan campos" no dice cuál, y no hay ningún campo visible que resaltar).
+        // El nombre del producto es un default razonable: coincide con lo que ya se ve en la
+        // columna "Producto" de la misma fila.
+        descripcion: this.selectedProduct.nombre,
       }),
     );
 
@@ -361,12 +365,16 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
 
     const guideData = {
       ...this.form.getRawValue(),
-      emp_id: 1,
-      suc_id: this.form.value.suc_id || this.sucursales[0]?.value,
+      // El backend valida sucursal_id (no suc_id/emp_id) y resuelve la empresa por tenant_id()
+      // del usuario autenticado -- emp_id: 1 hardcodeado nunca hizo nada, y suc_id nunca llegaba
+      // a destino con ese nombre.
+      sucursal_id: this.form.value.suc_id || this.sucursales[0]?.value,
       detalles: this.detailsArray.getRawValue().map((v) => ({
-        prod_id: v.prod_id,
+        // producto_id/unidad_id: los nombres reales que GuiaRemisionController valida.
+        // prod_id/und_id son los nombres de control internos de este form, no el contrato HTTP.
+        producto_id: v.prod_id,
         cantidad: v.cantidad,
-        und_id: v.und_id,
+        unidad_id: v.und_id,
         peso_unitario: v.peso_unitario,
         descripcion: v.descripcion,
         precio_unitario: v.precio_unitario,
