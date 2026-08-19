@@ -13,7 +13,8 @@ import {
 import { ProductService } from '../../core/services/product.service';
 import { CreateProduct, UpdateProduct, Product } from '../../core/models';
 import { IconDirective } from '@coreui/icons-angular';
-import { buildProductForm, productStructure } from '../../helpers';
+import { buildProductForm, productStructure, messages } from '../../helpers';
+import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BaseComponent } from '../../../shared/base/base.component';
 import { MODULES } from '../../../core/config/permissions/modules';
@@ -41,6 +42,7 @@ import { CommonModule } from '@angular/common';
     ModalFooterComponent,
     ReactiveFormsModule,
     SpinnerComponent,
+    ValidationMessagesComponent,
   ],
   templateUrl: './product-new-edit-modal.html',
   styleUrl: './product-new-edit-modal.scss',
@@ -49,6 +51,7 @@ export class ProductNewEditModal extends BaseComponent implements OnInit {
   form!: FormGroup;
   visible = false;
   structure = productStructure();
+  errorMessages = messages;
   selectedFile: File | null = null;
   imagePreview = signal<string | null>(null);
   isCompressing = signal<boolean>(false);

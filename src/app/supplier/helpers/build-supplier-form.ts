@@ -12,11 +12,8 @@ export const buildSupplierForm = (): {
       null,
       Validators.compose([Validators.required, Validators.minLength(3)]),
     ),
-    email: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
-    address: new FormControl(
-      null,
-      Validators.compose([Validators.required, Validators.minLength(3)]),
-    ),
+    email: new FormControl(null, Validators.email),
+    address: new FormControl(null, Validators.minLength(3)),
     documentTypeId: new FormControl(null, Validators.required),
     document: new FormControl(null, Validators.required),
     phone: new FormControl(null),
