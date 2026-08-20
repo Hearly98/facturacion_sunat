@@ -79,7 +79,9 @@
           <tr>
             <th>Fila</th>
             <th>Código</th>
+            <th>Cód. fabricante</th>
             <th>Nombre</th>
+            <th>Descripción</th>
             <th>Categoría</th>
             <th>Unidad</th>
             <th>Stock inicial</th>
@@ -91,7 +93,9 @@
           <tr [class.table-danger]="!fila.valida">
             <td>{{ fila.fila }}</td>
             <td>{{ fila.codigo_interno || '—' }}</td>
+            <td>{{ fila.codigo_fabricante || '—' }}</td>
             <td>{{ fila.nombre || '—' }}</td>
+            <td>{{ fila.descripcion || '—' }}</td>
             <td>{{ fila.categoria || '—' }}</td>
             <td>{{ fila.unidad || '—' }}</td>
             <td>{{ fila.stock_inicial ?? 0 }}</td>
