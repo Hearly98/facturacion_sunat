@@ -1,7 +1,9 @@
 export interface ProductImportRow {
   fila: number;
   codigo_interno: string | null;
+  codigo_fabricante: string | null;
   nombre: string | null;
+  descripcion: string | null;
   categoria: string | null;
   unidad: string | null;
   precio_compra: number | null;
