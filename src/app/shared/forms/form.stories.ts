@@ -2,7 +2,15 @@ import type { Meta, StoryObj } from '@storybook/angular';
 
 import { FormComponent } from './form.component';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { expect } from 'storybook/test';
+
+// El paquete `storybook` (que provee `storybook/test`) no está instalado en este proyecto
+// -- solo los paquetes @storybook/* con scope -- así que las aserciones del play() se hacen
+// con un assert nativo en vez de depender de una dependencia inexistente.
+function assert(condition: boolean, message: string): void {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
 
 function createForm(): FormGroup {
   return new FormGroup({
@@ -27,9 +35,9 @@ export const Default: Story = {
   args: {
     ...meta.args,
   },
-  play: ({ args }) => {
-    expect(args.form.touched).toBe(false);
-    expect(args.form.dirty).toBe(false);
+  play: ({ args }: { args: { form: FormGroup } }) => {
+    assert(args.form.touched === false, 'form should not be touched');
+    assert(args.form.dirty === false, 'form should not be dirty');
   },
 };
 
@@ -38,12 +46,12 @@ export const Error: Story = {
     ...Default.args,
     form: createForm(),
   },
-  play: ({ args }) => {
+  play: ({ args }: { args: { form: FormGroup } }) => {
     args.form.markAsDirty();
     args.form.markAllAsTouched();
     args.form.updateValueAndValidity();
-    expect(args.form.touched).toBe(true);
-    expect(args.form.dirty).toBe(true);
+    assert(args.form.touched === true, 'form should be touched');
+    assert(args.form.dirty === true, 'form should be dirty');
   },
 };
 
