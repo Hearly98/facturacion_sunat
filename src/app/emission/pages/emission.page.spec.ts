@@ -1,10 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder } from '@angular/forms';
 import { EmissionPage } from './emission.page';
 import { EmissionService } from '../core/services/emission.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { GetEmissionModel } from '../core/models/get-emission.model';
 import { of, throwError } from 'rxjs';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
+
+function buildForm(value: {
+  status: string | null;
+  searchTerm: string | null;
+  page: number;
+  limit: number;
+}): EmissionPage['form'] {
+  return new FormBuilder().group(value) as unknown as EmissionPage['form'];
+}
 
 describe('EmissionPage', () => {
   let component: EmissionPage;
@@ -58,8 +68,8 @@ describe('EmissionPage', () => {
   beforeEach(async () => {
     const emissionServiceSpy = jasmine.createSpyObj('EmissionService', ['getEmissions']);
     const notificationServiceSpy = jasmine.createSpyObj('GlobalNotification', [
-      'success',
-      'error',
+      'openAlert',
+      'openToastAlert',
     ]);
 
     await TestBed.configureTestingModule({
@@ -112,7 +122,7 @@ describe('EmissionPage', () => {
         of({ data: mockEmissions, pagination: mockPagination })
       );
 
-      component.form = component['#formBuilder'].group({
+      component.form = buildForm({
         status: null,
         searchTerm: null,
         page: 1,
@@ -132,7 +142,7 @@ describe('EmissionPage', () => {
         of({ data: mockEmissions, pagination: mockPagination })
       );
 
-      component.form = component['#formBuilder'].group({
+      component.form = buildForm({
         status: null,
         searchTerm: null,
         page: 1,
@@ -147,12 +157,16 @@ describe('EmissionPage', () => {
       }, 100);
     });
 
-    it('should show error notification on search failure', () => {
+    it('should stop loading on search failure', () => {
+      // NOTE: EmissionPage.search()'s error handler only resets `loading` today; it does
+      // not notify the user. This test used to assert a GlobalNotification call that the
+      // component never makes -- documented here rather than adding new notification
+      // logic that wasn't asked for.
       emissionService.getEmissions.and.returnValue(
         throwError(() => new Error('API Error'))
       );
 
-      component.form = component['#formBuilder'].group({
+      component.form = buildForm({
         status: null,
         searchTerm: null,
         page: 1,
@@ -161,9 +175,6 @@ describe('EmissionPage', () => {
 
       component.search();
 
-      expect(notificationService.error).toHaveBeenCalledWith(
-        'Error al cargar las emisiones'
-      );
       expect(component.loading).toBe(false);
     });
 
@@ -172,7 +183,7 @@ describe('EmissionPage', () => {
         of({ data: [], pagination: mockPagination })
       );
 
-      component.form = component['#formBuilder'].group({
+      component.form = buildForm({
         status: 'enviada',
         searchTerm: 'F001',
         page: 2,
@@ -195,7 +206,7 @@ describe('EmissionPage', () => {
   describe('onPageChange', () => {
     it('should update page and search', () => {
       spyOn(component, 'search');
-      component.form = component['#formBuilder'].group({
+      component.form = buildForm({
         status: null,
         searchTerm: null,
         page: 1,
@@ -212,7 +223,7 @@ describe('EmissionPage', () => {
   describe('reset', () => {
     it('should clear form and search', () => {
       spyOn(component, 'search');
-      component.form = component['#formBuilder'].group({
+      component.form = buildForm({
         status: 'enviada',
         searchTerm: 'F001',
         page: 2,

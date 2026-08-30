@@ -3,7 +3,7 @@ import { EmissionListComponent } from './emission-list.component';
 import { EmissionService } from '../core/services/emission.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { GetEmissionModel } from '../core/models/get-emission.model';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('EmissionListComponent', () => {
   let component: EmissionListComponent;
@@ -18,8 +18,8 @@ describe('EmissionListComponent', () => {
       'downloadCdr',
     ]);
     const notificationServiceSpy = jasmine.createSpyObj('GlobalNotification', [
-      'success',
-      'error',
+      'openAlert',
+      'openToastAlert',
     ]);
 
     await TestBed.configureTestingModule({
@@ -95,12 +95,15 @@ describe('EmissionListComponent', () => {
       };
 
       emissionService.downloadPdf.and.returnValue(of(mockBlob));
-      spyOn(component as any, '_EmissionListComponent__downloadFile');
 
       component.downloadPdf(emission);
 
       expect(emissionService.downloadPdf).toHaveBeenCalledWith(emission.id);
-      expect(notificationService.success).toHaveBeenCalledWith('PDF descargado correctamente');
+      expect(notificationService.openToastAlert).toHaveBeenCalledWith(
+        '¡Éxito!',
+        'PDF descargado correctamente',
+        'success'
+      );
     });
 
     it('should show error notification on download failure', () => {
@@ -123,14 +126,16 @@ describe('EmissionListComponent', () => {
       };
 
       emissionService.downloadPdf.and.returnValue(
-        new Promise((resolve, reject) => reject(new Error('Download failed')))
+        throwError(() => new Error('Download failed'))
       );
 
       component.downloadPdf(emission);
 
-      setTimeout(() => {
-        expect(notificationService.error).toHaveBeenCalledWith('Error al descargar PDF');
-      }, 100);
+      expect(notificationService.openToastAlert).toHaveBeenCalledWith(
+        'Error',
+        'Error al descargar PDF',
+        'danger'
+      );
     });
   });
 
@@ -156,12 +161,15 @@ describe('EmissionListComponent', () => {
       };
 
       emissionService.downloadXml.and.returnValue(of(mockBlob));
-      spyOn(component as any, '_EmissionListComponent__downloadFile');
 
       component.downloadXml(emission);
 
       expect(emissionService.downloadXml).toHaveBeenCalledWith(emission.id);
-      expect(notificationService.success).toHaveBeenCalledWith('XML descargado correctamente');
+      expect(notificationService.openToastAlert).toHaveBeenCalledWith(
+        '¡Éxito!',
+        'XML descargado correctamente',
+        'success'
+      );
     });
   });
 
@@ -187,12 +195,15 @@ describe('EmissionListComponent', () => {
       };
 
       emissionService.downloadCdr.and.returnValue(of(mockBlob));
-      spyOn(component as any, '_EmissionListComponent__downloadFile');
 
       component.downloadCdr(emission);
 
       expect(emissionService.downloadCdr).toHaveBeenCalledWith(emission.id);
-      expect(notificationService.success).toHaveBeenCalledWith('CDR descargado correctamente');
+      expect(notificationService.openToastAlert).toHaveBeenCalledWith(
+        '¡Éxito!',
+        'CDR descargado correctamente',
+        'success'
+      );
     });
   });
 });
