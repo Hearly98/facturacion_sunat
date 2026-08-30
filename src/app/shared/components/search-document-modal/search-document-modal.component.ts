@@ -148,7 +148,7 @@ export class SearchDocumentModalComponent {
         (this.allItems() as GetShippingGuideModel[]).filter(
           (g) =>
             g.numero_completo?.toLowerCase().includes(term) ||
-            g.cliente?.cli_nom?.toLowerCase().includes(term),
+            g.cliente?.razonSocial?.toLowerCase().includes(term),
         ),
       );
     }

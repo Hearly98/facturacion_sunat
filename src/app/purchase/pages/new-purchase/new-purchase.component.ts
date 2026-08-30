@@ -305,11 +305,11 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
 
   patchSupplier(item: any) {
     this.form.patchValue({
-      prov_documento: item.prov_documento,
-      tip_id: item.tip_id,
-      prov_direcc: item.prov_direcc,
-      prov_correo: item.prov_correo,
-      prov_telf: item.prov_telf,
+      prov_documento: item.document,
+      tip_id: item.documentTypeId,
+      prov_direcc: item.address,
+      prov_correo: item.email,
+      prov_telf: item.phone,
     });
   }
 
@@ -331,7 +331,7 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
       this.form.patchValue({ almacen_id: parseInt(value) });
       this.selectedProductStock.set(null);
       if (this.selectedProduct) {
-        this.loadProductStock(this.selectedProduct.prod_id);
+        this.loadProductStock(this.selectedProduct.id);
       }
     }
   }
@@ -349,7 +349,7 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
       this.form.patchValue({ almacen_id: parseInt(value) });
       this.selectedProductStock.set(null);
       if (this.selectedProduct) {
-        this.loadProductStock(this.selectedProduct.prod_id);
+        this.loadProductStock(this.selectedProduct.id);
       }
     }
   }
@@ -402,20 +402,22 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
 
     if (formControlName === 'prod_id') {
       this.form.patchValue({
-        prod_id: item.prod_id,
+        prod_id: item.id,
       });
       this.selectedProduct = item;
-      this.loadProductStock(item.prod_id);
+      this.loadProductStock(item.id);
+      return;
+    }
+
+    if (formControlName === 'prov_id') {
+      this.form.patchValue({ prov_id: item.id });
+      this.patchSupplier(item);
       return;
     }
 
     const control = this.form.get(formControlName);
     if (control) {
       control.setValue(item[formControlName]);
-    }
-
-    if (formControlName === 'prov_id') {
-      this.patchSupplier(item);
     }
   }
 
@@ -441,7 +443,7 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
 
     // Verificar si el producto ya existe en el detalle
     const exists = this.detailsArray.controls.some(
-      (control) => control.value.prod_id === this.selectedProduct.prod_id,
+      (control) => control.value.prod_id === this.selectedProduct.id,
     );
 
     if (exists) {
@@ -450,10 +452,10 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
     }
 
     const detailForm = buildPurchaseDetailForm({
-      prod_id: this.selectedProduct.prod_id,
+      prod_id: this.selectedProduct.id,
       cantidad: 1,
-      prod_nom: this.selectedProduct.prod_nom,
-      prod_cod_interno: this.selectedProduct.prod_cod,
+      prod_nom: this.selectedProduct.nombre,
+      prod_cod_interno: this.selectedProduct.codigo,
       unidad: this.selectedProduct.unidad,
       costo_unitario: this.selectedProduct.pcompra,
       precio_compra: null,
