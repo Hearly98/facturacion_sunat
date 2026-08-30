@@ -554,7 +554,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
             partida_direccion: guia.partida_direccion,
             destino_ubigeo: guia.destino_ubigeo,
             destino_direccion: guia.destino_direccion,
-            cli_id: guia.cliente?.cli_id,
+            cli_id: guia.cliente?.id,
             tipo_traslado: guia.tipo_traslado,
             motivo_traslado: guia.motivo_traslado,
             transportista_tipo_doc: guia.transportista_tipo_doc,
