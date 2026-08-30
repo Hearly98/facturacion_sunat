@@ -7,6 +7,7 @@ import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-moda
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { Serie } from '../core/models';
 import { ResponseDto } from '@shared/models/api/response.dto';
+import { ApplicationMessageType } from '@shared/models/api/application-message-type.dto';
 
 describe('SeriesPage', () => {
   let component: SeriesPage;
@@ -127,7 +128,13 @@ describe('SeriesPage', () => {
     it('should delete the serie and refresh on confirmation', (done) => {
       fixture.detectChanges();
       confirmServiceMock.open.and.returnValue(Promise.resolve(true));
-      const deleteResponse = { isValid: true, data: null, messages: ['Serie eliminada exitosamente'] };
+      const deleteResponse = {
+        isValid: true,
+        data: null,
+        messages: [
+          { key: '', message: 'Serie eliminada exitosamente', messageType: ApplicationMessageType.Ok },
+        ],
+      };
       serieServiceMock.delete.and.returnValue(of(deleteResponse as any));
       spyOn(component, 'onSearch');
 
