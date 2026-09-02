@@ -22,6 +22,7 @@ import { environment } from '@environments/environment';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/interceptor/auth.interceptor';
 import { errorInterceptor } from './core/auth/interceptor/error.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { AppInitializerService } from './core/services/app-initializer.service';
 
 /**
@@ -46,7 +47,7 @@ export function initializeAnalytics() {
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(SidebarModule, NgxPermissionsModule.forRoot()),
-    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, errorInterceptor, loadingInterceptor])),
     provideAnimationsAsync(),
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
