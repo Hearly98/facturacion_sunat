@@ -19,6 +19,7 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
 import { SerieService } from '../core/services/serie.service';
 import { Serie } from '../core/models';
 import { SerieModalComponent } from '../components/serie-modal.component';
+import { StatusBadgeComponent } from '@shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-series',
@@ -35,6 +36,7 @@ import { SerieModalComponent } from '../components/serie-modal.component';
     ReactiveFormsModule,
     PaginatorComponent,
     SerieModalComponent,
+    StatusBadgeComponent,
   ],
   template: `
     <c-row>
@@ -87,9 +89,10 @@ import { SerieModalComponent } from '../components/serie-modal.component';
                   <td>{{ serie.number }}</td>
                   <td>{{ serie.counter }}</td>
                   <td>
-                    <span class="badge" [class.bg-success]="serie.active" [class.bg-danger]="!serie.active">
-                      {{ serie.active ? 'Activo' : 'Inactivo' }}
-                    </span>
+                    <app-status-badge
+                      [color]="serie.active ? 'success' : 'danger'"
+                      [label]="serie.active ? 'Activo' : 'Inactivo'"
+                    ></app-status-badge>
                   </td>
                 </tr>
                 }
