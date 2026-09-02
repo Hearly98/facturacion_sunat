@@ -52,3 +52,6 @@ Thumbs.db
 
 # Claude-generated audit reports (internal, not for the public repo)
 /docs
+
+# Local-only agent instructions, never commit (public repo)
+CLAUDE.md
