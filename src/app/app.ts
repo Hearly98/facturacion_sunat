@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { iconSubset } from './icons/icon-subset';
 import { IconSetService } from '@coreui/icons-angular';
 import { ToastContainerComponent } from './shared/alerts/toast/toast-container.component';
+import { GlobalLoadingBarComponent } from './shared/components/global-loading-bar/global-loading-bar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastContainerComponent],
+  imports: [RouterOutlet, ToastContainerComponent, GlobalLoadingBarComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
