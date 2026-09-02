@@ -339,7 +339,7 @@
                                 <td>{{ quotation.fullNumber }}</td>
                                 <td>{{ quotation.issueDate | date: 'dd/MM/yyyy' }}</td>
                                 <td>{{ quotation.customer?.name }}</td>
-                                <td>{{ quotation.total | currency: 'S/. ' }}</td>
+                                <td>{{ quotation.total | appCurrency: quotation.currencySymbol }}</td>
                                 <td>
                                   <span
                                     class="badge"

@@ -1,5 +1,5 @@
 import { Component, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
   ButtonDirective,
@@ -45,6 +45,7 @@ import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { UserService } from 'src/app/user/core/services/user.service';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
+import { CurrencyPipe } from '@shared/pipes/currency.pipe';
 
 @Component({
   selector: 'app-quotation-main',

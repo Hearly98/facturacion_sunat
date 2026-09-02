@@ -8,7 +8,7 @@ import {
   computed,
   ViewContainerRef,
 } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -61,6 +61,7 @@ import {
 import { QuotationModel } from 'src/app/quotation/core/models/quotation.model';
 import { GetShippingGuideModel } from 'src/app/shipping-guide/core/models/get-shipping-guide.model';
 import { CustomerMapper } from 'src/app/customer/core/mappers';
+import { CurrencyPipe } from '@shared/pipes/currency.pipe';
 
 @Component({
   selector: 'app-sales-main',

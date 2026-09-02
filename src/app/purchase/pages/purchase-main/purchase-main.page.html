@@ -341,7 +341,7 @@
                             <td>{{ purchase.number }}</td>
                             <td>{{ purchase.issueDate | date: 'dd/MM/yyyy' }}</td>
                             <td>{{ purchase.supplier?.name }}</td>
-                            <td>{{ purchase.total | currency: 'S/. ' }}</td>
+                            <td>{{ purchase.total | appCurrency: purchase.currencySymbol }}</td>
                             <td>
                               <span
                                 class="badge"
