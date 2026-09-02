@@ -1,1 +1,0 @@
-<h1><%= classify(name) %> Page</h1>

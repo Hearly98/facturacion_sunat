@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -20,7 +20,8 @@ import { PurchaseDetailTableComponent } from 'src/app/purchase-detail/components
 import { PurchaseDetailForm } from 'src/app/purchase-detail/core/types';
 import { buildPurchaseDetailForm } from 'src/app/purchase-detail/helpers';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
-import { mapToSelectOption } from '@shared/functions';
+import { mapToSelectOption, parseLocalDate } from '@shared/functions';
+import { CurrencyPipe } from '@shared/pipes/currency.pipe';
 import { PurchaseService } from '../../core/services/purchase.service';
 import { buildPurchaseForm } from '../../helpers/build-purchase-form';
 import { purchaseStructure } from '../../helpers';
@@ -207,7 +208,7 @@ export class PurchaseEditPage implements OnInit {
       doc_id: purchase.documentId,
       mp_cod: purchase.paymentMethodId,
       mon_id: purchase.currencyId,
-      fechaEmision: purchase.issueDate ? new Date(purchase.issueDate) : null,
+      fechaEmision: parseLocalDate(purchase.issueDate),
       numero: purchase.number,
       prov_id: purchase.supplierId,
       prov_documento: purchase.supplier?.document ?? null,

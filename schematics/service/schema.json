@@ -1,9 +1,0 @@
-{
-    "schema": "http://json-schema.org/schema",
-    "id": "service",
-    "title": "service",
-    "type": "object",
-    "description": "service",
-    "properties": {},
-    "required": []
-}

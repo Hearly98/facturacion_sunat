@@ -12,9 +12,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "lint": "eslint src --ext .ts,.html",
-    "lint:fix": "eslint src --ext .ts,.html --fix"
+    "lint:fix": "eslint src --ext .ts,.html --fix",
+    "sync:types": "swagger-typescript-api generate -p http://localhost:8000/docs/api.json -o src/app/core/model -n api.interfaces.ts --no-client"
   },
-  "schematics": "./schematics/collection.json",
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,
@@ -84,6 +84,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "swagger-typescript-api": "^13.12.6",
     "typescript": "~5.9.2",
     "webpack-bundle-analyzer": "^4.10.2"
   }

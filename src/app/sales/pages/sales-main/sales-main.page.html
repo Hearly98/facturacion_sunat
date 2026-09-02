@@ -477,7 +477,7 @@
                         <td>{{ sale.documento?.name }}</td>
                         <td>{{ sale.fecha_emision | date: 'dd/MM/yyyy' }}</td>
                         <td>{{ sale.cliente?.businessName }}</td>
-                        <td>{{ sale.venta_total | currency: 'S/. ' }}</td>
+                        <td>{{ sale.venta_total | appCurrency }}</td>
                         <td>
                           <span
                             class="badge"

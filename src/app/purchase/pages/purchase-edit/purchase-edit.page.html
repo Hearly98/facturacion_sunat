@@ -189,7 +189,7 @@
                     @for (payment of payments(); track payment.id) {
                       <tr>
                         <td>{{ payment.paymentDate | date: 'dd/MM/yyyy' }}</td>
-                        <td>{{ payment.amount | currency: 'S/. ' }}</td>
+                        <td>{{ payment.amount | appCurrency: purchase()?.currencySymbol }}</td>
                         <td>{{ payment.method }}</td>
                         <td>{{ payment.externalReference || '-' }}</td>
                         <td>{{ payment.destinationBank ? (payment.destinationBank + ' - ' + payment.destinationAccount) : '-' }}</td>

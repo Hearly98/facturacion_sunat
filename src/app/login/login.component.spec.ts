@@ -4,7 +4,7 @@ import { ButtonModule, CardModule, FormModule, GridModule } from '@coreui/angula
 import { LoginComponent } from './login.component';
 import { IconModule } from '@coreui/icons-angular';
 import { IconSetService } from '@coreui/icons-angular';
-import { iconSubset } from '../../../icons/icon-subset';
+import { iconSubset } from '../icons/icon-subset';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;

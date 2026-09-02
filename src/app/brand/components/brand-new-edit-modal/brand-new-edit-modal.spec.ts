@@ -168,7 +168,7 @@ describe('BrandNewEditModal', () => {
     });
 
     it('should surface errors without invoking the callback', (done) => {
-      const error = { message: 'Error al crear' };
+      const error = { error: 'Error al crear' };
       brandServiceMock.create.and.returnValue(throwError(() => error));
       const callback = jasmine.createSpy('callback');
 
@@ -177,7 +177,7 @@ describe('BrandNewEditModal', () => {
       component.create();
 
       setTimeout(() => {
-        expect(globalNotificationMock.openAlert).toHaveBeenCalledWith('Error al crear');
+        expect(globalNotificationMock.openAlert).toHaveBeenCalledWith('Error al crear' as any);
         expect(callback).not.toHaveBeenCalled();
         expect(component.isLoading()).toBe(false);
         done();

@@ -8,7 +8,7 @@ import {
   computed,
   ViewContainerRef,
 } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -60,6 +60,8 @@ import {
 } from '@shared/components/search-document-modal/search-document-modal.component';
 import { QuotationModel } from 'src/app/quotation/core/models/quotation.model';
 import { GetShippingGuideModel } from 'src/app/shipping-guide/core/models/get-shipping-guide.model';
+import { CustomerMapper } from 'src/app/customer/core/mappers';
+import { CurrencyPipe } from '@shared/pipes/currency.pipe';
 
 @Component({
   selector: 'app-sales-main',
@@ -200,11 +202,11 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
   patchCustomer(item: any) {
     this.form.patchValue({
-      cli_documento: item.documento,
-      tip_id: item.tipoDocumentoId,
-      cli_direcc: item.direccion,
+      cli_documento: item.document,
+      tip_id: item.documentTypeId,
+      cli_direcc: item.address,
       cli_correo: item.email,
-      cli_telf: item.telefono,
+      cli_telf: item.phone,
     });
   }
 
@@ -233,13 +235,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.form.patchValue({ cot_id: cotizacion.id });
     if (cotizacion.customer) {
       this.form.patchValue({ cli_id: cotizacion.customer.id });
-      this.patchCustomer({
-        cli_documento: cotizacion.customer.document,
-        tip_id: cotizacion.customer.documentTypeId,
-        cli_direcc: cotizacion.customer.address,
-        cli_correo: cotizacion.customer.email,
-        cli_telf: cotizacion.customer.phone,
-      });
+      this.patchCustomer(cotizacion.customer);
     }
 
     this.detailsArray.clear();
@@ -262,8 +258,9 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     this.linkedGuia.set(guia);
     this.form.patchValue({ guia_id: guia.guia_id });
     if (guia.cliente) {
-      this.form.patchValue({ cli_id: guia.cliente.cli_id });
-      this.patchCustomer(guia.cliente);
+      const customer = CustomerMapper.fromApi(guia.cliente);
+      this.form.patchValue({ cli_id: customer.id });
+      this.patchCustomer(customer);
     }
 
     this.detailsArray.clear();
@@ -308,7 +305,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     const cot = this.linkedCotizacion();
     if (cot?.customer) return cot.customer.name;
     const guia = this.linkedGuia();
-    if (guia?.cliente) return guia.cliente.cli_nom;
+    if (guia?.cliente) return CustomerMapper.fromApi(guia.cliente).businessName;
     return '';
   }
 
