@@ -1,4 +1,4 @@
-import { Component, Inject, inject, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, Inject, inject, OnInit, signal, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import {
   ButtonDirective,
@@ -21,6 +21,9 @@ import { GetCustomer } from '../core/models';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { CustomerNewEditModalComponent } from '../components/customer-new-edit-modal.component';
+import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '@shared/components/error-state/error-state.component';
+import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-customer',
@@ -35,19 +38,14 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
     ReactiveFormsModule,
     PaginatorComponent,
     CustomerNewEditModalComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    PageHeaderComponent,
   ],
   template: `
-    <c-row>
-      <c-col>
-        <h4>{{ title }}</h4>
-      </c-col>
-      <c-col class="text-end">
-        <button cButton color="primary" (click)="openModal()">
-          <svg cIcon name="cilPlus"></svg>
-          Nuevo Cliente
-        </button>
-      </c-col>
-    </c-row>
+    <app-page-header [title]="title" actionLabel="Nuevo Cliente" (action)="openModal()">
+      <svg icon cIcon name="cilPlus"></svg>
+    </app-page-header>
 
     <c-card class="mt-3">
       <c-card-body>
@@ -84,7 +82,13 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                 </tr>
               </thead>
               <tbody>
-                @if (customers.length > 0) {
+                @if (hasError()) {
+                  <tr>
+                    <td colspan="4">
+                      <app-error-state (retry)="onSearch()"></app-error-state>
+                    </td>
+                  </tr>
+                } @else if (customers.length > 0) {
                   @for (customer of customers; track $index) {
                     <tr>
                       <td>
@@ -108,7 +112,9 @@ import { CustomerNewEditModalComponent } from '../components/customer-new-edit-m
                   }
                 } @else {
                   <tr>
-                    <td colspan="4">No hay datos</td>
+                    <td colspan="4">
+                      <app-empty-state message="No hay clientes registrados"></app-empty-state>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -134,6 +140,7 @@ export class CustomerPage extends BaseSearchComponent implements OnInit {
   public title = 'Clientes';
   readonly #customerService = inject(CustomerService);
   public customers: GetCustomer[] = [];
+  public hasError = signal(false);
   readonly #confirmService = inject(ConfirmService);
   readonly #globalNotification = inject(GlobalNotification);
 
@@ -162,13 +169,16 @@ export class CustomerPage extends BaseSearchComponent implements OnInit {
     const subscription = this.#customerService.search(params).subscribe({
       next: (response) => {
         if (response.isValid) {
+          this.hasError.set(false);
           this.total = response.data.total;
           this.customers = response.data.items;
         } else {
+          this.hasError.set(true);
           this.#globalNotification.openAlert(response);
         }
       },
       error: (response) => {
+        this.hasError.set(true);
         this.#globalNotification.openAlert(response.messages);
       },
     });

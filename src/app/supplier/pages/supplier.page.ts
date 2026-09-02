@@ -21,6 +21,9 @@ import { buildFilterForm, filterSort, mapParams } from '../helpers';
 import { SupplierNewEditModalComponent } from '../component/supplier-new-edit-modal.component';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
+import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
+import { ErrorStateComponent } from '@shared/components/error-state/error-state.component';
+import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 @Component({
   selector: 'app-supplier',
   imports: [
@@ -34,19 +37,14 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
     ReactiveFormsModule,
     PaginatorComponent,
     SupplierNewEditModalComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    PageHeaderComponent,
   ],
   template: `
-    <c-row>
-      <c-col>
-        <h4>{{ title() }}</h4>
-      </c-col>
-      <c-col class="text-end">
-        <button cButton color="primary" (click)="openModal()">
-          <svg cIcon name="cilPlus"></svg>
-          Nuevo Registro
-        </button>
-      </c-col>
-    </c-row>
+    <app-page-header [title]="title()" actionLabel="Nuevo Registro" (action)="openModal()">
+      <svg icon cIcon name="cilPlus"></svg>
+    </app-page-header>
 
     <c-card class="mt-3">
       <c-card-body>
@@ -82,7 +80,13 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
                 </tr>
               </thead>
               <tbody>
-                @if (suppliers.length > 0) {
+                @if (hasError()) {
+                  <tr>
+                    <td colspan="2">
+                      <app-error-state (retry)="onSearch()"></app-error-state>
+                    </td>
+                  </tr>
+                } @else if (suppliers.length > 0) {
                   @for (supplier of suppliers; track $index) {
                     <tr>
                       <td>
@@ -105,7 +109,9 @@ import { GlobalNotification } from '@shared/alerts/global-notification/global-no
                   }
                 } @else {
                   <tr>
-                    <td colspan="2">No hay datos</td>
+                    <td colspan="2">
+                      <app-empty-state message="No hay proveedores registrados"></app-empty-state>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -133,6 +139,7 @@ export class SupplierPage extends BaseSearchComponent {
   #confirmService = inject(ConfirmService);
   #globalNotification = inject(GlobalNotification);
   public suppliers: Supplier[] = [];
+  public hasError = signal(false);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.CUSTOMER, viewContainerRef);
@@ -159,13 +166,16 @@ export class SupplierPage extends BaseSearchComponent {
     const subscription = this.#supplierService.search(params).subscribe({
       next: (response) => {
         if (response.isValid) {
+          this.hasError.set(false);
           this.total = response.data.total;
           this.suppliers = response.data.items;
         } else {
+          this.hasError.set(true);
           console.error(response);
         }
       },
       error: (response) => {
+        this.hasError.set(true);
         console.error(response.messages);
       },
     });
