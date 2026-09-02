@@ -15,7 +15,6 @@
     "lint:fix": "eslint src --ext .ts,.html --fix",
     "sync:types": "swagger-typescript-api generate -p http://localhost:8000/docs/api.json -o src/app/core/model -n api.interfaces.ts --no-client"
   },
-  "schematics": "./schematics/collection.json",
   "prettier": {
     "printWidth": 100,
     "singleQuote": true,

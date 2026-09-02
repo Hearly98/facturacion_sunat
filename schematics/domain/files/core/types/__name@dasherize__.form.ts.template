@@ -1,6 +1,0 @@
-export interface <%= className %>Form {
-<% for (const key in schema.properties) { -%>
-  <%= key %>: <%= schema.properties[key] %> | null;
-<% } -%>
-  id?: number | null;
-}
