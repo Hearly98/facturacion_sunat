@@ -1,5 +1,5 @@
 import { Component, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
-import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -44,6 +44,7 @@ import { DateRangePickerComponent } from '@shared/components/date-range-picker/d
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { forkJoin } from 'rxjs';
 import { PurchaseModel } from '../../core/models/purchase.model';
+import { CurrencyPipe } from '@shared/pipes/currency.pipe';
 
 @Component({
   selector: 'app-purchase-main',
