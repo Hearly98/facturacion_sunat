@@ -1,153 +1,115 @@
 <c-row>
-    <c-col xs="12">
-        <c-card class="mb-4">
-            <c-card-body>
-                <h4 class="mb-4">{{ title }}</h4>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-body>
+        <h4 class="mb-4">{{ title }}</h4>
 
-                <form [formGroup]="filterForm" class="row g-3 mb-4">
-                    <!-- Fila 1 -->
-                    <c-col md="4">
-                        <label cLabel>Producto <span class="text-danger">*</span></label>
-                        <input cFormControl class="form-control" type="text" formControlName="prod_id"
-                            [autofocus]="true">
-                        <span *ngIf="filterForm.get('prod_id')?.touched && filterForm.get('prod_id')?.invalid"
-                            class="text-danger small">
-                            El producto es obligatorio
-                        </span>
-                    </c-col>
+        <form [formGroup]="filterForm" class="row g-3 mb-4">
+          <c-col md="4">
+            <label cLabel>Producto <span class="text-danger">*</span></label>
+            <select cSelect formControlName="productId">
+              <option [ngValue]="null">Seleccione un producto</option>
+              <option *ngFor="let product of products" [ngValue]="product.id">
+                {{ product.internalCode ? product.internalCode + ' - ' : '' }}{{ product.name }}
+              </option>
+            </select>
+            <span *ngIf="filterForm.get('productId')?.touched && filterForm.get('productId')?.invalid"
+              class="text-danger small">
+              El producto es obligatorio
+            </span>
+          </c-col>
 
-                    <c-col md="3">
-                        <label cLabel>Almacén</label>
-                        <select cSelect formControlName="alm_id">
-                            <option [value]="null">Todos los almacenes</option>
-                            <option *ngFor="let alm of warehouses" [value]="alm.id">
-                                {{ alm.nombre }}
-                            </option>
-                        </select>
-                    </c-col>
+          <c-col md="3">
+            <label cLabel>Almacén <span class="text-danger">*</span></label>
+            <select cSelect formControlName="warehouseId">
+              <option [ngValue]="null">Seleccione un almacén</option>
+              <option *ngFor="let alm of warehouses" [ngValue]="alm.id">{{ alm.nombre }}</option>
+            </select>
+            <span *ngIf="filterForm.get('warehouseId')?.touched && filterForm.get('warehouseId')?.invalid"
+              class="text-danger small">
+              El almacén es obligatorio
+            </span>
+          </c-col>
 
-                    <c-col md="3">
-                        <label cLabel>Tipo de Movimiento</label>
-                        <select cSelect formControlName="kar_tip">
-                            <option [value]="null">Seleccione</option>
-                            <option *ngFor="let type of movementTypes" [value]="type.value">
-                                {{ type.label }}
-                            </option>
-                        </select>
-                    </c-col>
+          <c-col md="2">
+            <label cLabel>Fecha Inicio</label>
+            <input cFormControl type="date" formControlName="dateFrom" />
+          </c-col>
 
-                    <c-col md="2">
-                        <label cLabel>Orden</label>
-                        <select cSelect formControlName="order">
-                            <option value="desc">Descendente</option>
-                            <option value="asc">Ascendente</option>
-                        </select>
-                    </c-col>
+          <c-col md="2">
+            <label cLabel>Fecha Fin</label>
+            <input cFormControl type="date" formControlName="dateTo" />
+          </c-col>
 
-                    <!-- Fila 2 -->
-                    <c-col md="3">
-                        <label cLabel>Fecha Inicio</label>
-                        <input cFormControl type="date" formControlName="fec_ini" />
-                    </c-col>
+          <c-col md="12" class="d-flex align-items-end gap-2">
+            <button type="button" (click)="onSearch()" cButton color="primary">
+              <svg cIcon name="cil-search" class="me-2"></svg>
+              Generar Reporte
+            </button>
+            <button type="button" (click)="onClean()" cButton color="secondary" variant="ghost">
+              Limpiar Filtros
+            </button>
+          </c-col>
+        </form>
 
-                    <c-col md="3">
-                        <label cLabel>Fecha Fin</label>
-                        <input cFormControl type="date" formControlName="fec_fin" />
-                    </c-col>
-
-                    <c-col md="3">
-                        <label cLabel>Doc. Referencia</label>
-                        <input cFormControl type="text" formControlName="kar_doc" placeholder="Ej: F001-0001" />
-                    </c-col>
-
-                    <c-col md="3">
-                        <label cLabel>Usuario</label>
-                        <select cSelect formControlName="usu_id">
-                            <option [value]="null">Todos los usuarios</option>
-                            <option *ngFor="let user of users" [value]="user.usu_id">
-                                {{ user.usu_nom }}
-                            </option>
-                        </select>
-                    </c-col>
-
-                    <!-- Botones y Paginación -->
-                    <c-col md="6" class="d-flex align-items-end gap-2">
-                        <button (click)="onSearch()" cButton color="primary">
-                            <svg cIcon name="cil-search" class="me-2"></svg>
-                            Generar Reporte
-                        </button>
-                        <button (click)="onClean()" cButton color="secondary" variant="ghost">
-                            Limpiar Filtros
-                        </button>
-                    </c-col>
-
-                    <c-col md="3" class="ms-auto d-flex align-items-end justify-content-end">
-                        <div class="d-flex align-items-center">
-                            <label cLabel class="me-2 mb-0">Mostrar:</label>
-                            <select cSelect formControlName="pageSize" style="width: auto;" (change)="onSearch()">
-                                <option *ngFor="let opt of pageSizeOptions" [value]="opt">{{ opt }}</option>
-                            </select>
-                        </div>
-                    </c-col>
-                </form>
-
-                <div class="table-responsive">
-                    <table [hover]="true" [striped]="true" cTable>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Documento / Ref.</th>
-                                <th>Tipo</th>
-                                <th>Almacén</th>
-                                <th class="text-end">Cant. Mov</th>
-                                <th class="text-end">Saldo</th>
-                                <th>Usuario</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let item of kardexItems">
-                                <td>{{ item.kar_fec | date:'dd/MM/yyyy HH:mm' }}</td>
-                                <td>
-                                    <span class="text-muted small">{{ item.kar_doc }}</span>
-                                </td>
-                                <td>
-                                    <span class="badge" [ngClass]="{
-                                        'bg-success': item.kar_tip === 'INGRESO',
-                                        'bg-danger': item.kar_tip === 'SALIDA',
-                                        'bg-info': item.kar_tip === 'TRANSFERENCIA',
-                                        'bg-warning': item.kar_tip === 'AJUSTE'
-                                    }">
-                                        {{ item.kar_tip }}
-                                    </span>
-                                </td>
-                                <td>{{ item.nombre }}</td>
-                                <td class="text-end fw-bold"
-                                    [ngClass]="item.kar_cant > 0 ? 'text-success' : 'text-danger'">
-                                    {{ item.kar_cant > 0 ? '+' : '' }}{{ item.kar_cant }}
-                                </td>
-                                <td class="text-end fw-bold">{{ item.kar_sal }}</td>
-                                <td>
-                                    <span class="small">{{ item.usu_nom }}</span>
-                                </td>
-                            </tr>
-                            <tr *ngIf="kardexItems.length === 0">
-                                <td colspan="7" class="text-center py-4">
-                                    <div class="text-muted">
-                                        <svg cIcon name="cil-info" size="xl" class="mb-2"></svg>
-                                        <p>Seleccione un producto y use los filtros para ver el historial de
-                                            movimientos.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-3" *ngIf="kardexItems.length > 0">
-                    <app-paginator [total]="total" [pageSize]="filterForm.get('pageSize')?.value || 50"
-                        (pageChange)="onPageChange($event)"></app-paginator>
-                </div>
-            </c-card-body>
-        </c-card>
-    </c-col>
+        <div class="table-responsive">
+          <table [hover]="true" [striped]="true" cTable>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Documento / Ref.</th>
+                <th>Tipo</th>
+                <th class="text-end">Cant. Mov</th>
+                <th class="text-end">Saldo</th>
+                <th>Usuario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="kardex">
+                <td colspan="4" class="text-muted">Saldo inicial</td>
+                <td class="text-end fw-bold">{{ kardex.openingBalance }}</td>
+                <td></td>
+              </tr>
+              <tr *ngFor="let item of kardex?.movements">
+                <td>{{ item.date | date: 'dd/MM/yyyy HH:mm' }}</td>
+                <td><span class="text-muted small">{{ item.reference }}</span></td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                      'bg-success': item.direction > 0,
+                      'bg-danger': item.direction < 0,
+                      'bg-secondary': item.direction === 0
+                    }" [title]="item.typeDescription ?? ''">
+                    {{ item.typeCode }}
+                  </span>
+                </td>
+                <td class="text-end fw-bold" [ngClass]="item.signedQuantity >= 0 ? 'text-success' : 'text-danger'">
+                  {{ item.signedQuantity > 0 ? '+' : '' }}{{ item.signedQuantity }}
+                </td>
+                <td class="text-end fw-bold">{{ item.balance }}</td>
+                <td><span class="small">{{ item.userName }}</span></td>
+              </tr>
+              <tr *ngIf="!kardex">
+                <td colspan="6" class="text-center py-4">
+                  <div class="text-muted">
+                    <svg cIcon name="cil-info" size="xl" class="mb-2"></svg>
+                    <p>Seleccione un producto y un almacén para ver el historial de movimientos.</p>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="kardex && kardex.movements.length === 0">
+                <td colspan="6" class="text-center text-muted py-3">Sin movimientos en el periodo.</td>
+              </tr>
+            </tbody>
+            <tfoot *ngIf="kardex">
+              <tr>
+                <td colspan="4" class="text-end fw-bold">Stock final</td>
+                <td class="text-end fw-bold">{{ kardex.finalStock }}</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
 </c-row>
