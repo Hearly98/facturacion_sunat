@@ -61,6 +61,7 @@ export class PurchaseMapper {
       productUnitId: dto.producto?.unidad?.id ?? null,
       unitCost: Number(dto.precio_compra),
       quantity: dto.cantidad,
+      discount: Number(dto.descuento ?? 0),
       total: Number(dto.total),
     };
   }

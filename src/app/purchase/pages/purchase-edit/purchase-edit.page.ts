@@ -197,7 +197,7 @@ export class PurchaseEditPage implements OnInit {
         unidad: detail.productUnit,
         costo_unitario: detail.unitCost,
         precio_compra: detail.unitCost,
-        dscto: 0,
+        dscto: detail.discount || null,
         precio_unitario: detail.unitCost,
       });
       this.detailsArray.push(detailForm as any);

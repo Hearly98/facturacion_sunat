@@ -8,6 +8,7 @@ export interface PurchaseDetailModel {
   productUnitId: number | null;
   unitCost: number;
   quantity: number;
+  discount: number;
   total: number;
 }
 

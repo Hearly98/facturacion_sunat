@@ -14,6 +14,7 @@ export interface PurchaseDetailDto {
   producto_id: number;
   precio_compra: string;
   cantidad: number;
+  descuento?: string;
   total: string;
   producto?: PurchaseDetailProductDto;
 }
