@@ -27,7 +27,7 @@ import { DocumentTypeService } from 'src/app/document-type/core/services/documen
 import { CommonModule } from '@angular/common';
 import { PurchaseDetailTableComponent } from 'src/app/purchase-detail/components/purchase-detail-table.component';
 import { PurchaseDetailCreteDTOForm, PurchaseDetailForm } from 'src/app/purchase-detail/core/types';
-import { buildPurchaseDetailForm } from 'src/app/purchase-detail/helpers';
+import { buildPurchaseDetailForm, toPurchaseDetailPayload } from 'src/app/purchase-detail/helpers';
 import { IconDirective } from '@coreui/icons-angular';
 import { PaymentMethodService } from 'src/app/payment-method/core/services/payment-method.service';
 import { SucursalService } from 'src/app/sucursal/core/services/sucursal.service';
@@ -509,14 +509,7 @@ export class NewPurchaseComponent extends BaseComponent implements OnInit {
       fechaEmision: this.form.value.fechaEmision,
       comentario: this.form.value.compr_coment,
       afectaStock: this.form.value.afecta_stock,
-      detalles: this.detailsArray.getRawValue().map((v) => {
-        return {
-          idProducto: v.prod_id,
-          cantidad: v.cantidad,
-          precioCompra: v.precio_compra,
-          descuento: v.dscto,
-        };
-      }),
+      detalles: toPurchaseDetailPayload(this.detailsArray.getRawValue()),
     };
 
     this.#purchaseService.create(purchaseData).subscribe({

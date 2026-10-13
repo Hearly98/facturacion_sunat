@@ -18,7 +18,7 @@ import { TypedFormGroup } from '@shared/types/types-form';
 import { SearchSelectComponent } from '@shared/components/search-select.component';
 import { PurchaseDetailTableComponent } from 'src/app/purchase-detail/components/purchase-detail-table.component';
 import { PurchaseDetailForm } from 'src/app/purchase-detail/core/types';
-import { buildPurchaseDetailForm } from 'src/app/purchase-detail/helpers';
+import { buildPurchaseDetailForm, toPurchaseDetailPayload } from 'src/app/purchase-detail/helpers';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { mapToSelectOption, parseLocalDate } from '@shared/functions';
 import { CurrencyPipe } from '@shared/pipes/currency.pipe';
@@ -301,12 +301,7 @@ export class PurchaseEditPage implements OnInit {
       numero: raw.numero,
       afectaStock: raw.afecta_stock,
       comentario: raw.compr_coment,
-      detalles: this.detailsArray.getRawValue().map((v) => ({
-        idProducto: v.prod_id,
-        cantidad: v.cantidad,
-        precioCompra: v.precio_compra,
-        descuento: v.dscto ?? 0,
-      })),
+      detalles: toPurchaseDetailPayload(this.detailsArray.getRawValue()),
     };
 
     this.#purchaseService.update(body).subscribe({

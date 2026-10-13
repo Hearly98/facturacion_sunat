@@ -216,7 +216,8 @@ export class PurchaseDetailTableComponent implements OnInit, OnChanges {
   @Input() showActions: boolean = true;
   @Output() detailRemoved = new EventEmitter<number>();
 
-  readonly IGV = environment.igv ?? 0.18;
+  /** Factor multiplicador (1.18), no la tasa: environment.igv ya viene como factor. */
+  readonly IGV_FACTOR = environment.igv ?? 1.18;
 
   // Totales como SIGNALS
   totalDscto = signal(0);
@@ -239,6 +240,8 @@ export class PurchaseDetailTableComponent implements OnInit, OnChanges {
     }
   }
 
+  // Mismo cálculo que Compra::calcularTotal() en el backend: costo_unitario es SIN IGV y el
+  // descuento de línea reduce la base imponible ANTES de aplicar el IGV.
   recalculate(rows: PurchaseDetailForm[]) {
     let total = 0;
     let totalDescuento = 0;
@@ -246,22 +249,15 @@ export class PurchaseDetailTableComponent implements OnInit, OnChanges {
     let totalBase = 0;
 
     rows.forEach((r) => {
-      const costoUnitario = Number(r.costo_unitario) || 0; // SIN IGV (base)
+      const costoUnitario = Number(r.costo_unitario) || 0;
       const cant = Number(r.cantidad) || 0;
       const dscto = Number(r.dscto) || 0;
 
-      // Precio unitario CON IGV
-      const precioUnitario = costoUnitario * (this.IGV);
-      
-      // Precio compra = (precio con IGV * cantidad) - descuento
-      const precioCompra = (precioUnitario * cant) - dscto;
-      
-      // Separar base e IGV del precio compra
-      const baseLinea = precioCompra / (this.IGV);
-      const igvLinea = precioCompra - baseLinea;
+      const baseLinea = costoUnitario * cant - dscto;
+      const totalLinea = baseLinea * this.IGV_FACTOR;
 
-      total += precioCompra;
-      totalIgv += igvLinea;
+      total += totalLinea;
+      totalIgv += totalLinea - baseLinea;
       totalDescuento += dscto;
       totalBase += baseLinea;
 
@@ -271,8 +267,8 @@ export class PurchaseDetailTableComponent implements OnInit, OnChanges {
 
       rowGroup?.patchValue(
         {
-          precio_unitario: Math.round(precioUnitario * 100) / 100,
-          precio_compra: Math.round(precioCompra * 100) / 100
+          precio_unitario: Math.round(costoUnitario * this.IGV_FACTOR * 100) / 100,
+          precio_compra: Math.round(totalLinea * 100) / 100
         },
         { emitEvent: false }
       );

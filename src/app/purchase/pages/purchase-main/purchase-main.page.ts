@@ -23,7 +23,7 @@ import { TypedFormGroup } from '@shared/types/types-form';
 import { SearchSelectComponent } from '@shared/components/search-select.component';
 import { PurchaseDetailTableComponent } from 'src/app/purchase-detail/components/purchase-detail-table.component';
 import { PurchaseDetailForm } from 'src/app/purchase-detail/core/types';
-import { buildPurchaseDetailForm } from 'src/app/purchase-detail/helpers';
+import { buildPurchaseDetailForm, toPurchaseDetailPayload } from 'src/app/purchase-detail/helpers';
 import { PaginatorComponent } from 'src/app/shared/components/paginator/paginator.component';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { mapToSelectOption } from '@shared/functions';
@@ -294,14 +294,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
       fechaEmision: this.form.value.fechaEmision,
       comentario: this.form.value.compr_coment,
       afectaStock: this.form.value.afecta_stock,
-      detalles: this.detailsArray.getRawValue().map((v) => {
-        return {
-          idProducto: v.prod_id,
-          cantidad: v.cantidad,
-          precioCompra: v.precio_compra,
-          descuento: v.dscto,
-        };
-      }),
+      detalles: toPurchaseDetailPayload(this.detailsArray.getRawValue()),
     };
 
     this.isLoadingForm.set(true);
