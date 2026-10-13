@@ -12,7 +12,7 @@ export const buildPurchaseDetailForm = (
     unidad: new FormControl<string | null>(productData?.unidad || null),
     costo_unitario: new FormControl<number | null>(productData?.costo_unitario || null),
     precio_unitario: new FormControl<number | null>({
-      value: productData?.prod_id || 0,
+      value: productData?.precio_unitario || 0,
       disabled: true,
     }),
     precio_compra: new FormControl<number | null>({

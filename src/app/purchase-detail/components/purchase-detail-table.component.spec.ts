@@ -1,92 +1,62 @@
+import { TestBed } from '@angular/core/testing';
+import { FormArray } from '@angular/forms';
+import { PurchaseDetailTableComponent } from './purchase-detail-table.component';
+import { buildPurchaseDetailForm } from '../helpers';
 import { PurchaseDetailForm } from '../core/types';
 
-describe('PurchaseDetailTableComponent - Lógica de Cálculo', () => {
-  const IGV = 0.18;
-
-  function calcularLinea(costoUnitario: number, cantidad: number, descuento: number) {
-    // Precio unitario CON IGV
-    const precioUnitario = costoUnitario * (1 + IGV);
-    
-    // Precio compra = (precio con IGV * cantidad) - descuento
-    const precioCompra = (precioUnitario * cantidad) - descuento;
-    
-    // Separar base e IGV del precio compra
-    const baseLinea = precioCompra / (1 + IGV);
-    const igvLinea = precioCompra - baseLinea;
-
-    return {
-      precioUnitario: Math.round(precioUnitario * 100) / 100,
-      precioCompra: Math.round(precioCompra * 100) / 100,
-      baseLinea: Math.round(baseLinea * 100) / 100,
-      igvLinea: Math.round(igvLinea * 100) / 100
-    };
+// El backend (Compra::calcularTotal) interpreta precioCompra como costo unitario SIN IGV:
+//   subtotal = Σ(costo * cantidad - descuento)
+//   igv      = subtotal * 0.18
+//   total    = subtotal + igv
+// La tabla debe mostrar exactamente esos mismos montos.
+describe('PurchaseDetailTableComponent', () => {
+  function setup(rows: Partial<PurchaseDetailForm>[]) {
+    TestBed.configureTestingModule({ imports: [PurchaseDetailTableComponent] });
+    const component = TestBed.createComponent(PurchaseDetailTableComponent).componentInstance;
+    component.detailsArray = new FormArray(rows.map((r) => buildPurchaseDetailForm(r))) as any;
+    component.recalculate(component.detailsArray.getRawValue());
+    return component;
   }
 
-  it('debe calcular correctamente con costo 20, cantidad 1, sin descuento', () => {
-    const resultado = calcularLinea(20, 1, 0);
+  it('costo 100 x 1 sin descuento: base 100, IGV 18, total 118', () => {
+    const c = setup([{ prod_id: 1, costo_unitario: 100, cantidad: 1 }]);
 
-    console.log('Test 1: Costo 20, Cantidad 1, Descuento 0');
-    console.log('Precio Unitario:', resultado.precioUnitario);
-    console.log('Precio Compra:', resultado.precioCompra);
-    console.log('Base:', resultado.baseLinea);
-    console.log('IGV:', resultado.igvLinea);
-
-    // Costo 20 sin IGV
-    // Precio unitario con IGV: 20 * 1.18 = 23.6
-    expect(resultado.precioUnitario).toBe(23.6);
-    
-    // Precio compra: 23.6 * 1 - 0 = 23.6
-    expect(resultado.precioCompra).toBe(23.6);
-    
-    // Base: 23.6 / 1.18 = 20
-    expect(resultado.baseLinea).toBe(20);
-    
-    // IGV: 23.6 - 20 = 3.6
-    expect(resultado.igvLinea).toBe(3.6);
+    expect(c.totalBase()).toBe(100);
+    expect(c.totalIgv()).toBe(18);
+    expect(c.totalFinal()).toBe(118);
+    const row = c.detailsArray.at(0).getRawValue();
+    expect(row.precio_unitario).toBe(118);
+    expect(row.precio_compra).toBe(118);
   });
 
-  it('debe calcular correctamente con costo 20, cantidad 2, descuento 5', () => {
-    const resultado = calcularLinea(20, 2, 5);
+  it('el descuento de línea reduce la base antes del IGV (igual que el backend)', () => {
+    const c = setup([{ prod_id: 1, costo_unitario: 20, cantidad: 2, dscto: 5 }]);
 
-    console.log('Test 2: Costo 20, Cantidad 2, Descuento 5');
-    console.log('Precio Unitario:', resultado.precioUnitario);
-    console.log('Precio Compra:', resultado.precioCompra);
-    console.log('Base:', resultado.baseLinea);
-    console.log('IGV:', resultado.igvLinea);
-
-    // Precio unitario con IGV: 20 * 1.18 = 23.6
-    expect(resultado.precioUnitario).toBe(23.6);
-    
-    // Precio compra: (23.6 * 2) - 5 = 47.2 - 5 = 42.2
-    expect(resultado.precioCompra).toBe(42.2);
-    
-    // Base: 42.2 / 1.18 = 35.76
-    expect(resultado.baseLinea).toBe(35.76);
-    
-    // IGV: 42.2 - 35.76 = 6.44
-    expect(resultado.igvLinea).toBe(6.44);
+    // base = 20*2 - 5 = 35 ; igv = 6.3 ; total = 41.3
+    expect(c.totalBase()).toBe(35);
+    expect(c.totalIgv()).toBe(6.3);
+    expect(c.totalDscto()).toBe(5);
+    expect(c.totalFinal()).toBe(41.3);
+    expect(c.detailsArray.at(0).getRawValue().precio_compra).toBe(41.3);
   });
 
-  it('debe calcular correctamente con costo 100, cantidad 3, sin descuento', () => {
-    const resultado = calcularLinea(100, 3, 0);
+  it('suma varias líneas', () => {
+    const c = setup([
+      { prod_id: 1, costo_unitario: 100, cantidad: 3 },
+      { prod_id: 2, costo_unitario: 10, cantidad: 1 },
+    ]);
 
-    console.log('Test 3: Costo 100, Cantidad 3, Descuento 0');
-    console.log('Precio Unitario:', resultado.precioUnitario);
-    console.log('Precio Compra:', resultado.precioCompra);
-    console.log('Base:', resultado.baseLinea);
-    console.log('IGV:', resultado.igvLinea);
+    expect(c.totalBase()).toBe(310);
+    expect(c.totalIgv()).toBe(55.8);
+    expect(c.totalFinal()).toBe(365.8);
+  });
 
-    // Precio unitario con IGV: 100 * 1.18 = 118
-    expect(resultado.precioUnitario).toBe(118);
-    
-    // Precio compra: 118 * 3 = 354
-    expect(resultado.precioCompra).toBe(354);
-    
-    // Base: 354 / 1.18 = 300
-    expect(resultado.baseLinea).toBe(300);
-    
-    // IGV: 354 - 300 = 54
-    expect(resultado.igvLinea).toBe(54);
+  it('recalcular varias veces no acumula el IGV', () => {
+    const c = setup([{ prod_id: 1, costo_unitario: 100, cantidad: 1 }]);
+    c.recalculate(c.detailsArray.getRawValue());
+    c.recalculate(c.detailsArray.getRawValue());
+
+    expect(c.totalFinal()).toBe(118);
+    expect(c.detailsArray.at(0).getRawValue().precio_unitario).toBe(118);
   });
 });
-
