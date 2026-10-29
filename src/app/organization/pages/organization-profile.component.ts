@@ -18,7 +18,6 @@ import { ImageCompressionService } from '../../shared/services/image-compression
 import { GetOrganization } from '../core/models/get-organization.model';
 import { UpdateOrganization } from '../core/models/update-organization.model';
 import { ButtonDirective } from '@coreui/angular';
-import { SunatConfigCardComponent } from '../../sunat/components/sunat-config-card.component';
 import { Ubigeo, UbigeoService } from '../../shared/services/ubigeo.service';
 
 @Component({
@@ -33,7 +32,6 @@ import { Ubigeo, UbigeoService } from '../../shared/services/ubigeo.service';
     IconDirective,
     ReactiveFormsModule,
     ButtonDirective,
-    SunatConfigCardComponent,
   ],
   template: `
     <c-row class="mb-4">
@@ -149,7 +147,6 @@ import { Ubigeo, UbigeoService } from '../../shared/services/ubigeo.service';
       }
     </datalist>
 
-    <app-sunat-config-card></app-sunat-config-card>
   `,
   styles: ``,
 })

@@ -64,16 +64,10 @@ import { CustomerMapper } from 'src/app/customer/core/mappers';
 import { CurrencyPipe } from '@shared/pipes/currency.pipe';
 import { downloadBlobResponse } from '@shared/functions';
 import { SaleListItemModel, toSaleListItem } from '../../core/models/sale-list-item.model';
-import { SunatService, sunatErrorMessage } from 'src/app/sunat/core/services/sunat.service';
+
+/** Estado de venta "Anulado con Nota de Crédito" (estado_ventas.id). */
+const SALE_STATE_CANCELLED_BY_CREDIT_NOTE = 4;
 import { CreditNoteModalComponent } from 'src/app/sunat/components/credit-note-modal.component';
-import {
-  canIssueCreditNote,
-  canSendToSunat,
-  isLockedBySunat,
-  isValidForSunat,
-  sunatStatusColor,
-  sunatStatusLabel,
-} from 'src/app/sunat/core/helpers/sunat-status';
 
 @Component({
   selector: 'app-sales-main',
@@ -119,15 +113,12 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
   public isLoadingList = signal(false);
   public sales: SaleListItemModel[] = [];
-  public sendingSaleId = signal<number | null>(null);
   public creditNoteSale = signal<SaleListItemModel | null>(null);
 
-  readonly canSendToSunat = canSendToSunat;
-  readonly canIssueCreditNote = canIssueCreditNote;
-  readonly isValidForSunat = isValidForSunat;
-  readonly isLockedBySunat = isLockedBySunat;
-  readonly sunatStatusLabel = sunatStatusLabel;
-  readonly sunatStatusColor = sunatStatusColor;
+  /** Boletas no anuladas con nota; la elegibilidad real (saldo, emisión) la decide el backend. */
+  canIssueCreditNote(sale: SaleListItemModel): boolean {
+    return sale.documento_codigo === '03' && sale.estado_id !== SALE_STATE_CANCELLED_BY_CREDIT_NOTE;
+  }
   public totalList = 0;
   public pageList = new PageParamsModel(1, 10);
 
@@ -168,7 +159,6 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   readonly #globalNotification = inject(GlobalNotification);
   readonly #confirmService = inject(ConfirmService);
   readonly #route = inject(ActivatedRoute);
-  readonly #sunatService = inject(SunatService);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.SALES, viewContainerRef);
@@ -624,31 +614,6 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   onEdit(id: number) {
     this.activeTab.set('create');
     this.saleId.set(id);
-  }
-
-  onSendToSunat(sale: SaleListItemModel): void {
-    this.sendingSaleId.set(sale.id);
-    this.#sunatService.sendSale(sale.id).subscribe({
-      next: (result) => {
-        this.sendingSaleId.set(null);
-        const color = isValidForSunat(result.status) ? 'success' : 'danger';
-        const detail = [result.description, ...result.observations].join(' · ');
-        this.#globalNotification.openToastAlert(`SUNAT: ${sunatStatusLabel(result.status)}`, detail, color);
-        this.onSearch(null, this.pageList.page);
-      },
-      error: (error) => {
-        this.sendingSaleId.set(null);
-        this.#globalNotification.openToastAlert('SUNAT', sunatErrorMessage(error), 'danger');
-        this.onSearch(null, this.pageList.page);
-      },
-    });
-  }
-
-  onDownloadSunatFile(sale: SaleListItemModel, file: 'xml' | 'cdr'): void {
-    this.#sunatService.downloadSaleFile(sale.id, file).subscribe({
-      next: (response) => downloadBlobResponse(response, `${sale.numero_completo}.${file === 'cdr' ? 'zip' : 'xml'}`),
-      error: (error) => this.#globalNotification.openToastAlert('SUNAT', sunatErrorMessage(error), 'danger'),
-    });
   }
 
   onCreditNoteClosed(created: boolean): void {

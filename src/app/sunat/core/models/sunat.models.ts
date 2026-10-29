@@ -1,3 +1,5 @@
+import { SendingPolicy } from 'src/app/emissions/core/models/emission.models';
+
 export type SunatStatus = 'PENDIENTE' | 'ACEPTADA' | 'OBSERVADA' | 'RECHAZADA' | 'ERROR';
 
 export type SunatEnvironment = 'prueba' | 'produccion';
@@ -9,16 +11,9 @@ export interface SunatConfig {
   hasSolPassword: boolean;
   hasCertificate: boolean;
   certificateExpiresAt: string | null;
+  policy: SendingPolicy;
 }
 
-export interface SunatSendResult {
-  status: SunatStatus;
-  code: string | null;
-  description: string;
-  observations: string[];
-  number: string;
-  hash: string | null;
-}
 
 export type CreditNoteReason = '01' | '07';
 
@@ -46,8 +41,6 @@ export interface CreditNote {
   reasonCode: CreditNoteReason;
   reasonDescription: string;
   total: number;
-  sunatStatus: SunatStatus;
-  sunatDescription: string | null;
 }
 
 export interface CreateCreditNote {

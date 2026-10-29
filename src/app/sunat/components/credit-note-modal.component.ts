@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   AlertComponent,
   ButtonCloseDirective,
@@ -16,8 +17,7 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { downloadBlobResponse } from '@shared/functions';
 import { SaleListItemModel } from 'src/app/sales/core/models/sale-list-item.model';
-import { sunatStatusColor, sunatStatusLabel, isValidForSunat } from '../core/helpers/sunat-status';
-import { CreditNote, CreditNoteBalance, CreditNoteReason, SunatSendResult } from '../core/models/sunat.models';
+import { CreditNote, CreditNoteBalance, CreditNoteReason } from '../core/models/sunat.models';
 import { SunatService, sunatErrorMessage } from '../core/services/sunat.service';
 
 @Component({
@@ -25,6 +25,7 @@ import { SunatService, sunatErrorMessage } from '../core/services/sunat.service'
   standalone: true,
   imports: [
     FormsModule,
+    RouterLink,
     DecimalPipe,
     ModalComponent,
     ModalHeaderComponent,
@@ -55,19 +56,11 @@ import { SunatService, sunatErrorMessage } from '../core/services/sunat.service'
             Se emitió la nota de crédito <strong>{{ creditNote()!.number }}</strong>
             por <strong>S/ {{ creditNote()!.total | number: '1.2-2' }}</strong>.
           </p>
-          @if (sendResult(); as r) {
-            <c-alert [color]="statusColor(r.status)">
-              <strong>SUNAT: {{ statusLabel(r.status) }}</strong> — {{ r.description }}
-              @for (obs of r.observations; track obs) {
-                <div class="small">{{ obs }}</div>
-              }
-            </c-alert>
-          }
-          @if (error()) {
-            <c-alert color="danger">
-              La nota quedó registrada pero no se pudo enviar a SUNAT: {{ error() }}
-            </c-alert>
-          }
+          <c-alert color="info" class="mb-0">
+            Su envío a SUNAT se gestiona en
+            <a routerLink="/emisiones/boletas" (click)="close()">Emisiones › Boletas electrónicas</a>,
+            según la política de envío de la empresa.
+          </c-alert>
         } @else if (balance(); as b) {
           <!-- Formulario -->
           <label class="form-label fw-semibold">Motivo</label>
@@ -139,13 +132,7 @@ import { SunatService, sunatErrorMessage } from '../core/services/sunat.service'
 
       <c-modal-footer>
         @if (creditNote()) {
-          @if (!sendResult() || !isValid(sendResult()!.status)) {
-            <button cButton color="warning" [disabled]="saving()" (click)="send()">
-              @if (saving()) { <c-spinner size="sm" class="me-1"></c-spinner> }
-              Reintentar envío a SUNAT
-            </button>
-          }
-          <button cButton color="primary" variant="outline" (click)="download('pdf')">
+          <button cButton color="primary" variant="outline" (click)="downloadPdf()">
             <svg cIcon name="cilPrint" class="me-1"></svg> PDF
           </button>
           <button cButton color="secondary" (click)="close()">Cerrar</button>
@@ -185,12 +172,8 @@ export class CreditNoteModalComponent {
   readonly reason = signal<CreditNoteReason>('07');
   readonly quantities = signal<Partial<Record<number, number>>>({});
   readonly creditNote = signal<CreditNote | null>(null);
-  readonly sendResult = signal<SunatSendResult | null>(null);
   readonly error = signal<string | null>(null);
 
-  readonly statusLabel = sunatStatusLabel;
-  readonly statusColor = sunatStatusColor;
-  readonly isValid = isValidForSunat;
 
   readonly total = computed(() => {
     const balance = this.balance();
@@ -227,8 +210,8 @@ export class CreditNoteModalComponent {
       })
       .subscribe({
         next: (creditNote) => {
+          this.saving.set(false);
           this.creditNote.set(creditNote);
-          this.send();
         },
         error: (err) => {
           this.saving.set(false);
@@ -237,29 +220,11 @@ export class CreditNoteModalComponent {
       });
   }
 
-  send(): void {
+  downloadPdf(): void {
     const creditNote = this.creditNote();
     if (!creditNote) return;
-
-    this.saving.set(true);
-    this.error.set(null);
-    this.#sunat.sendCreditNote(creditNote.id).subscribe({
-      next: (result) => {
-        this.saving.set(false);
-        this.sendResult.set(result);
-      },
-      error: (err) => {
-        this.saving.set(false);
-        this.error.set(sunatErrorMessage(err));
-      },
-    });
-  }
-
-  download(file: 'pdf' | 'xml' | 'cdr'): void {
-    const creditNote = this.creditNote();
-    if (!creditNote) return;
-    this.#sunat.downloadCreditNoteFile(creditNote.id, file).subscribe({
-      next: (response) => downloadBlobResponse(response, `${creditNote.number}.${file === 'cdr' ? 'zip' : file}`),
+    this.#sunat.downloadCreditNotePdf(creditNote.id).subscribe({
+      next: (response) => downloadBlobResponse(response, `${creditNote.number}.pdf`),
       error: (err) => this.error.set(sunatErrorMessage(err)),
     });
   }
@@ -290,7 +255,6 @@ export class CreditNoteModalComponent {
     this.balance.set(null);
     this.quantities.set({});
     this.creditNote.set(null);
-    this.sendResult.set(null);
     this.error.set(null);
     this.saving.set(false);
   }

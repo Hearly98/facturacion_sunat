@@ -444,7 +444,6 @@
                         <th>Cliente</th>
                         <th>Total</th>
                         <th>Estado</th>
-                        <th>SUNAT</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -462,34 +461,12 @@
                           >
                             <svg cIcon name="cilPrint"></svg>
                           </button>
-                          @if (canSendToSunat(sale.documento_codigo, sale.sunat.estado)) {
-                            <button
-                              size="sm"
-                              class="me-1"
-                              cButton
-                              color="success"
-                              title="Enviar a SUNAT"
-                              [disabled]="sendingSaleId() === sale.id"
-                              (click)="onSendToSunat(sale)"
-                            >
-                              @if (sendingSaleId() === sale.id) {
-                                <c-spinner size="sm"></c-spinner>
-                              } @else {
-                                <svg cIcon name="cilSend"></svg>
-                              }
-                            </button>
-                          }
-                          @if (isValidForSunat(sale.sunat.estado)) {
-                            <button size="sm" class="me-1" cButton color="info" variant="outline" title="Descargar XML" (click)="onDownloadSunatFile(sale, 'xml')">XML</button>
-                            <button size="sm" class="me-1" cButton color="info" variant="outline" title="Descargar CDR" (click)="onDownloadSunatFile(sale, 'cdr')">CDR</button>
-                          }
-                          @if (canIssueCreditNote(sale.sunat.estado, sale.estado_id)) {
+                          @if (canIssueCreditNote(sale)) {
                             <button size="sm" class="me-1" cButton color="warning" title="Nota de crédito" (click)="creditNoteSale.set(sale)">
                               <svg cIcon name="cilActionUndo"></svg>
                             </button>
                           }
-                          @if (!isLockedBySunat(sale.sunat.estado)) {
-                            <button
+                          <button
                               (click)="onEdit(sale.id)"
                               size="sm"
                               class="me-1"
@@ -502,7 +479,6 @@
                             <button (click)="onDelete(sale.id)" size="sm" cButton color="danger" title="Anular">
                               <svg cIcon name="cilTrash"></svg>
                             </button>
-                          }
                         </td>
                         <td>{{ sale.numero_completo }}</td>
                         <td>{{ sale.documento_nombre }}</td>
@@ -519,21 +495,12 @@
                             {{ sale.estado_nombre }}
                           </span>
                         </td>
-                        <td>
-                          @if (sale.documento_codigo === '03') {
-                            <span class="badge" [class]="'bg-' + sunatStatusColor(sale.sunat.estado)" [title]="sale.sunat.descripcion ?? ''">
-                              {{ sunatStatusLabel(sale.sunat.estado) }}
-                            </span>
-                          } @else {
-                            <span class="text-muted small">—</span>
-                          }
-                        </td>
                       </tr>
                       }
                       }
                       @else {
                         <tr>
-                          <td colspan="8">
+                          <td colspan="7">
                             No se encontraron resultados
                           </td>
                         </tr>

@@ -20,11 +20,11 @@ describe('CreditNoteModalComponent', () => {
   };
   const creditNote = {
     id: 5, saleId: 10, affectedDocument: 'B001-00000015', number: 'BC01-00000001', issueDate: '2026-10-29',
-    reasonCode: '07' as const, reasonDescription: 'DEVOLUCIÓN POR ÍTEM', total: 19.26, sunatStatus: 'PENDIENTE' as const, sunatDescription: null,
+    reasonCode: '07' as const, reasonDescription: 'DEVOLUCIÓN POR ÍTEM', total: 19.26,
   };
 
   beforeEach(() => {
-    sunat = jasmine.createSpyObj<SunatService>('SunatService', ['getCreditNoteBalance', 'createCreditNote', 'sendCreditNote', 'downloadCreditNoteFile']);
+    sunat = jasmine.createSpyObj<SunatService>('SunatService', ['getCreditNoteBalance', 'createCreditNote', 'downloadCreditNotePdf']);
     sunat.getCreditNoteBalance.and.returnValue(of(balance));
 
     TestBed.configureTestingModule({
@@ -61,9 +61,8 @@ describe('CreditNoteModalComponent', () => {
     expect(component.total()).toBe(62.61);
   });
 
-  it('emite la nota y la envía a SUNAT en el mismo paso', () => {
+  it('emite la nota sin enviarla: el envío lo gestiona Emisiones', () => {
     sunat.createCreditNote.and.returnValue(of(creditNote));
-    sunat.sendCreditNote.and.returnValue(of({ status: 'ACEPTADA', code: '0', description: 'ok', observations: [], number: 'BC01-00000001', hash: 'H' }));
     component.sale = sale;
     component.reason.set('07');
     component.setQuantity(1, 2, 3);
@@ -75,27 +74,24 @@ describe('CreditNoteModalComponent', () => {
       reason: '07',
       items: [{ saleDetailId: 1, quantity: 2 }, { saleDetailId: 2, quantity: 0 }],
     });
-    expect(sunat.sendCreditNote).toHaveBeenCalledWith(5);
-    expect(component.sendResult()?.status).toBe('ACEPTADA');
+    expect(component.creditNote()?.number).toBe('BC01-00000001');
+    expect(component.saving()).toBeFalse();
   });
 
-  it('si el envío falla la nota queda creada y se puede reintentar', () => {
-    sunat.createCreditNote.and.returnValue(of(creditNote));
-    sunat.sendCreditNote.and.returnValue(throwError(() => ({ error: { message: 'Sin credenciales' } })));
+  it('muestra el motivo si el backend no permite la nota', () => {
+    sunat.createCreditNote.and.returnValue(throwError(() => ({ error: { message: 'La boleta B001-00000015 fue rechazada por SUNAT' } })));
     component.sale = sale;
 
     component.submit();
 
-    expect(component.creditNote()?.number).toBe('BC01-00000001');
-    expect(component.error()).toBe('Sin credenciales');
-    expect(component.saving()).toBeFalse();
+    expect(component.creditNote()).toBeNull();
+    expect(component.error()).toContain('rechazada');
   });
 
   it('al cerrar informa si se creó una nota', () => {
     const emitted: boolean[] = [];
     component.closed.subscribe((v) => emitted.push(v));
     sunat.createCreditNote.and.returnValue(of(creditNote));
-    sunat.sendCreditNote.and.returnValue(of({ status: 'ACEPTADA', code: '0', description: 'ok', observations: [], number: 'x', hash: null }));
 
     component.sale = sale;
     component.close();

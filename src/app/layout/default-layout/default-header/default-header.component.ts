@@ -20,6 +20,7 @@ import {
 
 import { IconDirective } from '@coreui/icons-angular';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { NotificationBellComponent } from '../../../notifications/components/notification-bell.component';
 
 @Component({
   selector: 'app-default-header',
@@ -39,6 +40,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
     DropdownMenuDirective,
     DropdownHeaderDirective,
     DropdownItemDirective,
+    NotificationBellComponent,
   ],
 })
 export class DefaultHeaderComponent extends HeaderComponent {

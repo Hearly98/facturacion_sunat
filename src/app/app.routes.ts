@@ -182,6 +182,21 @@ export const routes: Routes = [
         redirectTo: 'ventas',
       },
       {
+        path: 'emisiones/boletas',
+        loadComponent: () => import('./emissions/pages/emissions.page').then((m) => m.EmissionsPage),
+        data: { title: 'Boletas electrónicas', family: 'boletas' },
+      },
+      {
+        path: 'emisiones/facturas',
+        loadComponent: () => import('./emissions/pages/emissions.page').then((m) => m.EmissionsPage),
+        data: { title: 'Facturas electrónicas', family: 'facturas' },
+      },
+      {
+        path: 'emisiones/configuracion',
+        loadComponent: () => import('./emissions/pages/emissions-settings.page').then((m) => m.EmissionsSettingsPage),
+        data: { title: 'Configuración de emisiones' },
+      },
+      {
         path: 'cotizaciones',
         loadComponent: () =>
           import('./quotation/pages/quotation-main/quotation-main.page').then((m) => m.QuotationMainPage),

@@ -1,21 +1,21 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { Observable, map, switchMap } from 'rxjs';
+import { EmissionMapper } from 'src/app/emissions/core/mappers/emission.mapper';
+import { SendingPolicy } from 'src/app/emissions/core/models/emission.models';
 import { environment } from 'src/environments/environment';
 import { SunatMapper } from '../mappers/sunat.mapper';
-import { CreditNoteDto, CreditNoteLineDto, SunatConfigDto, SunatSendResultDto } from '../models/sunat.dtos';
+import { CreditNoteDto, CreditNoteLineDto, SunatConfigDto } from '../models/sunat.dtos';
 import {
   CreateCreditNote,
   CreditNote,
   CreditNoteBalance,
   SunatConfig,
   SunatEnvironment,
-  SunatSendResult,
 } from '../models/sunat.models';
 
-export type SunatFile = 'xml' | 'cdr' | 'pdf';
-
 /**
+ * Configuración SUNAT y notas de crédito. El envío de comprobantes vive en EmissionService (/emisiones).
  * Endpoints SUNAT del backend. Responden JSON plano (no el envoltorio ResponseDto) y los
  * errores de negocio llegan como HTTP 422/409 con { message }.
  */
@@ -29,7 +29,18 @@ export class SunatService {
   }
 
   saveEnvironment(environmentName: SunatEnvironment, exists: boolean): Observable<unknown> {
-    const body = { ambiente: environmentName, auto_envio: false, max_intentos: 3, timeout_segundos: 60 };
+    return this.saveSettings({ ambiente: environmentName }, exists);
+  }
+
+  /** Política de envío del módulo de Emisiones; se guarda junto con el ambiente actual. */
+  savePolicy(policy: SendingPolicy, environmentName: SunatEnvironment, exists: boolean): Observable<SunatConfig> {
+    return this.saveSettings({ ambiente: environmentName, ...EmissionMapper.policyToApi(policy) }, exists).pipe(
+      switchMap(() => this.getConfig()),
+    );
+  }
+
+  private saveSettings(fields: Record<string, unknown>, exists: boolean): Observable<unknown> {
+    const body = { auto_envio: false, max_intentos: 3, timeout_segundos: 60, ...fields };
 
     return exists
       ? this.#http.put(`${this.#api}/sunat/configuracion`, body)
@@ -50,15 +61,7 @@ export class SunatService {
       .pipe(map(SunatMapper.configFromApi));
   }
 
-  sendSale(saleId: number): Observable<SunatSendResult> {
-    return this.#http
-      .post<SunatSendResultDto>(`${this.#api}/ventas/${saleId}/sunat/enviar`, {})
-      .pipe(map(SunatMapper.sendResultFromApi));
-  }
 
-  downloadSaleFile(saleId: number, file: 'xml' | 'cdr'): Observable<HttpResponse<Blob>> {
-    return this.#http.get(`${this.#api}/ventas/${saleId}/sunat/${file}`, { responseType: 'blob', observe: 'response' });
-  }
 
   getCreditNoteBalance(saleId: number): Observable<CreditNoteBalance> {
     return this.#http
@@ -78,14 +81,10 @@ export class SunatService {
       .pipe(map(({ data }) => SunatMapper.creditNoteFromApi(data)));
   }
 
-  sendCreditNote(creditNoteId: number): Observable<SunatSendResult> {
-    return this.#http
-      .post<SunatSendResultDto>(`${this.#api}/notas-credito/${creditNoteId}/sunat/enviar`, {})
-      .pipe(map(SunatMapper.sendResultFromApi));
-  }
 
-  downloadCreditNoteFile(creditNoteId: number, file: SunatFile): Observable<HttpResponse<Blob>> {
-    return this.#http.get(`${this.#api}/notas-credito/${creditNoteId}/${file}`, { responseType: 'blob', observe: 'response' });
+  /** PDF de la nota (documento de facturación); XML y CDR viven en el módulo de Emisiones. */
+  downloadCreditNotePdf(creditNoteId: number): Observable<HttpResponse<Blob>> {
+    return this.#http.get(`${this.#api}/notas-credito/${creditNoteId}/pdf`, { responseType: 'blob', observe: 'response' });
   }
 }
 

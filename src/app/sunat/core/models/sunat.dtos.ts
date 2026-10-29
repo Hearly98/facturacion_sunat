@@ -1,10 +1,12 @@
-import { CreditNoteReason, SunatEnvironment, SunatStatus } from './sunat.models';
+import { SendingPolicyDto } from 'src/app/emissions/core/models/emission.dtos';
+import { CreditNoteReason, SunatEnvironment } from './sunat.models';
 
 export interface SunatConfigDto {
   ambiente: SunatEnvironment;
   auto_envio: boolean;
   max_intentos: number;
   timeout_segundos: number;
+  politica?: SendingPolicyDto;
   credenciales: {
     sol_usuario: string | null;
     tiene_clave_sol: boolean;
@@ -13,14 +15,6 @@ export interface SunatConfigDto {
   };
 }
 
-export interface SunatSendResultDto {
-  estado: SunatStatus;
-  codigo: string | null;
-  descripcion: string;
-  observaciones: string[];
-  numero: string;
-  hash: string | null;
-}
 
 export interface CreditNoteLineDto {
   venta_detalle_id: number;
@@ -41,6 +35,4 @@ export interface CreditNoteDto {
   motivo_codigo: CreditNoteReason;
   motivo_descripcion: string;
   total: number;
-  estado_sunat: SunatStatus;
-  descripcion_respuesta: string | null;
 }

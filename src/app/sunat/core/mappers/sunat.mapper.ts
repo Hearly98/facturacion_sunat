@@ -2,9 +2,9 @@ import {
   CreditNoteDto,
   CreditNoteLineDto,
   SunatConfigDto,
-  SunatSendResultDto,
 } from '../models/sunat.dtos';
-import { CreateCreditNote, CreditNote, CreditNoteLine, SunatConfig, SunatSendResult } from '../models/sunat.models';
+import { EmissionMapper } from 'src/app/emissions/core/mappers/emission.mapper';
+import { CreateCreditNote, CreditNote, CreditNoteLine, SunatConfig } from '../models/sunat.models';
 
 export class SunatMapper {
   static configFromApi(dto: SunatConfigDto): SunatConfig {
@@ -15,19 +15,10 @@ export class SunatMapper {
       hasSolPassword: dto.credenciales?.tiene_clave_sol ?? false,
       hasCertificate: dto.credenciales?.tiene_certificado ?? false,
       certificateExpiresAt: dto.credenciales?.certificado_vence ?? null,
+      policy: EmissionMapper.policyFromApi(dto.politica),
     };
   }
 
-  static sendResultFromApi(dto: SunatSendResultDto): SunatSendResult {
-    return {
-      status: dto.estado,
-      code: dto.codigo,
-      description: dto.descripcion,
-      observations: dto.observaciones ?? [],
-      number: dto.numero,
-      hash: dto.hash,
-    };
-  }
 
   static creditNoteLineFromApi(dto: CreditNoteLineDto): CreditNoteLine {
     return {
@@ -51,8 +42,6 @@ export class SunatMapper {
       reasonCode: dto.motivo_codigo,
       reasonDescription: dto.motivo_descripcion,
       total: Number(dto.total),
-      sunatStatus: dto.estado_sunat,
-      sunatDescription: dto.descripcion_respuesta,
     };
   }
 

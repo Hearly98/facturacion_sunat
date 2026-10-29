@@ -24,7 +24,7 @@ import { QuotationService } from 'src/app/quotation/core/services/quotation.serv
 import { ShippingGuideService } from 'src/app/shipping-guide/core/services/shipping-guide.service';
 import { SunatService } from 'src/app/sunat/core/services/sunat.service';
 import { SaleListItemModel } from '../../core/models/sale-list-item.model';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 // REGRESSION: patchCustomer/onSelectCotizacion/onSelectGuia used to read field names that
 // don't exist on the real DTOs (item.documento/tipoDocumentoId/direccion/telefono instead of
@@ -41,7 +41,7 @@ describe('SalesMainPage', () => {
   const buildForm = () => new FormBuilder().group(buildSaleForm());
 
   beforeEach(async () => {
-    sunatService = jasmine.createSpyObj<SunatService>('SunatService', ['sendSale', 'downloadSaleFile']);
+    sunatService = jasmine.createSpyObj<SunatService>('SunatService', ['getCreditNoteBalance']);
     notification = jasmine.createSpyObj<GlobalNotification>('GlobalNotification', ['openToastAlert', 'openAlert']);
     saleService = { search: jasmine.createSpy('search').and.returnValue(of({ isValid: false })) };
 
@@ -218,54 +218,19 @@ describe('SalesMainPage', () => {
     });
   });
 
-  describe('envío a SUNAT', () => {
-    const sale: SaleListItemModel = {
-      id: 7,
-      numero_completo: 'B001-00000015',
-      fecha_emision: '2026-10-29',
-      total: 118,
-      estado_id: 2,
-      estado_nombre: 'Completado',
-      documento_codigo: '03',
-      documento_nombre: 'BOLETA DE VENTA ELECTRÓNICA',
-      cliente_nombre: 'CLIENTES VARIOS',
-      cliente_documento: null,
-      sunat: { estado: 'PENDIENTE', codigo: null, descripcion: null },
-    };
+  describe('nota de crédito', () => {
+    const sale = {
+      id: 7, numero_completo: 'B001-00000015', fecha_emision: '2026-10-29', total: 118, estado_id: 2, estado_nombre: 'Completado',
+      documento_codigo: '03', documento_nombre: 'BOLETA DE VENTA ELECTRÓNICA', cliente_nombre: 'CLIENTES VARIOS', cliente_documento: null,
+    } as SaleListItemModel;
 
-    it('envía la venta, muestra la respuesta de SUNAT y refresca el listado', () => {
-      sunatService.sendSale.and.returnValue(
-        of({ status: 'ACEPTADA', code: '0', description: 'La Boleta numero B001-15, ha sido aceptada', observations: [], number: 'B001-00000015', hash: 'H' }),
-      );
-
-      component.onSendToSunat(sale);
-
-      expect(sunatService.sendSale).toHaveBeenCalledWith(7);
-      expect(notification.openToastAlert).toHaveBeenCalledWith('SUNAT: Aceptada', 'La Boleta numero B001-15, ha sido aceptada', 'success');
-      expect(saleService.search).toHaveBeenCalled();
-      expect(component.sendingSaleId()).toBeNull();
+    it('solo se ofrece en boletas que no fueron anuladas con nota', () => {
+      expect(component.canIssueCreditNote(sale)).toBeTrue();
+      expect(component.canIssueCreditNote({ ...sale, estado_id: 4 })).toBeFalse();
+      expect(component.canIssueCreditNote({ ...sale, documento_codigo: '99' })).toBeFalse();
     });
 
-    it('muestra en rojo un comprobante rechazado', () => {
-      sunatService.sendSale.and.returnValue(
-        of({ status: 'RECHAZADA', code: '2800', description: 'Tipo de documento inválido', observations: [], number: 'B001-00000015', hash: null }),
-      );
-
-      component.onSendToSunat(sale);
-
-      expect(notification.openToastAlert).toHaveBeenCalledWith('SUNAT: Rechazada', 'Tipo de documento inválido', 'danger');
-    });
-
-    it('muestra el motivo de negocio cuando el backend responde 422', () => {
-      sunatService.sendSale.and.returnValue(throwError(() => ({ error: { message: 'Registre el certificado digital' } })));
-
-      component.onSendToSunat(sale);
-
-      expect(notification.openToastAlert).toHaveBeenCalledWith('SUNAT', 'Registre el certificado digital', 'danger');
-      expect(component.sendingSaleId()).toBeNull();
-    });
-
-    it('al cerrar el modal de nota de crédito refresca solo si se creó una', () => {
+    it('al cerrar el modal refresca solo si se creó una nota', () => {
       component.creditNoteSale.set(sale);
 
       component.onCreditNoteClosed(false);

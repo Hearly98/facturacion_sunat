@@ -1,0 +1,147 @@
+<c-row class="mb-3">
+  <c-col>
+    <h4 class="mb-0">{{ texts().title }}</h4>
+    <p class="text-body-secondary small mb-0">{{ texts().subtitle }}</p>
+  </c-col>
+</c-row>
+
+<!-- Resumen: cada chip filtra la bandeja -->
+@if (summary(); as s) {
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    <button cButton size="sm" [color]="!status && !dueSoon ? 'primary' : 'secondary'" variant="outline" (click)="filterBy('')">
+      Todas <c-badge color="secondary" class="ms-1">{{ s.total }}</c-badge>
+    </button>
+    <button cButton size="sm" color="secondary" variant="outline" (click)="filterBy('PROGRAMADA')">
+      Pendientes <c-badge color="secondary" class="ms-1">{{ s.pending }}</c-badge>
+    </button>
+    <button cButton size="sm" color="danger" [variant]="status === 'RECHAZADA' ? undefined : 'outline'" (click)="filterBy('RECHAZADA')">
+      Requieren atención <c-badge color="danger" class="ms-1">{{ s.needsAttention }}</c-badge>
+    </button>
+    <button cButton size="sm" color="warning" [variant]="dueSoon ? undefined : 'outline'" (click)="filterBy('', true)">
+      Por vencer (24 h)
+    </button>
+    <button cButton size="sm" color="success" [variant]="status === 'ACEPTADA' ? undefined : 'outline'" (click)="filterBy('ACEPTADA')">
+      Aceptadas <c-badge color="success" class="ms-1">{{ (s.byStatus['ACEPTADA'] ?? 0) + (s.byStatus['OBSERVADA'] ?? 0) }}</c-badge>
+    </button>
+  </div>
+}
+
+<c-card class="mb-3">
+  <c-card-body>
+    <c-row class="g-2 align-items-end">
+      <c-col [md]="3">
+        <label class="form-label small" for="em-status">Estado</label>
+        <select id="em-status" class="form-select form-select-sm" [(ngModel)]="status">
+          @for (o of statusOptions; track o.value) {
+            <option [value]="o.value">{{ o.label }}</option>
+          }
+        </select>
+      </c-col>
+      <c-col [md]="2">
+        <label class="form-label small" for="em-from">Desde</label>
+        <input id="em-from" type="date" class="form-control form-control-sm" [(ngModel)]="from" />
+      </c-col>
+      <c-col [md]="2">
+        <label class="form-label small" for="em-to">Hasta</label>
+        <input id="em-to" type="date" class="form-control form-control-sm" [(ngModel)]="to" />
+      </c-col>
+      <c-col [md]="3">
+        <label class="form-label small" for="em-search">Número</label>
+        <input id="em-search" class="form-control form-control-sm" placeholder="B001-00000015" [(ngModel)]="search" (keyup.enter)="applyFilters()" />
+      </c-col>
+      <c-col [md]="2" class="text-nowrap">
+        <button cButton size="sm" color="primary" class="me-1" (click)="applyFilters()"><svg cIcon name="cilSearch"></svg></button>
+        <button cButton size="sm" color="secondary" (click)="clear()"><svg cIcon name="cilX"></svg></button>
+      </c-col>
+    </c-row>
+  </c-card-body>
+</c-card>
+
+<c-card>
+  <c-card-body>
+    @if (selected().size) {
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="small">{{ selected().size }} seleccionadas</span>
+        <button cButton size="sm" color="success" (click)="sendSelected()">
+          <svg cIcon name="cilSend" class="me-1"></svg> Enviar seleccionadas
+        </button>
+      </div>
+    }
+
+    @if (loading()) {
+      <div class="text-center py-4"><c-spinner></c-spinner></div>
+    } @else if (emissions().length === 0) {
+      <div class="text-center text-body-secondary py-4">
+        @if (family() === 'facturas' && !summary()?.total) {
+          Aún no hay facturas electrónicas. La emisión de facturas se habilitará en la siguiente fase.
+        } @else {
+          No hay comprobantes con estos filtros.
+        }
+      </div>
+    } @else {
+      <table cTable hover [responsive]="true" class="align-middle mb-2">
+        <thead>
+          <tr>
+            <th style="width: 32px;">
+              <input type="checkbox" class="form-check-input" [checked]="allSelected()" [disabled]="!selectableIds().length" (change)="toggleAll()" aria-label="Seleccionar todas" />
+            </th>
+            <th>Comprobante</th>
+            <th>Cliente</th>
+            <th class="text-end">Total</th>
+            <th>Emisión</th>
+            <th>Estado</th>
+            <th>Plazo</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (e of emissions(); track e.id) {
+            <tr>
+              <td>
+                @if (canSendNow(e.status)) {
+                  <input type="checkbox" class="form-check-input" [checked]="selected().has(e.id)" (change)="toggle(e.id)" [attr.aria-label]="'Seleccionar ' + e.number" />
+                }
+              </td>
+              <td>
+                <a href="javascript:void(0)" class="fw-semibold text-decoration-none" (click)="openDetail(e)">{{ e.number }}</a>
+                <div class="small text-body-secondary">
+                  {{ e.documentTypeName }}@if (e.affectedDocument) { · modifica {{ e.affectedDocument }} }
+                </div>
+              </td>
+              <td>{{ e.customer }}</td>
+              <td class="text-end text-nowrap">S/ {{ e.total | number: '1.2-2' }}</td>
+              <td class="text-nowrap small">{{ e.issuedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <c-badge [color]="statusColor(e.status)" [class.text-dark]="statusColor(e.status) === 'light'" [title]="e.responseDescription ?? ''">
+                  {{ statusLabel(e.status) }}
+                </c-badge>
+                @if (e.attempts > 1 && !isValid(e.status)) {
+                  <div class="small text-body-secondary">{{ e.attempts }} intentos</div>
+                }
+              </td>
+              <td>
+                <c-badge [color]="deadlineColor(e)" [class.text-dark]="deadlineColor(e) === 'light'">{{ deadline(e) }}</c-badge>
+              </td>
+              <td class="text-end text-nowrap">
+                @if (canSendNow(e.status)) {
+                  <button cButton size="sm" color="success" class="me-1" title="Enviar ahora" [disabled]="sendingId() === e.id" (click)="sendNow(e)">
+                    @if (sendingId() === e.id) { <c-spinner size="sm"></c-spinner> } @else { <svg cIcon name="cilSend"></svg> }
+                  </button>
+                }
+                <button cButton size="sm" color="secondary" variant="outline" class="me-1" title="PDF" (click)="download(e, 'pdf')"><svg cIcon name="cilPrint"></svg></button>
+                @if (isValid(e.status)) {
+                  <button cButton size="sm" color="info" variant="outline" class="me-1" title="XML" (click)="download(e, 'xml')">XML</button>
+                  <button cButton size="sm" color="info" variant="outline" class="me-1" title="CDR" (click)="download(e, 'cdr')">CDR</button>
+                }
+                <button cButton size="sm" color="primary" variant="ghost" title="Detalle" (click)="openDetail(e)"><svg cIcon name="cilMagnifyingGlass"></svg></button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <app-paginator [page]="page" [pageSize]="pageSize" [total]="total()" (pageChange)="onPageChange($event)"></app-paginator>
+    }
+  </c-card-body>
+</c-card>
+
+<app-emission-detail-modal [emissionId]="detailId()" (closed)="onDetailClosed($event)"></app-emission-detail-modal>

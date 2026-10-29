@@ -11,6 +11,7 @@ describe('SunatMapper', () => {
     });
 
     expect(config).toEqual({
+      policy: { type: 'INMEDIATO', time: '23:00', days: [], safetyMarginHours: 24, warnings: [] },
       environment: 'produccion',
       autoSend: false,
       solUser: 'USUARIO1',
@@ -20,11 +21,6 @@ describe('SunatMapper', () => {
     });
   });
 
-  it('sendResultFromApi', () => {
-    expect(
-      SunatMapper.sendResultFromApi({ estado: 'OBSERVADA', codigo: '4252', descripcion: 'Con obs', observaciones: ['4252 - x'], numero: 'B001-00000001', hash: 'H' }),
-    ).toEqual({ status: 'OBSERVADA', code: '4252', description: 'Con obs', observations: ['4252 - x'], number: 'B001-00000001', hash: 'H' });
-  });
 
   it('creditNoteLineFromApi convierte el precio a número', () => {
     const line = SunatMapper.creditNoteLineFromApi({
@@ -51,11 +47,9 @@ describe('SunatMapper', () => {
     const note = SunatMapper.creditNoteFromApi({
       id: 5, venta_id: 10, documento_afectado: 'B001-00000015', numero: 'BC01-00000001', fecha_emision: '2026-10-29',
       motivo_codigo: '01', motivo_descripcion: 'ANULACIÓN DE LA OPERACIÓN', total: '354.00' as unknown as number,
-      estado_sunat: 'PENDIENTE', descripcion_respuesta: null,
     });
 
     expect(note.total).toBe(354);
     expect(note.affectedDocument).toBe('B001-00000015');
-    expect(note.sunatStatus).toBe('PENDIENTE');
   });
 });

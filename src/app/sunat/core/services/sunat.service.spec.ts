@@ -17,16 +17,6 @@ describe('SunatService', () => {
 
   afterEach(() => http.verify());
 
-  it('sendSale hace POST a ventas/{id}/sunat/enviar y mapea el resultado', () => {
-    let status = '';
-    service.sendSale(7).subscribe((r) => (status = r.status));
-
-    const req = http.expectOne(`${api}/ventas/7/sunat/enviar`);
-    expect(req.request.method).toBe('POST');
-    req.flush({ estado: 'ACEPTADA', codigo: '0', descripcion: 'ok', observaciones: [], numero: 'B001-00000001', hash: 'H' });
-
-    expect(status).toBe('ACEPTADA');
-  });
 
   it('saveCredentials envía multipart y solo adjunta el certificado si existe', () => {
     service.saveCredentials('USR', 'clave', null, null).subscribe();
@@ -66,11 +56,30 @@ describe('SunatService', () => {
     req.flush({ data: { id: 1, venta_id: 10, numero: 'BC01-00000001', total: 10, estado_sunat: 'PENDIENTE' } });
   });
 
-  it('descargas piden blob con la respuesta completa (para leer el nombre)', () => {
-    service.downloadSaleFile(7, 'cdr').subscribe();
-    const req = http.expectOne(`${api}/ventas/7/sunat/cdr`);
+  it('savePolicy guarda la política junto al ambiente y recarga la configuración', () => {
+    let warnings: string[] = [];
+    service
+      .savePolicy({ type: 'PROGRAMADO', time: '08:00', days: [1], safetyMarginHours: 24, warnings: [] }, 'prueba', true)
+      .subscribe((c) => (warnings = c.policy.warnings));
+
+    const put = http.expectOne(`${api}/sunat/configuracion`);
+    expect(put.request.method).toBe('PUT');
+    expect(put.request.body).toEqual(jasmine.objectContaining({ ambiente: 'prueba', politica_envio: 'PROGRAMADO', hora_envio: '08:00', dias_envio: [1] }));
+    put.flush({});
+
+    http.expectOne(`${api}/sunat/configuracion`).flush({
+      ambiente: 'prueba', auto_envio: false, max_intentos: 3, timeout_segundos: 60,
+      politica: { tipo: 'PROGRAMADO', hora_envio: '08:00', dias_envio: [1], margen_seguridad_horas: 24, advertencias: ['facturas se toparán'] },
+      credenciales: { sol_usuario: null, tiene_clave_sol: false, tiene_certificado: false, certificado_vence: null },
+    });
+    expect(warnings).toEqual(['facturas se toparán']);
+  });
+
+  it('el PDF de la nota de crédito se pide como blob', () => {
+    service.downloadCreditNotePdf(5).subscribe();
+    const req = http.expectOne(`${api}/notas-credito/5/pdf`);
     expect(req.request.responseType).toBe('blob');
-    req.flush(new Blob(['PK']));
+    req.flush(new Blob(['%PDF']));
   });
 
   it('sunatErrorMessage prioriza el message del backend', () => {
