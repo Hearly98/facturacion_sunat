@@ -94,6 +94,17 @@ export const productStructure = (
       col: '6',
     },
     {
+      label: 'Afectación IGV',
+      formControlName: 'igvAffectation',
+      type: 'select',
+      col: '6',
+      options: [
+        { label: 'Gravado (IGV 18%)', value: '10' },
+        { label: 'Exonerado', value: '20' },
+        { label: 'Inafecto', value: '30' },
+      ],
+    },
+    {
       label: 'Peso',
       formControlName: 'weight',
       type: 'number',

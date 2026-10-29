@@ -7,6 +7,7 @@ export type OrganizationDto = {
   direccion: string | null;
   telefono: string | null;
   pagina_web: string | null;
+  codigoUbigeo: string | null;
   logo: string | null;
   logo_url: string | null;
   est: boolean;

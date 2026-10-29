@@ -21,6 +21,7 @@ export const buildProductForm = (isEditMode: boolean = false): {
     internalCode: new FormControl<string | null>(null),
     basePurchasePrice: new FormControl<number | null>(null, priceValidators),
     baseSalePrice: new FormControl<number | null>(null, priceValidators),
+    igvAffectation: new FormControl<string | null>('10'),
     weight: new FormControl<number | null>(null),
     branchId: new FormControl<number | null>(null),
     warehouses: new FormControl<number[] | null>(null),

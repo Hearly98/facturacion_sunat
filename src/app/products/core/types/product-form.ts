@@ -11,6 +11,7 @@ export type ProductForm = {
   image: string | File | null;
   basePurchasePrice: number | null;
   baseSalePrice: number | null;
+  igvAffectation: string | null;
   weight: number | null;
   branchId: number | null;
   warehouses: number[] | null;

@@ -18,6 +18,8 @@ import { ImageCompressionService } from '../../shared/services/image-compression
 import { GetOrganization } from '../core/models/get-organization.model';
 import { UpdateOrganization } from '../core/models/update-organization.model';
 import { ButtonDirective } from '@coreui/angular';
+import { SunatConfigCardComponent } from '../../sunat/components/sunat-config-card.component';
+import { Ubigeo, UbigeoService } from '../../shared/services/ubigeo.service';
 
 @Component({
   selector: 'app-organization-profile',
@@ -31,6 +33,7 @@ import { ButtonDirective } from '@coreui/angular';
     IconDirective,
     ReactiveFormsModule,
     ButtonDirective,
+    SunatConfigCardComponent,
   ],
   template: `
     <c-row class="mb-4">
@@ -113,7 +116,11 @@ import { ButtonDirective } from '@coreui/angular';
                       [type]="item.type"
                       [formControlName]="item.formControlName"
                       [placeholder]="'Ingrese ' + item.label"
+                      [attr.list]="item.list ?? null"
                     />
+                    @if (item.list === 'ubigeos') {
+                      <div class="form-text">Código de 6 dígitos (requerido para emitir comprobantes). Escriba el distrito para buscarlo.</div>
+                    }
                   </c-col>
                 }
               }
@@ -135,6 +142,14 @@ import { ButtonDirective } from '@coreui/angular';
         </c-row>
       </c-card-body>
     </c-card>
+
+    <datalist id="ubigeos">
+      @for (u of ubigeos(); track u.code) {
+        <option [value]="u.code">{{ u.label }}</option>
+      }
+    </datalist>
+
+    <app-sunat-config-card></app-sunat-config-card>
   `,
   styles: ``,
 })
@@ -151,6 +166,8 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   #globalNotification = inject(GlobalNotification);
   #imageCompressionService = inject(ImageCompressionService);
   originalData: GetOrganization | null = null;
+  ubigeos = signal<Ubigeo[]>([]);
+  #ubigeoService = inject(UbigeoService);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ORGANIZATION, viewContainerRef);
@@ -159,6 +176,7 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   ngOnInit(): void {
     this.createForm();
     this.loadData();
+    this.subscriptions.push(this.#ubigeoService.list().subscribe((ubigeos) => this.ubigeos.set(ubigeos)));
   }
 
   createForm() {

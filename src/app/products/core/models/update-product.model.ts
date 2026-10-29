@@ -14,6 +14,7 @@ export interface UpdateProduct {
   brandId: number;
   basePurchasePrice: number;
   baseSalePrice: number;
+  igvAffectation?: string;
   branches?: number[];
 }
 

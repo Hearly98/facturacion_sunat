@@ -11,6 +11,7 @@ export const buildOrganizationForm = (): {
   address: new FormControl(null, Validators.required),
   phone: new FormControl(null),
   website: new FormControl(null),
+  ubigeo: new FormControl(null, Validators.pattern(/^\d{6}$/)),
   logo: new FormControl(null),
   status: new FormControl(true),
 });

@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import {
   Component,
   inject,
@@ -37,7 +38,6 @@ import { PaginatorComponent } from 'src/app/shared/components/paginator/paginato
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { SaleService } from '../../core/services/sale.service';
-import { SaleModel } from '../../core/models/sale.model';
 import { SaleForm } from '../../core/types';
 import { buildSaleForm } from '../../helpers/build-sale-form';
 import { buildFilterForm, filterSort, mapParams } from '../../helpers';
@@ -62,6 +62,18 @@ import { QuotationModel } from 'src/app/quotation/core/models/quotation.model';
 import { GetShippingGuideModel } from 'src/app/shipping-guide/core/models/get-shipping-guide.model';
 import { CustomerMapper } from 'src/app/customer/core/mappers';
 import { CurrencyPipe } from '@shared/pipes/currency.pipe';
+import { downloadBlobResponse } from '@shared/functions';
+import { SaleListItemModel, toSaleListItem } from '../../core/models/sale-list-item.model';
+import { SunatService, sunatErrorMessage } from 'src/app/sunat/core/services/sunat.service';
+import { CreditNoteModalComponent } from 'src/app/sunat/components/credit-note-modal.component';
+import {
+  canIssueCreditNote,
+  canSendToSunat,
+  isLockedBySunat,
+  isValidForSunat,
+  sunatStatusColor,
+  sunatStatusLabel,
+} from 'src/app/sunat/core/helpers/sunat-status';
 
 @Component({
   selector: 'app-sales-main',
@@ -89,6 +101,7 @@ import { CurrencyPipe } from '@shared/pipes/currency.pipe';
     SpinnerComponent,
     DateRangePickerComponent,
     SearchDocumentModalComponent,
+    CreditNoteModalComponent,
   ],
   templateUrl: './sales-main.page.html',
 })
@@ -105,7 +118,16 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   searchDocumentType = signal<SearchDocumentType>('cotizacion');
 
   public isLoadingList = signal(false);
-  public sales: SaleModel[] = [];
+  public sales: SaleListItemModel[] = [];
+  public sendingSaleId = signal<number | null>(null);
+  public creditNoteSale = signal<SaleListItemModel | null>(null);
+
+  readonly canSendToSunat = canSendToSunat;
+  readonly canIssueCreditNote = canIssueCreditNote;
+  readonly isValidForSunat = isValidForSunat;
+  readonly isLockedBySunat = isLockedBySunat;
+  readonly sunatStatusLabel = sunatStatusLabel;
+  readonly sunatStatusColor = sunatStatusColor;
   public totalList = 0;
   public pageList = new PageParamsModel(1, 10);
 
@@ -146,6 +168,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   readonly #globalNotification = inject(GlobalNotification);
   readonly #confirmService = inject(ConfirmService);
   readonly #route = inject(ActivatedRoute);
+  readonly #sunatService = inject(SunatService);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.SALES, viewContainerRef);
@@ -537,7 +560,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
         this.isLoadingList.set(false);
         if (response.isValid) {
           this.totalList = response.data.total;
-          this.sales = response.data.items;
+          this.sales = response.data.items.map(toSaleListItem);
         }
       },
       error: () => {
@@ -591,27 +614,7 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
   onPrint(id: number, number_serie: string) {
     this.#saleService.print(id).subscribe({
-      next: (response) => {
-        const blob = response.body as Blob;
-        const contentDisposition = response.headers.get('content-disposition');
-        let filename = `${number_serie}.pdf`;
-
-        if (contentDisposition) {
-          const match = contentDisposition.match(/filename="?([^";\\n]*)"?/);
-          if (match && match[1]) {
-            filename = match[1];
-          }
-        }
-
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-      },
+      next: (response) => downloadBlobResponse(response as HttpResponse<Blob>, `${number_serie}.pdf`),
       error: (error) => {
         this.#globalNotification.openToastAlert('Error', error.message, 'danger');
       },
@@ -621,5 +624,37 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   onEdit(id: number) {
     this.activeTab.set('create');
     this.saleId.set(id);
+  }
+
+  onSendToSunat(sale: SaleListItemModel): void {
+    this.sendingSaleId.set(sale.id);
+    this.#sunatService.sendSale(sale.id).subscribe({
+      next: (result) => {
+        this.sendingSaleId.set(null);
+        const color = isValidForSunat(result.status) ? 'success' : 'danger';
+        const detail = [result.description, ...result.observations].join(' · ');
+        this.#globalNotification.openToastAlert(`SUNAT: ${sunatStatusLabel(result.status)}`, detail, color);
+        this.onSearch(null, this.pageList.page);
+      },
+      error: (error) => {
+        this.sendingSaleId.set(null);
+        this.#globalNotification.openToastAlert('SUNAT', sunatErrorMessage(error), 'danger');
+        this.onSearch(null, this.pageList.page);
+      },
+    });
+  }
+
+  onDownloadSunatFile(sale: SaleListItemModel, file: 'xml' | 'cdr'): void {
+    this.#sunatService.downloadSaleFile(sale.id, file).subscribe({
+      next: (response) => downloadBlobResponse(response, `${sale.numero_completo}.${file === 'cdr' ? 'zip' : 'xml'}`),
+      error: (error) => this.#globalNotification.openToastAlert('SUNAT', sunatErrorMessage(error), 'danger'),
+    });
+  }
+
+  onCreditNoteClosed(created: boolean): void {
+    this.creditNoteSale.set(null);
+    if (created) {
+      this.onSearch(null, this.pageList.page);
+    }
   }
 }

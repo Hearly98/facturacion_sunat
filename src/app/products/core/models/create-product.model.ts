@@ -13,6 +13,7 @@ export interface CreateProduct {
   brandId: number;
   basePurchasePrice: number;
   baseSalePrice: number;
+  igvAffectation?: string;
   branches?: number[];
 }
 

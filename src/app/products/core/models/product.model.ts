@@ -14,6 +14,7 @@ export interface Product {
   brandId: number;
   basePurchasePrice: number;
   baseSalePrice: number;
+  igvAffectation: string;
   branches?: number[];
   active: boolean;
   createdAt: string;
