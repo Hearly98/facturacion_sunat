@@ -1,3 +1,9 @@
+import { importProvidersFrom } from '@angular/core';
+import { NgxPermissionsModule } from 'ngx-permissions';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ButtonModule, CardModule, FormModule, GridModule } from '@coreui/angular';
@@ -14,7 +20,7 @@ describe('LoginComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
     imports: [FormModule, CardModule, GridModule, ButtonModule, IconModule, LoginComponent],
-    providers: [IconSetService]
+    providers: [provideNoopAnimations(), provideHttpClient(), provideHttpClientTesting(), provideRouter([]), IconSetService, importProvidersFrom(NgxPermissionsModule.forRoot())]
 })
     .compileComponents();
   });

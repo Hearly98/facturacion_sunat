@@ -1,3 +1,7 @@
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
@@ -55,7 +59,7 @@ describe('BancoComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [BancoComponent, ReactiveFormsModule],
-      providers: [
+      providers: [provideNoopAnimations(), provideHttpClient(), provideHttpClientTesting(), provideRouter([]), 
         { provide: BancoService, useValue: bancoServiceMock },
         { provide: ConfirmService, useValue: confirmServiceMock },
         { provide: GlobalNotification, useValue: globalNotificationMock },

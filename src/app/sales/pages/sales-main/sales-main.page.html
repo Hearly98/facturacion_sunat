@@ -448,44 +448,51 @@
                     </thead>
                     <tbody>
                       @if (sales.length > 0) {
-                      @for (sale of sales; track sale.venta_id) {
+                      @for (sale of sales; track sale.id) {
                       <tr>
-                        <td>
+                        <td class="text-nowrap">
                           <button
                             size="sm"
-                            class="me-2"
+                            class="me-1"
                             cButton
                             color="secondary"
-                            (click)="onPrint(sale.venta_id, sale.numero_completo)"
+                            title="Imprimir"
+                            (click)="onPrint(sale.id, sale.numero_completo)"
                           >
                             <svg cIcon name="cilPrint"></svg>
                           </button>
+                          @if (canIssueCreditNote(sale)) {
+                            <button size="sm" class="me-1" cButton color="warning" title="Nota de crédito" (click)="creditNoteSale.set(sale)">
+                              <svg cIcon name="cilActionUndo"></svg>
+                            </button>
+                          }
                           <button
-                            (click)="onEdit(sale.venta_id)"
-                            size="sm"
-                            class="me-2"
-                            cButton
-                            color="info"
-                          >
-                            <svg cIcon name="cilPencil"></svg>
-                          </button>
-                          <button (click)="onDelete(sale.venta_id)" size="sm" cButton color="danger">
-                            <svg cIcon name="cilTrash"></svg>
-                          </button>
+                              (click)="onEdit(sale.id)"
+                              size="sm"
+                              class="me-1"
+                              cButton
+                              color="info"
+                              title="Editar"
+                            >
+                              <svg cIcon name="cilPencil"></svg>
+                            </button>
+                            <button (click)="onDelete(sale.id)" size="sm" cButton color="danger" title="Anular">
+                              <svg cIcon name="cilTrash"></svg>
+                            </button>
                         </td>
                         <td>{{ sale.numero_completo }}</td>
-                        <td>{{ sale.documento?.name }}</td>
+                        <td>{{ sale.documento_nombre }}</td>
                         <td>{{ sale.fecha_emision | date: 'dd/MM/yyyy' }}</td>
-                        <td>{{ sale.cliente?.businessName }}</td>
-                        <td>{{ sale.venta_total | appCurrency }}</td>
+                        <td>{{ sale.cliente_nombre }}</td>
+                        <td>{{ sale.total | appCurrency }}</td>
                         <td>
                           <span
                             class="badge"
-                            [class.bg-warning]="sale.estado?.codigo === 1"
-                            [class.bg-success]="sale.estado?.codigo === 2"
-                            [class.bg-danger]="sale.estado?.codigo === 3"
+                            [class.bg-warning]="sale.estado_id === 1"
+                            [class.bg-success]="sale.estado_id === 2"
+                            [class.bg-danger]="sale.estado_id >= 3"
                           >
-                            {{ sale.estado?.nombre || (sale.est ? 'Activo' : 'Anulado') }}
+                            {{ sale.estado_nombre }}
                           </span>
                         </td>
                       </tr>
@@ -515,6 +522,8 @@
     </c-card>
   </c-col>
 </c-row>
+
+<app-credit-note-modal [sale]="creditNoteSale()" (closed)="onCreditNoteClosed($event)"></app-credit-note-modal>
 
 <!-- Modal de búsqueda de documentos -->
 <app-search-document-modal

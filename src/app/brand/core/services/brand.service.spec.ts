@@ -139,7 +139,7 @@ describe('BrandService', () => {
 
       const req = httpMock.expectOne(`${baseUrl}/`);
       expect(req.request.method).toBe('PUT');
-      expect(req.request.body).toEqual({ nombre: 'Samsung Electronics', codigo: 'SAMSUNG' });
+      expect(req.request.body).toEqual({ id: 1, nombre: 'Samsung Electronics', codigo: 'SAMSUNG' });
       req.flush(mockResponse);
     });
   });

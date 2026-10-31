@@ -19,6 +19,7 @@ export class OrganizationMapper {
       address: dto.direccion,
       phone: dto.telefono,
       website: dto.pagina_web,
+      ubigeo: dto.codigoUbigeo,
       logo: dto.logo,
       status: dto.est,
       logoUrl: dto.logo_url,
@@ -40,6 +41,7 @@ export class OrganizationMapper {
       direccion: model.address,
       telefono: model.phone,
       pagina_web: model.website,
+      codigo_ubigeo: model.ubigeo,
       logo: model.logo,
       est: model.status,
     };
@@ -54,6 +56,7 @@ export class OrganizationMapper {
       direccion: model.address,
       telefono: model.phone,
       pagina_web: model.website,
+      codigo_ubigeo: model.ubigeo,
       logo: model.logo,
       est: model.status,
     };

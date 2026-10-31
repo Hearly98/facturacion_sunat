@@ -5,6 +5,7 @@ export type CreateOrganizationDto = {
   direccion?: string | null;
   telefono?: string | null;
   pagina_web?: string | null;
+  codigo_ubigeo?: string | null;
   logo?: string | null;
   est?: boolean;
 };

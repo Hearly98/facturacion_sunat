@@ -122,6 +122,7 @@ describe('CurrencyService', () => {
       const req = httpMock.expectOne(`${baseUrl}/`);
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual({
+        id: 1,
         nombre: 'Dólar Estadounidense',
         codigo: 'USD',
         simbolo: 'USD$',

@@ -1,3 +1,7 @@
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
@@ -62,7 +66,7 @@ describe('BrandComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [BrandComponent, ReactiveFormsModule],
-      providers: [
+      providers: [provideNoopAnimations(), provideHttpClient(), provideHttpClientTesting(), provideRouter([]), 
         { provide: BrandService, useValue: brandServiceMock },
         { provide: ConfirmService, useValue: confirmServiceMock },
         { provide: GlobalNotification, useValue: globalNotificationMock },
@@ -160,7 +164,7 @@ describe('BrandComponent', () => {
     });
 
     it('should not throw when the modal is not yet initialized', () => {
-      fixture.detectChanges();
+      component.brandNewEditModal = undefined as unknown as typeof component.brandNewEditModal;
 
       expect(() => component.openModal(1)).not.toThrow();
     });

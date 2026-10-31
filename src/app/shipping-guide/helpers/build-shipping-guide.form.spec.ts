@@ -74,8 +74,8 @@ describe('buildShippingGuideForm', () => {
       expect(rawValue.nombre_cliente).toBe('Modified');
 
       // But value() excludes disabled fields
-      expect(form.value.cli_id).toBeNull();
-      expect(form.value.nombre_cliente).toBeNull();
+      expect(form.value.cli_id).toBeUndefined();
+      expect(form.value.nombre_cliente).toBeUndefined();
     });
 
     it('should disable detalles FormArray fields', () => {

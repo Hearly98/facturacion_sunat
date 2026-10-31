@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/auth/guards/auth.guard';
+import { permissionGuard } from './core/guards/permission.guard';
 
 export const routes: Routes = [
   {
@@ -180,6 +181,24 @@ export const routes: Routes = [
       {
         path: 'ver-venta/:id',
         redirectTo: 'ventas',
+      },
+      {
+        path: 'emisiones/boletas',
+        loadComponent: () => import('./emissions/pages/emissions.page').then((m) => m.EmissionsPage),
+        canActivate: [permissionGuard],
+        data: { title: 'Boletas electrónicas', family: 'boletas', permission: 'emisiones.ver' },
+      },
+      {
+        path: 'emisiones/facturas',
+        loadComponent: () => import('./emissions/pages/emissions.page').then((m) => m.EmissionsPage),
+        canActivate: [permissionGuard],
+        data: { title: 'Facturas electrónicas', family: 'facturas', permission: 'emisiones.ver' },
+      },
+      {
+        path: 'emisiones/configuracion',
+        loadComponent: () => import('./emissions/pages/emissions-settings.page').then((m) => m.EmissionsSettingsPage),
+        canActivate: [permissionGuard],
+        data: { title: 'Configuración de emisiones', permission: 'emisiones.configurar' },
       },
       {
         path: 'cotizaciones',

@@ -6,6 +6,7 @@ export type OrganizationForm = {
   address: string | null;
   phone: string | null;
   website: string | null;
+  ubigeo: string | null;
   logo: string | null;
   status: boolean | null;
 };

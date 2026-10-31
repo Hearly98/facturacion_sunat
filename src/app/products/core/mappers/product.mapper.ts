@@ -19,6 +19,7 @@ export class ProductMapper {
       brandId: dto.marca_id,
       basePurchasePrice: dto.precio_compra_base,
       baseSalePrice: dto.precio_venta_base,
+      igvAffectation: dto.tipo_afectacion_igv ?? '10',
       branches: dto.sucursales,
       active: dto.est,
       createdAt: dto.createdAt,
@@ -40,6 +41,7 @@ export class ProductMapper {
       moneda_id: model.currencyId,
       precio_compra_base: model.basePurchasePrice,
       precio_venta_base: model.baseSalePrice,
+      tipo_afectacion_igv: model.igvAffectation,
       sucursales: model.branches || [],
     };
   }
@@ -59,6 +61,7 @@ export class ProductMapper {
       moneda_id: model.currencyId,
       precio_compra_base: model.basePurchasePrice,
       precio_venta_base: model.baseSalePrice,
+      tipo_afectacion_igv: model.igvAffectation,
       sucursales: model.branches || [],
     };
   }
@@ -80,6 +83,7 @@ export class ProductMapper {
       moneda_id: model.currencyId,
       precio_compra_base: model.basePurchasePrice,
       precio_venta_base: model.baseSalePrice,
+      tipo_afectacion_igv: model.igvAffectation,
       sucursales: model.branches || [],
       est: model.active,
       createdAt: model.createdAt,
@@ -106,6 +110,7 @@ export class ProductMapper {
     ProductMapper.appendIfPresent(formData, 'moneda_id', model.currencyId);
     ProductMapper.appendIfPresent(formData, 'precio_compra_base', model.basePurchasePrice);
     ProductMapper.appendIfPresent(formData, 'precio_venta_base', model.baseSalePrice);
+    ProductMapper.appendIfPresent(formData, 'tipo_afectacion_igv', model.igvAffectation);
 
     if (model.branches && model.branches.length > 0) {
       model.branches.forEach((branch, index) => {
@@ -140,6 +145,7 @@ export class ProductMapper {
     ProductMapper.appendIfPresent(formData, 'moneda_id', model.currencyId);
     ProductMapper.appendIfPresent(formData, 'precio_compra_base', model.basePurchasePrice);
     ProductMapper.appendIfPresent(formData, 'precio_venta_base', model.baseSalePrice);
+    ProductMapper.appendIfPresent(formData, 'tipo_afectacion_igv', model.igvAffectation);
 
     if (model.branches && model.branches.length > 0) {
       model.branches.forEach((branch, index) => {

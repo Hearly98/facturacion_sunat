@@ -6,6 +6,8 @@ export type Organization = {
   address: string;
   phone: string;
   website: string;
+  // Ubigeo INEI del domicilio fiscal: obligatorio para emitir comprobantes
+  ubigeo: string;
   logo: string;
   status: boolean;
 };

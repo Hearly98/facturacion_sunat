@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ResponseDto } from '@shared/models/api/response.dto';
 import { SaleModel } from '../models/sale.model';
+import { SaleListItemModel } from '../models/sale-list-item.model';
 import { Serie } from 'src/app/series/core/models/serie.model';
 import { QueryParamsModel } from '@shared/models/query/query-params.model';
 import { BaseService } from '@shared/services/base.service';
@@ -17,8 +18,8 @@ export class SaleService extends BaseService {
     super(http, `${environment.apiUrl}/ventas`);
   }
 
-  search(body: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<SaleModel>>> {
-    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<SaleModel>>>(
+  search(body: QueryParamsModel): Observable<ResponseDto<QueryResultsModel<SaleListItemModel>>> {
+    return this.postRequest<QueryParamsModel, ResponseDto<QueryResultsModel<SaleListItemModel>>>(
       `/search`,
       body
     );

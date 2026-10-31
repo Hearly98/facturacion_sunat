@@ -22,6 +22,9 @@ import { GetShippingGuideModel } from 'src/app/shipping-guide/core/models/get-sh
 import { CustomerDto } from 'src/app/customer/core/dto';
 import { QuotationService } from 'src/app/quotation/core/services/quotation.service';
 import { ShippingGuideService } from 'src/app/shipping-guide/core/services/shipping-guide.service';
+import { SunatService } from 'src/app/sunat/core/services/sunat.service';
+import { SaleListItemModel } from '../../core/models/sale-list-item.model';
+import { of } from 'rxjs';
 
 // REGRESSION: patchCustomer/onSelectCotizacion/onSelectGuia used to read field names that
 // don't exist on the real DTOs (item.documento/tipoDocumentoId/direccion/telefono instead of
@@ -31,16 +34,23 @@ import { ShippingGuideService } from 'src/app/shipping-guide/core/services/shipp
 describe('SalesMainPage', () => {
   let component: SalesMainPage;
   let fixture: ComponentFixture<SalesMainPage>;
+  let sunatService: jasmine.SpyObj<SunatService>;
+  let notification: jasmine.SpyObj<GlobalNotification>;
+  let saleService: { search: jasmine.Spy };
 
   const buildForm = () => new FormBuilder().group(buildSaleForm());
 
   beforeEach(async () => {
+    sunatService = jasmine.createSpyObj<SunatService>('SunatService', ['getCreditNoteBalance']);
+    notification = jasmine.createSpyObj<GlobalNotification>('GlobalNotification', ['openToastAlert', 'openAlert']);
+    saleService = { search: jasmine.createSpy('search').and.returnValue(of({ isValid: false })) };
+
     await TestBed.configureTestingModule({
       imports: [SalesMainPage],
       providers: [
         provideNoopAnimations(),
         { provide: ActivatedRoute, useValue: { snapshot: { params: {} } } },
-        { provide: SaleService, useValue: {} },
+        { provide: SaleService, useValue: saleService },
         { provide: CurrencyService, useValue: {} },
         { provide: DocumentService, useValue: {} },
         { provide: CustomerService, useValue: {} },
@@ -50,10 +60,11 @@ describe('SalesMainPage', () => {
         { provide: DocumentTypeService, useValue: {} },
         { provide: OrganizationService, useValue: {} },
         { provide: AlmacenService, useValue: {} },
-        { provide: GlobalNotification, useValue: {} },
+        { provide: GlobalNotification, useValue: notification },
         { provide: ConfirmService, useValue: {} },
         { provide: QuotationService, useValue: {} },
         { provide: ShippingGuideService, useValue: {} },
+        { provide: SunatService, useValue: sunatService },
       ],
     }).compileComponents();
 
@@ -204,6 +215,30 @@ describe('SalesMainPage', () => {
       component.linkedGuia.set(guia);
 
       expect(component.getClientInitialValue('cli_id')).toBe('Maria Lopez');
+    });
+  });
+
+  describe('nota de crédito', () => {
+    const sale = {
+      id: 7, numero_completo: 'B001-00000015', fecha_emision: '2026-10-29', total: 118, estado_id: 2, estado_nombre: 'Completado',
+      documento_codigo: '03', documento_nombre: 'BOLETA DE VENTA ELECTRÓNICA', cliente_nombre: 'CLIENTES VARIOS', cliente_documento: null,
+    } as SaleListItemModel;
+
+    it('solo se ofrece en boletas que no fueron anuladas con nota', () => {
+      expect(component.canIssueCreditNote(sale)).toBeTrue();
+      expect(component.canIssueCreditNote({ ...sale, estado_id: 4 })).toBeFalse();
+      expect(component.canIssueCreditNote({ ...sale, documento_codigo: '99' })).toBeFalse();
+    });
+
+    it('al cerrar el modal refresca solo si se creó una nota', () => {
+      component.creditNoteSale.set(sale);
+
+      component.onCreditNoteClosed(false);
+      expect(component.creditNoteSale()).toBeNull();
+      expect(saleService.search).not.toHaveBeenCalled();
+
+      component.onCreditNoteClosed(true);
+      expect(saleService.search).toHaveBeenCalled();
     });
   });
 });
