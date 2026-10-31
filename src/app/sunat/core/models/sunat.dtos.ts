@@ -1,5 +1,5 @@
 import { SendingPolicyDto } from 'src/app/emissions/core/models/emission.dtos';
-import { CreditNoteReason, SunatEnvironment } from './sunat.models';
+import { CreditNoteReason, SunatCredentialsStatus, SunatEnvironment } from './sunat.models';
 
 export interface SunatConfigDto {
   ambiente: SunatEnvironment;
@@ -8,6 +8,8 @@ export interface SunatConfigDto {
   timeout_segundos: number;
   politica?: SendingPolicyDto;
   credenciales: {
+    estado?: SunatCredentialsStatus;
+    mensaje?: string | null;
     sol_usuario: string | null;
     tiene_clave_sol: boolean;
     tiene_certificado: boolean;

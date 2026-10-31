@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/auth/guards/auth.guard';
+import { permissionGuard } from './core/guards/permission.guard';
 
 export const routes: Routes = [
   {
@@ -184,17 +185,20 @@ export const routes: Routes = [
       {
         path: 'emisiones/boletas',
         loadComponent: () => import('./emissions/pages/emissions.page').then((m) => m.EmissionsPage),
-        data: { title: 'Boletas electrónicas', family: 'boletas' },
+        canActivate: [permissionGuard],
+        data: { title: 'Boletas electrónicas', family: 'boletas', permission: 'emisiones.ver' },
       },
       {
         path: 'emisiones/facturas',
         loadComponent: () => import('./emissions/pages/emissions.page').then((m) => m.EmissionsPage),
-        data: { title: 'Facturas electrónicas', family: 'facturas' },
+        canActivate: [permissionGuard],
+        data: { title: 'Facturas electrónicas', family: 'facturas', permission: 'emisiones.ver' },
       },
       {
         path: 'emisiones/configuracion',
         loadComponent: () => import('./emissions/pages/emissions-settings.page').then((m) => m.EmissionsSettingsPage),
-        data: { title: 'Configuración de emisiones' },
+        canActivate: [permissionGuard],
+        data: { title: 'Configuración de emisiones', permission: 'emisiones.configurar' },
       },
       {
         path: 'cotizaciones',

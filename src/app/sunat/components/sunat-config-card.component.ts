@@ -59,6 +59,11 @@ import { SunatService, sunatErrorMessage } from '../core/services/sunat.service'
             </c-col>
 
             <c-col [md]="8">
+              @if (config()?.credentialsStatus === 'ILEGIBLES') {
+                <c-alert color="danger" class="py-2 small" data-testid="credenciales-ilegibles">
+                  {{ config()?.credentialsMessage || 'Las credenciales guardadas no pueden leerse. Vuelva a registrarlas.' }}
+                </c-alert>
+              }
               <div class="mb-2">
                 <c-badge [color]="config()?.hasCertificate ? 'success' : 'secondary'" class="me-2">
                   Certificado: {{ config()?.hasCertificate ? 'registrado' : 'pendiente' }}

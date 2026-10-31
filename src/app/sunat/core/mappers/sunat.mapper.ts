@@ -15,6 +15,8 @@ export class SunatMapper {
       hasSolPassword: dto.credenciales?.tiene_clave_sol ?? false,
       hasCertificate: dto.credenciales?.tiene_certificado ?? false,
       certificateExpiresAt: dto.credenciales?.certificado_vence ?? null,
+      credentialsStatus: dto.credenciales?.estado ?? 'INCOMPLETAS',
+      credentialsMessage: dto.credenciales?.mensaje ?? null,
       policy: EmissionMapper.policyFromApi(dto.politica),
     };
   }

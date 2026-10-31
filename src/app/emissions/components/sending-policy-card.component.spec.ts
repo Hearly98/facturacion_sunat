@@ -10,7 +10,7 @@ describe('SendingPolicyCardComponent', () => {
   let sunat: jasmine.SpyObj<SunatService>;
 
   const config = (overrides: Partial<SunatConfig['policy']> = {}): SunatConfig => ({
-    environment: 'prueba', autoSend: false, solUser: null, hasSolPassword: false, hasCertificate: false, certificateExpiresAt: null,
+    environment: 'prueba', autoSend: false, solUser: null, hasSolPassword: false, hasCertificate: false, certificateExpiresAt: null, credentialsStatus: 'INCOMPLETAS', credentialsMessage: null,
     policy: { type: 'INMEDIATO', time: '23:00', days: [], safetyMarginHours: 24, warnings: [], ...overrides },
   });
 

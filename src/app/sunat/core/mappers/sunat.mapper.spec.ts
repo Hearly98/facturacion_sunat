@@ -18,7 +18,22 @@ describe('SunatMapper', () => {
       hasSolPassword: true,
       hasCertificate: true,
       certificateExpiresAt: '2027-10-29',
+      credentialsStatus: 'INCOMPLETAS',
+      credentialsMessage: null,
     });
+  });
+
+  it('configFromApi expone el estado ILEGIBLES y su mensaje', () => {
+    const config = SunatMapper.configFromApi({
+      ambiente: 'prueba', auto_envio: false, max_intentos: 3, timeout_segundos: 60,
+      credenciales: {
+        estado: 'ILEGIBLES', mensaje: 'Vuelva a registrarlas.',
+        sol_usuario: 'USUARIO1', tiene_clave_sol: false, tiene_certificado: false, certificado_vence: null,
+      },
+    });
+
+    expect(config.credentialsStatus).toBe('ILEGIBLES');
+    expect(config.credentialsMessage).toBe('Vuelva a registrarlas.');
   });
 
 

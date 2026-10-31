@@ -13,6 +13,7 @@ import {
   SpinnerComponent,
   TableDirective,
 } from '@coreui/angular';
+import { NgxPermissionsService } from 'ngx-permissions';
 import { downloadBlobResponse } from '@shared/functions';
 import {
   canReschedule,
@@ -23,7 +24,7 @@ import {
   emissionStatusColor,
   emissionStatusLabel,
 } from '../core/helpers/emission-status';
-import { EmissionDetail } from '../core/models/emission.models';
+import { EmissionDetail, EmissionStatus } from '../core/models/emission.models';
 import { EmissionFile, EmissionService, emissionErrorMessage } from '../core/services/emission.service';
 
 @Component({
@@ -135,6 +136,8 @@ import { EmissionFile, EmissionService, emissionErrorMessage } from '../core/ser
 })
 export class EmissionDetailModalComponent {
   readonly #service = inject(EmissionService);
+  /** Enviar y reprogramar exigen emisiones.enviar (el backend también lo valida). */
+  readonly canSend = inject(NgxPermissionsService).getPermission('emisiones.enviar') !== undefined;
 
   #emissionId: number | null = null;
 
@@ -159,8 +162,8 @@ export class EmissionDetailModalComponent {
 
   readonly statusLabel = emissionStatusLabel;
   readonly statusColor = emissionStatusColor;
-  readonly canSendNow = canSendNow;
-  readonly canReschedule = canReschedule;
+  readonly canSendNow = (status: EmissionStatus) => this.canSend && canSendNow(status);
+  readonly canReschedule = (status: EmissionStatus) => this.canSend && canReschedule(status);
   deadline = (d: EmissionDetail) => deadlineText(d.status, d.hoursLeft);
   deadlineColor = (d: EmissionDetail) => DEADLINE_COLORS[deadlineLevel(d.status, d.hoursLeft)];
 

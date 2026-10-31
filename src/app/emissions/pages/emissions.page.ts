@@ -13,6 +13,7 @@ import {
   TableDirective,
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
+import { NgxPermissionsService } from 'ngx-permissions';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { PaginatorComponent } from '@shared/components/paginator/paginator.component';
 import { downloadBlobResponse } from '@shared/functions';
@@ -63,6 +64,8 @@ const PAGE_SIZE = 20;
 })
 export class EmissionsPage implements OnInit {
   readonly #service = inject(EmissionService);
+  /** Enviar y reprogramar exigen emisiones.enviar; sin él la bandeja queda en solo lectura (el backend también lo valida). */
+  readonly canSend = inject(NgxPermissionsService).getPermission('emisiones.enviar') !== undefined;
   readonly #route = inject(ActivatedRoute);
   readonly #router = inject(Router);
   readonly #notification = inject(GlobalNotification);
@@ -96,12 +99,12 @@ export class EmissionsPage implements OnInit {
 
   readonly statusLabel = emissionStatusLabel;
   readonly statusColor = emissionStatusColor;
-  readonly canSendNow = canSendNow;
+  readonly canSendNow = (status: EmissionStatus) => this.canSend && canSendNow(status);
   readonly isValid = isEmissionValid;
   deadline = (e: Emission) => deadlineText(e.status, e.hoursLeft);
   deadlineColor = (e: Emission) => DEADLINE_COLORS[deadlineLevel(e.status, e.hoursLeft)];
 
-  readonly selectableIds = computed(() => this.emissions().filter((e) => canSendNow(e.status)).map((e) => e.id));
+  readonly selectableIds = computed(() => this.emissions().filter((e) => this.canSendNow(e.status)).map((e) => e.id));
   readonly allSelected = computed(() => {
     const ids = this.selectableIds();
     return ids.length > 0 && ids.every((id) => this.selected().has(id));

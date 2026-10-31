@@ -4,6 +4,9 @@ export type SunatStatus = 'PENDIENTE' | 'ACEPTADA' | 'OBSERVADA' | 'RECHAZADA' |
 
 export type SunatEnvironment = 'prueba' | 'produccion';
 
+/** ILEGIBLES: están guardadas pero no se pueden descifrar (cambió APP_KEY); hay que registrarlas de nuevo. */
+export type SunatCredentialsStatus = 'OK' | 'ILEGIBLES' | 'INCOMPLETAS';
+
 export interface SunatConfig {
   environment: SunatEnvironment;
   autoSend: boolean;
@@ -11,6 +14,8 @@ export interface SunatConfig {
   hasSolPassword: boolean;
   hasCertificate: boolean;
   certificateExpiresAt: string | null;
+  credentialsStatus: SunatCredentialsStatus;
+  credentialsMessage: string | null;
   policy: SendingPolicy;
 }
 

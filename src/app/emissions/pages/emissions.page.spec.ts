@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { BehaviorSubject, of, throwError } from 'rxjs';
+import { NgxPermissionsService } from 'ngx-permissions';
 import { GlobalNotification } from '@shared/alerts/global-notification/global-notification';
 import { EmissionsPage } from './emissions.page';
 import { EmissionService } from '../core/services/emission.service';
@@ -13,6 +14,7 @@ describe('EmissionsPage', () => {
   let notification: jasmine.SpyObj<GlobalNotification>;
   const data$ = new BehaviorSubject<Record<string, unknown>>({ family: 'boletas' });
   const query$ = new BehaviorSubject(convertToParamMap({}));
+  let granted: string[];
 
   const emission = (id: number, status: Emission['status']): Emission => ({
     id, family: 'boletas', saleId: id, documentType: '03', documentTypeName: 'Boleta', number: `B001-0000000${id}`,
@@ -20,7 +22,13 @@ describe('EmissionsPage', () => {
     deadline: null, hoursLeft: 100, attempts: 0, nextAttemptAt: null, responseCode: null, responseDescription: null,
   });
 
+  const create = () => {
+    page = TestBed.createComponent(EmissionsPage).componentInstance;
+    page.ngOnInit();
+  };
+
   beforeEach(() => {
+    granted = ['emisiones.ver', 'emisiones.enviar'];
     service = jasmine.createSpyObj<EmissionService>('EmissionService', ['list', 'summary', 'sendNow', 'sendBatch', 'download', 'detail', 'reschedule']);
     service.list.and.returnValue(of({ items: [emission(1, 'PROGRAMADA'), emission(2, 'ACEPTADA'), emission(3, 'RECHAZADA')], total: 3, page: 1, lastPage: 1 }));
     service.summary.and.returnValue(of({ total: 3, byStatus: {}, pending: 1, needsAttention: 1 }));
@@ -32,12 +40,21 @@ describe('EmissionsPage', () => {
         provideNoopAnimations(),
         { provide: EmissionService, useValue: service },
         { provide: GlobalNotification, useValue: notification },
+        { provide: NgxPermissionsService, useValue: { getPermission: (p: string) => (granted.includes(p) ? { name: p } : undefined) } },
         { provide: Router, useValue: jasmine.createSpyObj('Router', ['navigate']) },
         { provide: ActivatedRoute, useValue: { data: data$, queryParamMap: query$, snapshot: { queryParamMap: convertToParamMap({}) } } },
       ],
     });
-    page = TestBed.createComponent(EmissionsPage).componentInstance;
-    page.ngOnInit();
+    create();
+  });
+
+  it('sin emisiones.enviar la bandeja es de solo lectura', () => {
+    granted = ['emisiones.ver'];
+    create();
+
+    expect(page.canSend).toBeFalse();
+    expect(page.canSendNow('PROGRAMADA')).toBeFalse();
+    expect(page.selectableIds()).toEqual([]);
   });
 
   it('carga la familia de la ruta y su resumen', () => {
