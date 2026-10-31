@@ -65,6 +65,7 @@ describe('SunatService', () => {
     const put = http.expectOne(`${api}/sunat/configuracion`);
     expect(put.request.method).toBe('PUT');
     expect(put.request.body).toEqual(jasmine.objectContaining({ ambiente: 'prueba', politica_envio: 'PROGRAMADO', hora_envio: '08:00', dias_envio: [1] }));
+    expect(put.request.body).not.toEqual(jasmine.objectContaining({ auto_envio: jasmine.anything() }));
     put.flush({});
 
     http.expectOne(`${api}/sunat/configuracion`).flush({

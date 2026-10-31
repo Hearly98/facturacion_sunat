@@ -40,7 +40,7 @@ export class SunatService {
   }
 
   private saveSettings(fields: Record<string, unknown>, exists: boolean): Observable<unknown> {
-    const body = { auto_envio: false, max_intentos: 3, timeout_segundos: 60, ...fields };
+    const body = { max_intentos: 3, timeout_segundos: 60, ...fields };
 
     return exists
       ? this.#http.put(`${this.#api}/sunat/configuracion`, body)
