@@ -1,3 +1,7 @@
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CategoryNewEditModal } from './category-new-edit-modal';
@@ -8,7 +12,8 @@ describe('CategoryNewEditModal', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CategoryNewEditModal]
+      imports: [CategoryNewEditModal],
+      providers: [provideNoopAnimations(), provideHttpClient(), provideHttpClientTesting(), provideRouter([])]
     })
     .compileComponents();
 

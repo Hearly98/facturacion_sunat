@@ -1,3 +1,7 @@
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
@@ -29,7 +33,7 @@ describe('BrandNewEditModal', () => {
 
     await TestBed.configureTestingModule({
       imports: [BrandNewEditModal, ReactiveFormsModule],
-      providers: [
+      providers: [provideNoopAnimations(), provideHttpClient(), provideHttpClientTesting(), provideRouter([]), 
         { provide: BrandService, useValue: brandServiceMock },
         { provide: GlobalNotification, useValue: globalNotificationMock },
       ],

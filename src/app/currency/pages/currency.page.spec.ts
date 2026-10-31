@@ -1,3 +1,7 @@
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError } from 'rxjs';
@@ -50,7 +54,7 @@ describe('CurrencyPage', () => {
 
     await TestBed.configureTestingModule({
       imports: [CurrencyPage, ReactiveFormsModule],
-      providers: [
+      providers: [provideNoopAnimations(), provideHttpClient(), provideHttpClientTesting(), provideRouter([]), 
         { provide: CurrencyService, useValue: currencyServiceMock },
         { provide: ConfirmService, useValue: confirmServiceMock },
         { provide: GlobalNotification, useValue: globalNotificationMock },
@@ -180,7 +184,7 @@ describe('CurrencyPage', () => {
     });
 
     it('should not throw if modal is not initialized', () => {
-      fixture.detectChanges();
+      component.currencyNewEditModal = undefined as unknown as typeof component.currencyNewEditModal;
 
       expect(() => component.openModal(1)).not.toThrow();
     });
