@@ -181,6 +181,23 @@ describe('SalesMainPage', () => {
       expect(component.form.value.cli_telf).toBe('987654321');
       expect(component.linkedCotizacion()).toEqual(cotizacion);
     });
+
+    it('convierte el precio cotizado (sin IGV) al precio de venta con IGV', () => {
+      component.onSelectCotizacion({
+        ...cotizacion,
+        details: [
+          { id: 1, quotationId: 10, productId: 3, productName: 'Arroz', productCode: 'ARR', productUnit: 'KG',
+            productUnitId: 2, productWeight: null, productTaxAffectation: '10', unitPrice: 100, quantity: 2,
+            discount: 0, total: 200, description: null },
+          { id: 2, quotationId: 10, productId: 4, productName: 'Libro', productCode: 'LIB', productUnit: 'UND',
+            productUnitId: 1, productWeight: null, productTaxAffectation: '20', unitPrice: 50, quantity: 1,
+            discount: 0, total: 50, description: null },
+        ],
+      });
+
+      const precios = component.detailsArray.getRawValue().map((l: any) => l.precio_unitario);
+      expect(precios).toEqual([118, 50]);
+    });
   });
 
   describe('onSelectGuia', () => {
@@ -231,7 +248,8 @@ describe('SalesMainPage', () => {
       const lineas = component.detailsArray.getRawValue();
       expect(lineas.map((l: any) => l.prod_id)).toEqual([3, 4]);
       expect(lineas[0]).toEqual(jasmine.objectContaining({
-        cantidad: 4, prod_nom: 'Arroz', prod_cod_interno: 'ARR-001', unidad: 'Kilogramo', precio_unitario: 114,
+        // 114 sin IGV en la cotización -> 134.52 con IGV en la venta.
+        cantidad: 4, prod_nom: 'Arroz', prod_cod_interno: 'ARR-001', unidad: 'Kilogramo', precio_unitario: 134.52,
       }));
       expect(component.detailsArray.at(0).get('cantidad')!.disabled).toBeTrue();
       // Sin precio en la guía: el vendedor debe poder escribirlo.

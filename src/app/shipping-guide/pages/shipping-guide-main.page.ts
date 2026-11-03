@@ -53,6 +53,7 @@ import {
   SHIPPING_GUIDE_LABELS,
   shippingGuideFromApi,
   ShippingGuideEstado,
+  toShippingGuidePayload,
 } from '../helpers';
 import { findMissingFields, focusFirstInvalid } from '@shared/functions';
 import { UbigeoPickerComponent } from '@shared/components/ubigeo-picker/ubigeo-picker.component';
@@ -458,24 +459,10 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
       return;
     }
 
-    const guideData = {
-      ...this.form.getRawValue(),
-      // El backend valida sucursal_id (no suc_id/emp_id) y resuelve la empresa por tenant_id()
-      // del usuario autenticado -- emp_id: 1 hardcodeado nunca hizo nada, y suc_id nunca llegaba
-      // a destino con ese nombre.
-      sucursal_id: this.form.value.suc_id || this.sucursales[0]?.value,
-      detalles: this.detailsArray.getRawValue().map((v) => ({
-        // producto_id/unidad_id: los nombres reales que GuiaRemisionController valida.
-        // prod_id/und_id son los nombres de control internos de este form, no el contrato HTTP.
-        producto_id: v.prod_id,
-        cantidad: v.cantidad,
-        unidad_id: v.und_id,
-        peso_unitario: v.peso_unitario,
-        descripcion: v.descripcion,
-        precio_unitario: v.precio_unitario,
-        descuento: v.descuento,
-      })),
-    };
+    const guideData = toShippingGuidePayload(
+      this.form.getRawValue(),
+      (this.sucursales[0]?.value as number) ?? null,
+    );
 
     this.isLoadingForm.set(true);
 

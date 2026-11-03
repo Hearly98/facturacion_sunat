@@ -78,8 +78,10 @@ export interface ShippingGuideDetailRow {
   peso_unitario: number;
   peso_total: number;
   descripcion: string;
+  /** Precio SIN IGV copiado de la cotización (null si la guía no nació de una). */
   precio_unitario: number | null;
   descuento: number;
+  afectacion_igv: string | null;
 }
 
 const dateOnly = (value?: string | null) => (value ? String(value).slice(0, 10) : null);
@@ -137,6 +139,7 @@ export function shippingGuideFromApi(guia: any) {
     descripcion: d.descripcion || d.prod_nom || d.producto?.nombre || '',
     precio_unitario: num(d.precio_unitario),
     descuento: num(d.descuento) ?? 0,
+    afectacion_igv: d.producto?.tipo_afectacion_igv ?? null,
   }));
 
   const estado: ShippingGuideEstado | null = guia.estado_guia_remision
@@ -144,4 +147,28 @@ export function shippingGuideFromApi(guia: any) {
     : null;
 
   return { header, details, estado };
+}
+
+/**
+ * Arma el cuerpo de POST/PUT /guias-remision con los nombres que valida
+ * GuiaRemisionController (cliente_id, sucursal_id, producto_id, unidad_id). Los nombres del
+ * formulario (cli_id, suc_id, prod_id, und_id) son internos: si viajan tal cual, el backend
+ * los descarta sin avisar.
+ */
+export function toShippingGuidePayload(raw: any, sucursalPorDefecto: number | null) {
+  const { cli_id, suc_id, detalles, prod_id, est, id_cotizacion, numero_completo, serie_id, ...cabecera } = raw;
+  return {
+    ...cabecera,
+    cliente_id: cli_id ?? null,
+    sucursal_id: suc_id || sucursalPorDefecto,
+    detalles: (detalles ?? []).map((d: any) => ({
+      producto_id: d.prod_id,
+      unidad_id: d.und_id,
+      cantidad: d.cantidad,
+      peso_unitario: d.peso_unitario,
+      descripcion: d.descripcion,
+      precio_unitario: d.precio_unitario,
+      descuento: d.descuento,
+    })),
+  };
 }

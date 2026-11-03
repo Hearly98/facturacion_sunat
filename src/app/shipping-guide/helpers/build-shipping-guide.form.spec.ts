@@ -5,6 +5,7 @@ import {
   applyCotizacionLock,
   applyTransportValidators,
   shippingGuideFromApi,
+  toShippingGuidePayload,
   SHIPPING_GUIDE_LABELS,
 } from './shipping-guide-rules';
 import { findMissingFields } from '@shared/functions';
@@ -155,6 +156,24 @@ describe('Guía de remisión: formulario y reglas', () => {
         prod_id: 1, und_id: 2, cantidad: 3, prod_cod: 'ARR-001', prod_nom: 'Arroz',
         peso_unitario: 1.5, precio_unitario: 114, descripcion: 'Arroz',
       }));
+    });
+  });
+
+  describe('toShippingGuidePayload', () => {
+    it('usa los nombres que valida el backend (cliente_id, producto_id, unidad_id)', () => {
+      completarValido();
+      form.patchValue({ cli_id: 3, cot_id: 16 });
+      applyCotizacionLock(form, true); // lo bloqueado también debe viajar
+
+      const payload = toShippingGuidePayload(form.getRawValue(), 1);
+
+      // Antes se enviaba cli_id, que el backend ignora: la guía quedaba sin cliente y la
+      // venta armada desde ella salía a "CLIENTES VARIOS".
+      expect(payload.cliente_id).toBe(3);
+      expect(payload.cot_id).toBe(16);
+      expect(payload.sucursal_id).toBe(1);
+      expect(payload.detalles[0]).toEqual(jasmine.objectContaining({ producto_id: 1, unidad_id: 2, cantidad: 2 }));
+      expect('cli_id' in payload).toBeFalse();
     });
   });
 });

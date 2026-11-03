@@ -3,6 +3,7 @@ export interface QuotationDetailProductDto {
   nombre: string;
   codigo_interno: string;
   peso: string | null;
+  tipo_afectacion_igv?: string | null;
   unidad?: {
     id: number;
     nombre: string;

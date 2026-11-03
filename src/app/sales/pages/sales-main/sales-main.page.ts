@@ -63,7 +63,7 @@ import { QuotationModel } from 'src/app/quotation/core/models/quotation.model';
 import { GetShippingGuideModel } from 'src/app/shipping-guide/core/models/get-shipping-guide.model';
 import { CustomerMapper } from 'src/app/customer/core/mappers';
 import { CurrencyPipe } from '@shared/pipes/currency.pipe';
-import { downloadBlobResponse, findMissingFields, focusFirstInvalid } from '@shared/functions';
+import { downloadBlobResponse, findMissingFields, focusFirstInvalid, precioConIgv } from '@shared/functions';
 import { UserService } from 'src/app/user/core/services/user.service';
 import { AuthService } from 'src/app/core/auth/services/auth.service';
 import { shippingGuideFromApi } from 'src/app/shipping-guide/helpers';
@@ -289,7 +289,8 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
         prod_nom: [{ value: detalle.productName, disabled: true }],
         prod_cod_interno: [detalle.productCode],
         unidad: [detalle.productUnit],
-        precio_unitario: [{ value: detalle.unitPrice, disabled: true }],
+        // La cotización guarda el precio sin IGV y la venta lo espera con IGV.
+        precio_unitario: [{ value: precioConIgv(detalle.unitPrice, detalle.productTaxAffectation), disabled: true }],
         precio_venta: [{ value: null, disabled: true }],
         dscto: [detalle.discount ?? 0],
       });
@@ -325,7 +326,10 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
         // El precio viene de la cotización de la que nació la guía (snapshot en la línea);
         // si la guía no nació de una cotización, el vendedor lo completa a mano.
         precio_unitario: [
-          { value: detalle.precio_unitario, disabled: detalle.precio_unitario !== null },
+          {
+            value: detalle.precio_unitario === null ? null : precioConIgv(detalle.precio_unitario, detalle.afectacion_igv),
+            disabled: detalle.precio_unitario !== null,
+          },
           [Validators.required, Validators.min(0)],
         ],
         precio_venta: [{ value: null, disabled: true }],
