@@ -18,6 +18,11 @@ export class ProductoAlmacenService extends BaseService {
         return this.getRequest<ResponseDto<ProductoAlmacenModel[]>>(`/almacen/${almacenId}`);
     }
 
+    /** Vincula el producto al almacén con stock 0 (el stock entra con el ingreso/compra). */
+    vincular(productoId: number, almacenId: number): Observable<ResponseDto<unknown>> {
+        return this.postRequest<object, ResponseDto<unknown>>('', { idProducto: productoId, idAlmacen: almacenId, stock: 0 });
+    }
+
     getByProducto(productoId: number): Observable<ResponseDto<ProductoAlmacenModel[]>> {
         return this.getRequest<ResponseDto<ProductoAlmacenModel[]>>(`/producto/${productoId}`);
     }
