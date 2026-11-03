@@ -43,6 +43,13 @@
                       [messages]="messages"
                     ></app-validation-messages>
                   }
+                  @case ('ubigeo') {
+                    <app-ubigeo-picker
+                      mode="inline"
+                      inputId="customer-ubigeo"
+                      [formControlName]="item.formControlName"
+                    ></app-ubigeo-picker>
+                  }
                   @default {
                     <input
                       cFormControl

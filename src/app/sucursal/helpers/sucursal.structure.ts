@@ -18,27 +18,10 @@ export const SucursalStructure = [
     col: '12',
   },
   {
-    label: 'Ubigeo',
+    // Departamento, provincia y distrito se completan solos al elegir el ubigeo.
+    label: 'Ubigeo (departamento / provincia / distrito)',
     formControlName: 'zip',
-    type: 'text',
-    col: '12',
-  },
-  {
-    label: 'Departamento',
-    formControlName: 'department',
-    type: 'text',
-    col: '12',
-  },
-  {
-    label: 'Provincia',
-    formControlName: 'province',
-    type: 'text',
-    col: '12',
-  },
-  {
-    label: 'Distrito',
-    formControlName: 'district',
-    type: 'text',
+    type: 'ubigeo',
     col: '12',
   },
 ];

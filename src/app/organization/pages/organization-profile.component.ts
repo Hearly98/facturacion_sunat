@@ -18,12 +18,13 @@ import { ImageCompressionService } from '../../shared/services/image-compression
 import { GetOrganization } from '../core/models/get-organization.model';
 import { UpdateOrganization } from '../core/models/update-organization.model';
 import { ButtonDirective } from '@coreui/angular';
-import { Ubigeo, UbigeoService } from '../../shared/services/ubigeo.service';
+import { UbigeoPickerComponent } from '../../shared/components/ubigeo-picker/ubigeo-picker.component';
 
 @Component({
   selector: 'app-organization-profile',
   standalone: true,
   imports: [
+    UbigeoPickerComponent,
     RowComponent,
     ColComponent,
     CardComponent,
@@ -108,16 +109,22 @@ import { Ubigeo, UbigeoService } from '../../shared/services/ubigeo.service';
               @for (item of structure; track $index) {
                 @if (item.formControlName !== 'emp_logo') {
                   <c-col [md]="item.col || 12">
-                    <label for="" class="form-label">{{ item.label }}</label>
-                    <input
-                      class="form-control"
-                      [type]="item.type"
-                      [formControlName]="item.formControlName"
-                      [placeholder]="'Ingrese ' + item.label"
-                      [attr.list]="item.list ?? null"
-                    />
+                    <label [for]="'org-' + item.formControlName" class="form-label">{{ item.label }}</label>
                     @if (item.list === 'ubigeos') {
-                      <div class="form-text">Código de 6 dígitos (requerido para emitir comprobantes). Escriba el distrito para buscarlo.</div>
+                      <app-ubigeo-picker
+                        [inputId]="'org-' + item.formControlName"
+                        title="Ubigeo del domicilio fiscal"
+                        [formControlName]="item.formControlName"
+                      ></app-ubigeo-picker>
+                      <div class="form-text">Requerido para emitir comprobantes electrónicos.</div>
+                    } @else {
+                      <input
+                        class="form-control"
+                        [id]="'org-' + item.formControlName"
+                        [type]="item.type"
+                        [formControlName]="item.formControlName"
+                        [placeholder]="'Ingrese ' + item.label"
+                      />
                     }
                   </c-col>
                 }
@@ -141,11 +148,6 @@ import { Ubigeo, UbigeoService } from '../../shared/services/ubigeo.service';
       </c-card-body>
     </c-card>
 
-    <datalist id="ubigeos">
-      @for (u of ubigeos(); track u.code) {
-        <option [value]="u.code">{{ u.label }}</option>
-      }
-    </datalist>
 
   `,
   styles: ``,
@@ -163,8 +165,6 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   #globalNotification = inject(GlobalNotification);
   #imageCompressionService = inject(ImageCompressionService);
   originalData: GetOrganization | null = null;
-  ubigeos = signal<Ubigeo[]>([]);
-  #ubigeoService = inject(UbigeoService);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.ORGANIZATION, viewContainerRef);
@@ -173,7 +173,6 @@ export class OrganizationProfileComponent extends BaseComponent implements OnIni
   ngOnInit(): void {
     this.createForm();
     this.loadData();
-    this.subscriptions.push(this.#ubigeoService.list().subscribe((ubigeos) => this.ubigeos.set(ubigeos)));
   }
 
   createForm() {
