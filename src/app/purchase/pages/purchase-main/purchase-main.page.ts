@@ -31,7 +31,7 @@ import { mapToSelectOption } from '@shared/functions';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { PurchaseService } from '../../core/services/purchase.service';
 import { PurchaseCreateDto } from '../../core/purchase-create-dto';
-import { buildPurchaseForm } from '../../helpers/build-purchase-form';
+import { buildPurchaseForm, PURCHASE_FORM_DEFAULTS } from '../../helpers/build-purchase-form';
 import { purchaseStructure, buildFilterForm, filterSort, mapParams } from '../../helpers';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
 import { CurrencyService } from 'src/app/currency/core/services/currency.service';
@@ -320,7 +320,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   }
 
   resetForm() {
-    this.form.reset();
+    this.form.reset(PURCHASE_FORM_DEFAULTS);
     this.detailsArray.clear();
     this.selectedProduct = null;
     this.selectedProductStock.set(null);
