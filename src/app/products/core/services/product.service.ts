@@ -96,6 +96,8 @@ export class ProductService extends BaseService {
     term: string;
     suc_id?: number;
     almacen_id?: number;
+    /** Compras/ingresos: incluir productos aún no vinculados al almacén (vinculado=false). */
+    incluir_no_vinculados?: boolean;
   }): Observable<ResponseDto<ProductoSearchDto[]>> {
     // El backend espera 'sucursal_id', no 'suc_id' (ProductoController::searchQuick)
     const { suc_id, ...rest } = body;
