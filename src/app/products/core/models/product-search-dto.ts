@@ -10,4 +10,6 @@ export class ProductoSearchDto {
   pcompra: number = 0;
   pventa: number = 0;
   label: string = "";
+  /** Solo con almacen_id: false si el producto aún no está vinculado a ese almacén. */
+  vinculado?: boolean;
 }

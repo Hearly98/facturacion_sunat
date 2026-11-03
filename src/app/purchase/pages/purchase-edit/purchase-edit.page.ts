@@ -1,3 +1,4 @@
+import { VinculoProductoAlmacenService } from 'src/app/almacen/core/services/vinculo-producto-almacen.service';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -96,13 +97,12 @@ export class PurchaseEditPage implements OnInit {
 
   paymentMethodOptions = PAYMENT_METHOD_OPTIONS;
 
+  readonly #vinculo = inject(VinculoProductoAlmacenService);
+
   serviceMap: Record<string, any> = {
     providerSearch: (term: string) => this.#supplierService.searchQuick(term),
-    productSearch: (term: string) =>
-      this.#productService.searchQuick({
-        term,
-        almacen_id: this.form.get('almacen_id')?.value,
-      }),
+    // Una compra ingresa mercadería: se ofrecen también los productos aún no vinculados.
+    productSearch: (term: string) => this.#vinculo.buscarParaIngreso(term, this.form.get('almacen_id')?.value),
   };
 
   get detailsArray(): FormArray<TypedFormGroup<PurchaseDetailForm>> {
@@ -234,8 +234,14 @@ export class PurchaseEditPage implements OnInit {
     if (!item) return;
 
     if (formControlName === 'prod_id') {
-      this.form.patchValue({ prod_id: item.id });
-      this.selectedProduct = item;
+      this.selectedProduct = null;
+      const almacenId = this.form.get('almacen_id')?.value;
+      const almacenNombre = this.almacenOptions().find((a) => a.value === almacenId)?.label ?? '';
+      this.#vinculo.asegurarVinculo(item, almacenId, almacenNombre).then((ok) => {
+        if (!ok) return;
+        this.form.patchValue({ prod_id: item.id });
+        this.selectedProduct = { ...item, vinculado: true };
+      });
       return;
     }
 
