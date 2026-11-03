@@ -60,6 +60,7 @@ export class QuotationMapper {
             address: dto.cliente.direccion,
             phone: dto.cliente.telefono,
             email: dto.cliente.email,
+            ubigeoCode: dto.cliente.codigo_ubigeo ?? null,
           }
         : null,
       currencyName: dto.moneda?.nombre ?? null,

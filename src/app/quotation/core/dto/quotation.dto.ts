@@ -31,6 +31,7 @@ export interface QuotationCustomerDto {
   direccion: string | null;
   email: string | null;
   tipo_documento_id: number;
+  codigo_ubigeo?: string | null;
 }
 
 export interface QuotationCurrencyDto {

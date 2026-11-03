@@ -22,6 +22,7 @@ export interface QuotationCustomerModel {
   address: string | null;
   phone: string | null;
   email: string | null;
+  ubigeoCode?: string | null;
 }
 
 export interface QuotationModel {

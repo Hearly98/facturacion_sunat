@@ -1,4 +1,4 @@
-import { Component, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
+import { Component, computed, ElementRef, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -44,7 +44,20 @@ import {
   QuotationDetailModel,
   QuotationModel,
 } from 'src/app/quotation/core/models/quotation.model';
-import { buildShippingGuideForm, buildShippingGuideDetail } from '../helpers';
+import {
+  applyCotizacionLock,
+  applyTransportValidators,
+  buildShippingGuideDetail,
+  buildShippingGuideForm,
+  SHIPPING_GUIDE_DETAIL_LABELS,
+  SHIPPING_GUIDE_LABELS,
+  shippingGuideFromApi,
+  ShippingGuideEstado,
+} from '../helpers';
+import { findMissingFields, focusFirstInvalid } from '@shared/functions';
+import { UbigeoPickerComponent } from '@shared/components/ubigeo-picker/ubigeo-picker.component';
+import { Sucursal } from 'src/app/sucursal/core/models';
+import { GetCustomer } from 'src/app/customer/core/models/get-customer.model';
 import { ShippingGuideForm } from '../core/types/shipping-guide.form';
 import { TypedFormGroup } from '@shared/types/types-form';
 import { DocumentTypeService } from 'src/app/document-type/core/services/document-type.service';
@@ -70,6 +83,7 @@ import { DocumentTypeService } from 'src/app/document-type/core/services/documen
     DatePipe,
     SearchDocumentModalComponent,
     AlertComponent,
+    UbigeoPickerComponent,
   ],
   templateUrl: './shipping-guide-main.page.html',
 })
@@ -128,6 +142,17 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
   // State for cotización attachment
   selectedCotizacion = signal<QuotationModel | null>(null);
   isCotizacionAttached = signal(false);
+  /** Número de la cotización vinculada (también al editar, donde no hay QuotationModel). */
+  linkedQuotationNumber = signal<string | null>(null);
+
+  /** Estado de la guía en edición: Facturado (02) o Anulado (03) la vuelven de solo lectura. */
+  editingEstado = signal<ShippingGuideEstado | null>(null);
+  editingNumber = signal<string | null>(null);
+  isReadOnly = computed(() => ['02', '03'].includes(this.editingEstado()?.codigo ?? ''));
+  canEditItems = computed(() => !this.isCotizacionAttached() && !this.isReadOnly());
+
+  sucursalesData: Sucursal[] = [];
+  readonly #host = inject(ElementRef<HTMLElement>);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.SALES, viewContainerRef);
@@ -146,16 +171,35 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
   }
 
   loadForm() {
-    this.form = this.#formBuilder.group(buildShippingGuideForm());
-
-    const today = new Date().toISOString().split('T')[0];
-    this.form.get('fecha_emision')?.setValue(today);
-
-    this.form.patchValue({
-      fecha_inicio_traslado: today,
-    });
-
+    this.buildForm();
     this.loadSelectCombos();
+  }
+
+  /** Form nuevo con validadores, fechas de hoy y el transporte según el tipo elegido. */
+  private buildForm() {
+    this.form = this.#formBuilder.group(buildShippingGuideForm());
+    const today = this.today();
+    this.form.patchValue({ fecha_emision: today, fecha_inicio_traslado: today });
+    applyTransportValidators(this.form);
+    this.form.get('tipo_traslado')!.valueChanges.subscribe((tipo) => applyTransportValidators(this.form, tipo));
+    this.applyPartidaDefault();
+  }
+
+  private today(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  /** El punto de partida por defecto es la sucursal que emite (su dirección y ubigeo). */
+  private applyPartidaDefault() {
+    const sucursal = this.sucursalesData[0];
+    if (!sucursal || !this.form) return;
+    if (!this.form.get('partida_direccion')!.value && sucursal.address) {
+      this.form.patchValue({ partida_direccion: sucursal.address });
+    }
+    if (!this.form.get('partida_ubigeo')!.value && sucursal.zip) {
+      this.form.patchValue({ partida_ubigeo: sucursal.zip });
+    }
   }
 
   loadListData() {
@@ -195,7 +239,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
 
   onSelectCotizacion(cotizacion: QuotationModel) {
     this.selectedCotizacion.set(cotizacion);
-    this.isCotizacionAttached.set(true);
+    this.linkedQuotationNumber.set(cotizacion.fullNumber);
     this.form.patchValue({
       cot_id: cotizacion.id,
       nro_cotizacion: cotizacion.fullNumber,
@@ -208,6 +252,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
         doc_cliente: cotizacion.customer.document,
         direccion_cliente: cotizacion.customer.address,
         destino_direccion: cotizacion.customer.address,
+        destino_ubigeo: cotizacion.customer.ubigeoCode ?? null,
       });
     }
 
@@ -218,10 +263,10 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
           buildShippingGuideDetail({
             prod_id: detalle.productId,
             prod_cod: detalle.productCode ?? '',
-            prod_nom: detalle.description ?? '',
+            prod_nom: detalle.productName ?? detalle.description ?? '',
             cantidad: detalle.quantity,
             peso_unitario: detalle.productWeight ?? 0,
-            descripcion: detalle.description ?? '',
+            descripcion: detalle.description || detalle.productName || '',
             und_id: detalle.productUnitId ?? null,
             // Snapshot del precio de la Cotización: la Guía no muestra precio en su propio
             // PDF, pero lo lleva consigo para que una Venta que se arme desde esta Guía
@@ -233,12 +278,42 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
         this.detailsArray.push(detailForm);
       });
     }
+
+    // Cliente y bienes vienen de la cotización: se bloquean desde ya, no recién al editar.
+    this.isCotizacionAttached.set(true);
+    applyCotizacionLock(this.form, true);
   }
 
   clearCotizacion() {
     this.selectedCotizacion.set(null);
+    this.linkedQuotationNumber.set(null);
     this.isCotizacionAttached.set(false);
     this.form.patchValue({ cot_id: null, nro_cotizacion: null });
+    applyCotizacionLock(this.form, false);
+  }
+
+  /** Cliente elegido a mano (guía libre): completa sus datos y el destino por defecto. */
+  onSelectCustomer(customer: GetCustomer | any) {
+    if (!customer) return;
+    const nombre =
+      customer.businessName || `${customer.firstName ?? ''} ${customer.lastName ?? ''}`.trim();
+    this.form.patchValue({
+      cli_id: customer.id,
+      nombre_cliente: nombre,
+      doc_cliente: customer.document,
+      direccion_cliente: customer.address,
+    });
+    if (!this.form.get('destino_direccion')!.value) {
+      this.form.patchValue({ destino_direccion: customer.address });
+    }
+    if (!this.form.get('destino_ubigeo')!.value && customer.ubigeoCode) {
+      this.form.patchValue({ destino_ubigeo: customer.ubigeoCode });
+    }
+  }
+
+  isInvalid(name: string): boolean {
+    const control = this.form.get(name);
+    return !!control && control.enabled && control.invalid && control.touched;
   }
 
   onSelectItem(formControlName: string, item: any) {
@@ -266,6 +341,7 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
         prod_nom: this.selectedProduct.nombre,
         prod_cod: this.selectedProduct.codigo,
         cantidad: 1,
+        und_id: this.selectedProduct.unidad_id ?? null,
         peso_unitario: this.selectedProduct.peso || 0,
         peso_total: (this.selectedProduct.peso || 0) * 1,
         // descripcion es obligatoria pero no hay ningún input en la tabla de detalle para
@@ -318,6 +394,8 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
 
     this.#sucursalService.getAll().subscribe({
       next: (response) => {
+        this.sucursalesData = response.data;
+        this.applyPartidaDefault();
         this.sucursales = response.data
           .filter(item => item.id != null)
           .map((item) => ({
@@ -354,12 +432,29 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
   }
 
   save() {
-    if (this.form.invalid || this.detailsArray.length === 0) {
-      this.#globalNotification.openToastAlert(
-        'Validación',
-        'Complete todos los campos requeridos y agregue al menos un producto',
-      );
+    if (this.isReadOnly()) return;
+
+    const missing = findMissingFields(this.form, SHIPPING_GUIDE_LABELS, {
+      arrayName: 'detalles',
+      rowLabel: (i, row) => row.get('prod_nom')?.value || `Producto ${i + 1}`,
+      labels: SHIPPING_GUIDE_DETAIL_LABELS,
+    });
+    if (this.detailsArray.length === 0) {
+      missing.push('Bienes transportados (agrega al menos un producto)');
+    }
+
+    if (missing.length > 0) {
       this.form.markAllAsTouched();
+      this.#confirmService.open({
+        title: 'Faltan datos obligatorios',
+        message: `Completa lo siguiente antes de guardar:<br>${missing.map((label) => `• ${label}`).join('<br>')}`,
+        color: 'danger',
+        confirmText: 'Entendido',
+        cancelText: '',
+      })
+        // Al cerrar el aviso, llevar al usuario al primer campo que falta (antes de cerrar, el
+        // modal se queda con el foco).
+        .then(() => setTimeout(() => focusFirstInvalid(this.#host.nativeElement)));
       return;
     }
 
@@ -402,26 +497,25 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
       },
       error: (error) => {
         this.isLoadingForm.set(false);
-        this.#globalNotification.openToastAlert(
-          'Error',
-          error.messages || 'Error al guardar',
-          'danger',
-        );
+        // El backend responde 422 con el motivo (p. ej. guía facturada): mostrarlo tal cual.
+        if (error?.error?.messages) {
+          this.#globalNotification.openAlert(error.error);
+          return;
+        }
+        this.#globalNotification.openToastAlert('Error', 'No se pudo guardar la guía', 'danger');
       },
     });
   }
 
   resetForm() {
-    this.form.reset();
-    this.detailsArray.clear();
     this.guideId.set(null);
     this.selectedProduct = null;
     this.selectedCotizacion.set(null);
+    this.linkedQuotationNumber.set(null);
     this.isCotizacionAttached.set(false);
-    this.form.patchValue({
-      fecha_emision: new Date().toISOString().split('T')[0],
-      fecha_inicio_traslado: new Date().toISOString().split('T')[0],
-    });
+    this.editingEstado.set(null);
+    this.editingNumber.set(null);
+    this.buildForm();
   }
 
   formList!: FormGroup;
@@ -536,64 +630,38 @@ export class ShippingGuideMainPage extends BaseSearchComponent implements OnInit
 
   onEdit(id: number) {
     this.activeTab.set('create');
-    this.guideId.set(id);
+    this.isLoadingForm.set(true);
     this.#shippingGuideService.getById(id).subscribe({
       next: (response) => {
-        if (response.isValid) {
-          const guia = response.data;
-          const hasCotizacion = !!guia.cot_id;
-
-          this.isCotizacionAttached.set(hasCotizacion);
-          this.form = this.#formBuilder.group(buildShippingGuideForm(hasCotizacion));
-
-          this.form.patchValue({
-            serie_id: guia.serie_id,
-            fecha_emision: guia.fecha_emision,
-            fecha_inicio_traslado: guia.fecha_inicio_traslado,
-            partida_ubigeo: guia.partida_ubigeo,
-            partida_direccion: guia.partida_direccion,
-            destino_ubigeo: guia.destino_ubigeo,
-            destino_direccion: guia.destino_direccion,
-            cli_id: guia.cliente?.id,
-            tipo_traslado: guia.tipo_traslado,
-            motivo_traslado: guia.motivo_traslado,
-            transportista_tipo_doc: guia.transportista_tipo_doc,
-            transportista_nro_doc: guia.transportista_nro_doc,
-            transportista_licencia: guia.transportista_licencia,
-            transportista_placa: guia.transportista_placa,
-            transportista_direccion: guia.transportista_direccion,
-            transportista_vehiculo: guia.transportista_vehiculo,
-            empresa_transporte_tipo_doc: guia.empresa_transporte_tipo_doc,
-            empresa_transporte_nro_doc: guia.empresa_transporte_nro_doc,
-            empresa_transporte_razon_social: guia.empresa_transporte_razon_social,
-            nro_cotizacion: guia.nro_cotizacion,
-            nro_oc: guia.nro_oc,
-            nro_factura: guia.nro_factura,
-            fecha_factura: guia.fecha_factura,
-            total_peso_bruto: guia.total_peso_bruto,
-            observaciones: guia.observaciones,
-            cot_id: guia.cot_id,
-          });
-
-          this.detailsArray.clear();
-          guia.detalles?.forEach((detalle: any) => {
-            const detailForm = this.#formBuilder.group(
-              buildShippingGuideDetail({
-                detg_id: detalle.detg_id,
-                prod_id: detalle.prod_id,
-                prod_nom: detalle.producto?.prod_nom || '',
-                prod_cod: detalle.producto?.prod_cod || '',
-                cantidad: detalle.cantidad,
-                und_id: detalle.und_id,
-                peso_unitario: detalle.peso_unitario,
-                peso_total: detalle.peso_total,
-                descripcion: detalle.descripcion,
-                precio_unitario: detalle.precio_unitario,
-              }),
-            );
-            this.detailsArray.push(detailForm);
-          });
+        this.isLoadingForm.set(false);
+        if (!response.isValid || !response.data) {
+          this.#globalNotification.openAlert(response);
+          return;
         }
+
+        const { header, details, estado } = shippingGuideFromApi(response.data);
+        this.resetForm();
+        this.guideId.set(id);
+        this.editingEstado.set(estado);
+        this.editingNumber.set(header.numero_completo);
+
+        this.form.patchValue(header);
+        details.forEach((detalle) =>
+          this.detailsArray.push(this.#formBuilder.group(buildShippingGuideDetail(detalle))),
+        );
+
+        const linked = !!header.cot_id;
+        this.isCotizacionAttached.set(linked);
+        this.linkedQuotationNumber.set(header.nro_cotizacion);
+        applyCotizacionLock(this.form, linked);
+
+        if (this.isReadOnly()) {
+          this.form.disable({ emitEvent: false });
+        }
+      },
+      error: (error) => {
+        this.isLoadingForm.set(false);
+        this.#globalNotification.openAlert(error.error);
       },
     });
   }
