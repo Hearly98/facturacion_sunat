@@ -94,8 +94,8 @@ export function tipoDocumentoConfig(): ModuleConfig {
     name: 'Tipo de Documento',
     route: '/tipo-documento',
     createButtonText: 'Nuevo Registro',
-    // Gotcha confirmed via code audit: this module's filter form uses `nombre`, not `name` like the rest.
-    searchControlName: 'nombre',
+    // El filtro usa `name` como el resto de módulos desde 2fb9d57 (antes era `nombre`).
+    searchControlName: 'name',
     identifyValue: name,
     createFields: [
       { label: 'Nombre', value: name },

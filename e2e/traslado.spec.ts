@@ -79,8 +79,31 @@ test('Traslado: transferir entre almacenes descuenta origen y suma destino', asy
   await expect(rows.first()).toBeVisible({ timeout: 10_000 });
 });
 
+/**
+ * Precondición del caso "stock insuficiente": el producto debe estar VINCULADO al almacén de
+ * origen (si no, el buscador ni lo ofrece) pero sin ingresos en Kardex. Se vincula con stock 0;
+ * si ya estaba vinculado, el backend lo rechaza y da igual.
+ */
+async function vincularSinStock(page: Page, productoTerm: string, almacenNombre: string) {
+  const api = process.env['E2E_API_URL'] ?? 'http://127.0.0.1:8000/api/v1';
+  const token = await page.evaluate(() => localStorage.getItem('factu_token'));
+  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
+  const productos = await (await page.request.post(`${api}/productos/search-quick`, { headers, data: { term: productoTerm } })).json();
+  const almacenes = await (await page.request.get(`${api}/almacenes`, { headers })).json();
+  const lista = almacenes.data?.items ?? almacenes.data ?? [];
+  const almacen = lista.find((a: any) => (a.nombre ?? a.name) === almacenNombre);
+  expect(productos.data?.[0], `producto ${productoTerm}`).toBeTruthy();
+  expect(almacen, `almacén ${almacenNombre}`).toBeTruthy();
+  await page.request.post(`${api}/producto-almacen`, {
+    headers,
+    data: { idProducto: productos.data[0].id, idAlmacen: almacen.id, stock: 0 },
+  });
+}
+
 test('Traslado: stock insuficiente en origen se bloquea con mensaje claro', async ({ page }) => {
   await page.goto('/movimientos');
+  await vincularSinStock(page, 'Fideos', 'ALMACEN EN TRANSITO');
+  await page.reload();
   await fieldByLabel(page, 'Tipo de Movimiento').selectOption({ label: 'Transferencia' });
   await fieldByLabel(page, 'Almacén Origen').selectOption({ label: 'ALMACEN EN TRANSITO' });
   await fieldByLabel(page, 'Almacén Destino').selectOption({ label: 'ALMACEN PRINCIPAL' });
