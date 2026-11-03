@@ -33,7 +33,9 @@ async function crearCompraCredito(page: Page) {
   await selectViaSearchSelect(page, 'Proveedor', 'Distribuidora ABC');
 
   await page.locator('select[formcontrolname="suc_id"]').selectOption({ index: 1 });
-  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ index: 1 });
+  // Solo se compra en almacenes donde el producto está vinculado (producto_almacen); el
+  // seeder vincula los productos al almacén secundario.
+  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ label: 'ALMACEN SECUNDARIO' });
   await selectViaSearchSelect(page, 'Producto', 'Arroz');
 
   await page.getByRole('button', { name: 'Agregar Producto', exact: true }).click();
@@ -142,7 +144,9 @@ test('Compra: contado nace Completada y no admite edición ni pagos', async ({ p
   await selectViaSearchSelect(page, 'Proveedor', 'Distribuidora ABC');
 
   await page.locator('select[formcontrolname="suc_id"]').selectOption({ index: 1 });
-  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ index: 1 });
+  // Solo se compra en almacenes donde el producto está vinculado (producto_almacen); el
+  // seeder vincula los productos al almacén secundario.
+  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ label: 'ALMACEN SECUNDARIO' });
   await selectViaSearchSelect(page, 'Producto', 'Arroz');
   await page.getByRole('button', { name: 'Agregar Producto', exact: true }).click();
   await page.locator('input[formcontrolname="costo_unitario"]').first().fill('50');
@@ -168,7 +172,9 @@ test('Compra: efectivo también autocompleta la compra al crearla', async ({ pag
   await selectViaSearchSelect(page, 'Proveedor', 'Distribuidora ABC');
 
   await page.locator('select[formcontrolname="suc_id"]').selectOption({ index: 1 });
-  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ index: 1 });
+  // Solo se compra en almacenes donde el producto está vinculado (producto_almacen); el
+  // seeder vincula los productos al almacén secundario.
+  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ label: 'ALMACEN SECUNDARIO' });
   await selectViaSearchSelect(page, 'Producto', 'Arroz');
   await page.getByRole('button', { name: 'Agregar Producto', exact: true }).click();
   await page.locator('input[formcontrolname="costo_unitario"]').first().fill('75');
