@@ -1,6 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import {
   Component,
+  ElementRef,
   inject,
   Inject,
   OnInit,
@@ -10,7 +11,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
   ButtonDirective,
@@ -62,7 +63,24 @@ import { QuotationModel } from 'src/app/quotation/core/models/quotation.model';
 import { GetShippingGuideModel } from 'src/app/shipping-guide/core/models/get-shipping-guide.model';
 import { CustomerMapper } from 'src/app/customer/core/mappers';
 import { CurrencyPipe } from '@shared/pipes/currency.pipe';
-import { downloadBlobResponse } from '@shared/functions';
+import { downloadBlobResponse, findMissingFields, focusFirstInvalid } from '@shared/functions';
+import { UserService } from 'src/app/user/core/services/user.service';
+import { AuthService } from 'src/app/core/auth/services/auth.service';
+import { shippingGuideFromApi } from 'src/app/shipping-guide/helpers';
+
+/** Lo que el usuario ve cuando falta algo, en el orden de la pantalla. */
+const SALE_LABELS: Record<string, string> = {
+  doc_id: 'Tipo de documento',
+  suc_id: 'Sucursal',
+  almacen_id: 'Almacén (la venta afecta stock)',
+  mp_cod: 'Tipo de pago',
+  mon_id: 'Moneda',
+  vendedor_id: 'Vendedor',
+};
+const SALE_DETAIL_LABELS: Record<string, string> = {
+  cantidad: 'cantidad mayor a 0',
+  precio_unitario: 'precio',
+};
 import { SaleListItemModel, toSaleListItem } from '../../core/models/sale-list-item.model';
 
 /** Estado de venta "Anulado con Nota de Crédito" (estado_ventas.id). */
@@ -106,6 +124,9 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   public linkedCotizacion = signal<QuotationModel | null>(null);
   public linkedGuia = signal<GetShippingGuideModel | null>(null);
   public isClientReadonly = computed(() => !!(this.linkedCotizacion() || this.linkedGuia()));
+  /** Cotización y guía son excluyentes: la guía ya trae su propia cotización. */
+  public guiaCotizacionNumber = signal<string | null>(null);
+  public vendedorOptions = signal<SelectOption[]>([]);
 
   // Modal state
   isSearchModalVisible = signal(false);
@@ -159,6 +180,9 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   readonly #globalNotification = inject(GlobalNotification);
   readonly #confirmService = inject(ConfirmService);
   readonly #route = inject(ActivatedRoute);
+  readonly #userService = inject(UserService);
+  readonly #authService = inject(AuthService);
+  readonly #host = inject(ElementRef<HTMLElement>);
 
   constructor(@Inject(ViewContainerRef) viewContainerRef: ViewContainerRef) {
     super(MODULES.SALES, viewContainerRef);
@@ -179,6 +203,12 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
   loadForm() {
     this.form = this.#formBuilder.group(buildSaleForm());
+    for (const name of ['doc_id', 'suc_id', 'mp_cod', 'mon_id', 'vendedor_id']) {
+      this.form.get(name)!.addValidators(Validators.required);
+    }
+    this.applyAlmacenRequired(this.form.get('afecta_stock')!.value);
+    this.form.get('afecta_stock')!.valueChanges.subscribe((afecta) => this.applyAlmacenRequired(afecta));
+    this.form.patchValue({ vendedor_id: this.#authService.user()?.id ?? null });
     this.loadSelectCombos();
 
     this.form.get('mp_cod')?.valueChanges.subscribe((value) => {
@@ -268,8 +298,15 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   onSelectGuia(guia: GetShippingGuideModel) {
+    // GET /guias-remision/{id} devuelve el modelo crudo (id, cotizacion_id, producto_id...):
+    // se traduce con el mismo mapper que usa la pantalla de guías.
+    const { header, details } = shippingGuideFromApi(guia);
     this.linkedGuia.set(guia);
-    this.form.patchValue({ guia_id: guia.guia_id });
+    this.guiaCotizacionNumber.set(header.nro_cotizacion);
+    this.form.patchValue({ guia_id: (guia as any).id, cot_id: header.cot_id });
+    if (header.suc_id && !this.form.get('suc_id')!.value) {
+      this.form.patchValue({ suc_id: header.suc_id });
+    }
     if (guia.cliente) {
       const customer = CustomerMapper.fromApi(guia.cliente);
       this.form.patchValue({ cli_id: customer.id });
@@ -277,22 +314,31 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
     }
 
     this.detailsArray.clear();
-    (guia.detalles ?? []).forEach((detalle) => {
+    details.forEach((detalle) => {
       const detailForm = this.#formBuilder.group({
         prod_id: [detalle.prod_id],
-        cantidad: [detalle.cantidad],
-        prod_nom: [{ value: detalle.producto?.prod_nom ?? '', disabled: true }],
-        prod_cod_interno: [detalle.producto?.prod_cod_interno ?? ''],
-        unidad: [null],
-        // El precio viene de la Cotización que la Guía tenía vinculada al crearse
-        // (snapshot guardado en guia_remision_detalles); si la Guía no nació de una
-        // Cotización, no hay precio y el vendedor lo completa a mano.
-        precio_unitario: [{ value: detalle.precio_unitario ?? null, disabled: !!detalle.precio_unitario }],
+        // Se factura lo que se despachó: producto y cantidad quedan fijos.
+        cantidad: [{ value: detalle.cantidad, disabled: true }, [Validators.required, Validators.min(1)]],
+        prod_nom: [{ value: detalle.prod_nom, disabled: true }],
+        prod_cod_interno: [detalle.prod_cod],
+        unidad: [detalle.und_nom],
+        // El precio viene de la cotización de la que nació la guía (snapshot en la línea);
+        // si la guía no nació de una cotización, el vendedor lo completa a mano.
+        precio_unitario: [
+          { value: detalle.precio_unitario, disabled: detalle.precio_unitario !== null },
+          [Validators.required, Validators.min(0)],
+        ],
         precio_venta: [{ value: null, disabled: true }],
         dscto: [detalle.descuento ?? 0],
       });
       this.detailsArray.push(detailForm as any);
     });
+  }
+
+  private applyAlmacenRequired(afectaStock: boolean | null) {
+    const almacen = this.form.get('almacen_id')!;
+    almacen.setValidators(afectaStock ? [Validators.required] : []);
+    almacen.updateValueAndValidity({ emitEvent: false });
   }
 
   unlinkCotizacion() {
@@ -306,7 +352,8 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
 
   unlinkGuia() {
     this.linkedGuia.set(null);
-    this.form.patchValue({ guia_id: null });
+    this.guiaCotizacionNumber.set(null);
+    this.form.patchValue({ guia_id: null, cot_id: null });
     this.detailsArray.clear();
     if (!this.linkedCotizacion()) {
       this.clearClientFields();
@@ -394,6 +441,13 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   loadSelectCombos() {
+    this.#userService.getAll().subscribe({
+      next: (response) =>
+        this.vendedorOptions.set(
+          response.data.map((u: any) => ({ value: u.id, label: `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || u.email })),
+        ),
+    });
+
     this.#currencyService.getAll().subscribe({
       next: (response) => {
         this.currencyOptions.set(
@@ -468,12 +522,27 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   save() {
-    if (this.form.invalid || this.detailsArray.length === 0) {
-      this.#globalNotification.openToastAlert(
-        'Validación',
-        'Complete todos los campos requeridos y agregue al menos un producto',
-      );
+    const missing = findMissingFields(this.form, SALE_LABELS, {
+      arrayName: 'detalles',
+      rowLabel: (i, row) => row.get('prod_nom')?.value || `Producto ${i + 1}`,
+      labels: SALE_DETAIL_LABELS,
+    });
+    if (this.detailsArray.length === 0) {
+      missing.push('Productos (agrega al menos uno)');
+    }
+
+    if (missing.length > 0) {
       this.form.markAllAsTouched();
+      this.#confirmService.open({
+        title: 'Faltan datos obligatorios',
+        message: `Completa lo siguiente antes de guardar:<br>${missing.map((label) => `• ${label}`).join('<br>')}`,
+        color: 'danger',
+        confirmText: 'Entendido',
+        cancelText: '',
+      })
+        // Al cerrar el aviso, llevar al usuario al primer campo que falta (antes de cerrar, el
+        // modal se queda con el foco).
+        .then(() => setTimeout(() => focusFirstInvalid(this.#host.nativeElement)));
       return;
     }
 
@@ -501,12 +570,18 @@ export class SalesMainPage extends BaseSearchComponent implements OnInit {
   }
 
   resetForm() {
-    this.form.reset();
     this.detailsArray.clear();
+    // reset() sin valores dejaba la fecha de emisión y "afecta stock" vacíos.
+    this.form.reset({
+      fecha_emision: new Date().toISOString().split('T')[0],
+      afecta_stock: true,
+      vendedor_id: this.#authService.user()?.id ?? null,
+    });
     this.saleId.set(null);
     this.selectedProduct = null;
     this.linkedCotizacion.set(null);
     this.linkedGuia.set(null);
+    this.guiaCotizacionNumber.set(null);
   }
 
   toggleEstado(id: number) {
