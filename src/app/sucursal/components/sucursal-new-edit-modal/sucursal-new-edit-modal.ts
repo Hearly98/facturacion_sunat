@@ -20,10 +20,15 @@ import { buildSucursalForm, sucursalErrorMessages, SucursalStructure } from '../
 import { CreateSucursal, UpdateSucursal } from '../../core/models';
 import { GlobalNotification } from '../../../shared/alerts/global-notification/global-notification';
 import { ValidationMessagesComponent } from '@shared/components/error-messages/validation-messages.component';
+import {
+  UbigeoPickerComponent,
+  UbigeoSeleccionado,
+} from '@shared/components/ubigeo-picker/ubigeo-picker.component';
 
 @Component({
   selector: 'app-sucursal-new-edit-modal',
   imports: [
+    UbigeoPickerComponent,
     CardComponent,
     CardBodyComponent,
     ModalBodyComponent,
@@ -144,5 +149,14 @@ export class SucursalNewEditModal extends BaseComponent implements OnInit {
         },
       });
     this.subscriptions.push(subscription);
+  }
+
+  /** Al elegir el distrito, los nombres viajan junto con el código (el backend los guarda). */
+  onUbigeoSelected(ubigeo: UbigeoSeleccionado) {
+    this.form.patchValue({
+      department: ubigeo.departamento,
+      province: ubigeo.provincia,
+      district: ubigeo.distrito,
+    } as any);
   }
 }

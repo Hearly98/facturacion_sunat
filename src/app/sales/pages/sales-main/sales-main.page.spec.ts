@@ -25,6 +25,8 @@ import { ShippingGuideService } from 'src/app/shipping-guide/core/services/shipp
 import { SunatService } from 'src/app/sunat/core/services/sunat.service';
 import { SaleListItemModel } from '../../core/models/sale-list-item.model';
 import { of } from 'rxjs';
+import { UserService } from 'src/app/user/core/services/user.service';
+import { AuthService } from 'src/app/core/auth/services/auth.service';
 
 // REGRESSION: patchCustomer/onSelectCotizacion/onSelectGuia used to read field names that
 // don't exist on the real DTOs (item.documento/tipoDocumentoId/direccion/telefono instead of
@@ -65,6 +67,8 @@ describe('SalesMainPage', () => {
         { provide: QuotationService, useValue: {} },
         { provide: ShippingGuideService, useValue: {} },
         { provide: SunatService, useValue: sunatService },
+        { provide: UserService, useValue: { getAll: () => of({ data: [] }) } },
+        { provide: AuthService, useValue: { user: () => ({ id: 1 }) } },
       ],
     }).compileComponents();
 
@@ -177,6 +181,23 @@ describe('SalesMainPage', () => {
       expect(component.form.value.cli_telf).toBe('987654321');
       expect(component.linkedCotizacion()).toEqual(cotizacion);
     });
+
+    it('convierte el precio cotizado (sin IGV) al precio de venta con IGV', () => {
+      component.onSelectCotizacion({
+        ...cotizacion,
+        details: [
+          { id: 1, quotationId: 10, productId: 3, productName: 'Arroz', productCode: 'ARR', productUnit: 'KG',
+            productUnitId: 2, productWeight: null, productTaxAffectation: '10', unitPrice: 100, quantity: 2,
+            discount: 0, total: 200, description: null },
+          { id: 2, quotationId: 10, productId: 4, productName: 'Libro', productCode: 'LIB', productUnit: 'UND',
+            productUnitId: 1, productWeight: null, productTaxAffectation: '20', unitPrice: 50, quantity: 1,
+            discount: 0, total: 50, description: null },
+        ],
+      });
+
+      const precios = component.detailsArray.getRawValue().map((l: any) => l.precio_unitario);
+      expect(precios).toEqual([118, 50]);
+    });
   });
 
   describe('onSelectGuia', () => {
@@ -194,10 +215,20 @@ describe('SalesMainPage', () => {
       empresaId: 1,
     };
 
+    // Forma real de GET /guias-remision/{id}: modelo crudo con `id`, `cotizacion_id` y líneas
+    // con producto_id/unidad_id (antes el spec usaba guia_id/prod_id, que el backend no envía).
     const guia = Object.assign(new GetShippingGuideModel(), {
-      guia_id: 20,
+      id: 20,
+      cotizacion_id: 5,
+      nro_cotizacion: 'COT01-00000005',
       cliente: clienteDto,
-    });
+      detalles: [
+        { id: 1, producto_id: 3, unidad_id: 2, prod_nom: 'Arroz', cantidad: 4, precio_unitario: '114.00',
+          descuento: '0', producto: { codigo_interno: 'ARR-001' }, unidad: { nombre: 'Kilogramo' } },
+        { id: 2, producto_id: 4, unidad_id: 1, prod_nom: 'Aceite', cantidad: 1, precio_unitario: null,
+          descuento: '0', producto: { codigo_interno: 'ACE-001' }, unidad: { nombre: 'Unidad' } },
+      ],
+    } as any);
 
     it('maps the raw ClienteResource DTO through CustomerMapper before patching the form', () => {
       component.onSelectGuia(guia);
@@ -209,6 +240,21 @@ describe('SalesMainPage', () => {
       expect(component.form.value.cli_direcc).toBe('Calle Los Pinos 789');
       expect(component.form.value.cli_correo).toBe('maria@example.com');
       expect(component.form.value.cli_telf).toBe('911222333');
+    });
+
+    it('trae las líneas reales de la guía, fija la cantidad y hereda la cotización', () => {
+      component.onSelectGuia(guia);
+
+      const lineas = component.detailsArray.getRawValue();
+      expect(lineas.map((l: any) => l.prod_id)).toEqual([3, 4]);
+      expect(lineas[0]).toEqual(jasmine.objectContaining({
+        // 114 sin IGV en la cotización -> 134.52 con IGV en la venta.
+        cantidad: 4, prod_nom: 'Arroz', prod_cod_interno: 'ARR-001', unidad: 'Kilogramo', precio_unitario: 134.52,
+      }));
+      expect(component.detailsArray.at(0).get('cantidad')!.disabled).toBeTrue();
+      // Sin precio en la guía: el vendedor debe poder escribirlo.
+      expect(component.detailsArray.at(1).get('precio_unitario')!.enabled).toBeTrue();
+      expect(component.form.getRawValue().cot_id).toBe(5);
     });
 
     it('getClientInitialValue reads the mapped business name, not the non-existent cli_nom', () => {

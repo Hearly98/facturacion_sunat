@@ -73,15 +73,30 @@
                       </div>
                     } @else {
                       <button
+                        type="button"
                         cButton
                         color="primary"
                         variant="outline"
                         class="w-100 justify-content-start"
+                        [disabled]="!!linkedGuia()"
                         (click)="openDocumentSearch('cotizacion')"
                       >
                         <svg cIcon name="cilSearch" class="me-2"></svg>
                         Buscar cotización
                       </button>
+                      @if (linkedGuia()) {
+                        <div class="small text-muted mt-1">
+                          @if (guiaCotizacionNumber()) {
+                            La guía ya trae la cotización {{ guiaCotizacionNumber() }}.
+                          } @else {
+                            No aplica: la venta se arma desde la guía.
+                          }
+                        </div>
+                      } @else {
+                        <div class="small text-muted mt-1">
+                          Solo cotizaciones pendientes. Si ya tiene guía, factúrala desde la guía.
+                        </div>
+                      }
                     }
                   </c-col>
 
@@ -96,6 +111,9 @@
                         <div class="flex-grow-1">
                           <div class="d-flex align-items-center gap-2">
                             <span class="fw-semibold">{{ linkedGuia()!.numero_completo }}</span>
+                            @if (guiaCotizacionNumber()) {
+                              <span class="small text-muted">de {{ guiaCotizacionNumber() }}</span>
+                            }
                             <span class="badge bg-primary-subtle text-primary small">
                               <svg cIcon name="cilLockLocked" style="width:10px;height:10px;" class="me-1"></svg>
                               Vinculada
@@ -115,10 +133,12 @@
                       </div>
                     } @else {
                       <button
+                        type="button"
                         cButton
                         color="primary"
                         variant="outline"
                         class="w-100 justify-content-start"
+                        [disabled]="!!linkedCotizacion()"
                         (click)="openDocumentSearch('guia')"
                       >
                         <svg cIcon name="cilSearch" class="me-2"></svg>
@@ -135,7 +155,7 @@
                       @if (linkedCotizacion()) {
                         Los datos del cliente provienen de la cotización <strong>{{ linkedCotizacion()!.fullNumber }}</strong>. Los campos de cliente son de solo lectura.
                       } @else {
-                        Los datos del cliente provienen de la guía <strong>{{ linkedGuia()!.numero_completo }}</strong>. Los campos de cliente son de solo lectura.
+                        El cliente y los productos (con sus cantidades) provienen de la guía <strong>{{ linkedGuia()!.numero_completo }}</strong>: se factura lo que se despachó. Completa el precio si la guía no lo trae.
                       }
                     </span>
                   </div>
@@ -168,7 +188,7 @@
                       </select>
                     </c-col>
                     <c-col md="3">
-                      <label for="doc_id" class="form-label">Tipo Documento</label>
+                      <label for="doc_id" class="form-label">Tipo Documento <span class="text-danger">*</span></label>
                       <select id="doc_id" class="form-select" formControlName="doc_id">
                         <option [ngValue]="null">Seleccione</option>
                         @for (option of documentOptions(); track option.value) {
@@ -177,7 +197,7 @@
                       </select>
                     </c-col>
                     <c-col md="3">
-                      <label for="suc_id" class="form-label">Sucursal</label>
+                      <label for="suc_id" class="form-label">Sucursal <span class="text-danger">*</span></label>
                       <select id="suc_id" class="form-select" formControlName="suc_id">
                         <option [ngValue]="null">Seleccione</option>
                         @for (option of sucursalOptions(); track option.value) {
@@ -186,7 +206,7 @@
                       </select>
                     </c-col>
                     <c-col md="3">
-                      <label for="almacen_id" class="form-label">Almacén</label>
+                      <label for="almacen_id" class="form-label">Almacén <span class="text-danger">*</span></label>
                       <select id="almacen_id" class="form-select" formControlName="almacen_id">
                         <option [ngValue]="null">Seleccione</option>
                         @for (option of almacenOptions(); track option.value) {
@@ -199,7 +219,7 @@
                       <input type="date" id="fecha_emision" class="form-control" formControlName="fecha_emision" />
                     </c-col>
                     <c-col md="3">
-                      <label for="mp_cod" class="form-label">Tipo de Pago</label>
+                      <label for="mp_cod" class="form-label">Tipo de Pago <span class="text-danger">*</span></label>
                       <select id="mp_cod" class="form-select" formControlName="mp_cod">
                         <option [ngValue]="null">Seleccione</option>
                         @for (option of paymentMethodOptions(); track option.value) {
@@ -208,7 +228,7 @@
                       </select>
                     </c-col>
                     <c-col md="3">
-                      <label for="mon_id" class="form-label">Moneda</label>
+                      <label for="mon_id" class="form-label">Moneda <span class="text-danger">*</span></label>
                       <select id="mon_id" class="form-select" formControlName="mon_id">
                         <option [ngValue]="null">Seleccione</option>
                         @for (option of currencyOptions(); track option.value) {
@@ -217,8 +237,13 @@
                       </select>
                     </c-col>
                     <c-col md="3">
-                      <label for="vendedor_id" class="form-label">Vendedor</label>
-                      <input type="number" id="vendedor_id" class="form-control" formControlName="vendedor_id" placeholder="ID Vendedor" />
+                      <label for="vendedor_id" class="form-label">Vendedor <span class="text-danger">*</span></label>
+                      <select id="vendedor_id" class="form-select" formControlName="vendedor_id">
+                        <option [ngValue]="null">Seleccione</option>
+                        @for (option of vendedorOptions(); track option.value) {
+                          <option [ngValue]="option.value">{{ option.label }}</option>
+                        }
+                      </select>
                     </c-col>
                     @if (showFechaVencimiento()) {
                       <c-col md="3">
@@ -299,6 +324,7 @@
                 </c-card-body>
               </c-card>
 
+              @if (!linkedGuia()) {
               <!-- Agregar Producto -->
               <c-card class="mb-4">
                 <c-card-body>
@@ -334,10 +360,12 @@
                   </c-row>
                 </c-card-body>
               </c-card>
+              }
 
               <!-- Tabla de detalles -->
               <app-sale-detail-table
                 [detailsArray]="detailsArray"
+                [showActions]="!linkedGuia()"
                 (detailRemoved)="onDetailRemoved($event)"
               ></app-sale-detail-table>
 
@@ -358,7 +386,7 @@
                         cButton
                         color="success"
                         (click)="save()"
-                        [disabled]="!form.valid || detailsArray.length === 0"
+                        [disabled]="isLoadingForm()"
                       >
                         <svg cIcon name="cilSave" class="me-2"></svg>
                         Guardar Venta

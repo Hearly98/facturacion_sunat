@@ -42,6 +42,12 @@ export const customerStructure = [
     col: '12',
   },
   {
+    label: 'Ubigeo (departamento / provincia / distrito)',
+    formControlName: 'ubigeoCode',
+    type: 'ubigeo',
+    col: '12',
+  },
+  {
     label: 'Razon Social',
     formControlName: 'businessName',
     type: 'text',

@@ -1,3 +1,4 @@
+import { VinculoProductoAlmacenService } from 'src/app/almacen/core/services/vinculo-producto-almacen.service';
 import { Component, Inject, inject, OnInit, ViewContainerRef, signal } from '@angular/core';
 import {
   ButtonDirective,
@@ -186,6 +187,11 @@ export class MovimientoMainPage extends BaseSearchComponent implements OnInit {
         return { data: [] };
       }
       this.almacenError.set(false);
+      // Un ingreso puede traer productos aún no vinculados al almacén; salidas y transferencias
+      // solo pueden mover lo que ya está en el origen.
+      if (this.form.get('tipoMovimiento')?.value === 'INGRESO') {
+        return this.#vinculo.buscarParaIngreso(term, almacenId);
+      }
       return this.#productService.searchQuick({
         term,
         almacen_id: almacenId,
@@ -202,9 +208,16 @@ export class MovimientoMainPage extends BaseSearchComponent implements OnInit {
     }
   }
 
+  readonly #vinculo = inject(VinculoProductoAlmacenService);
+
   onProductSelected(item: any) {
     if (!item) return;
-    this.selectedProduct = item;
+    this.selectedProduct = null;
+    const almacenId = this.getWarehouseIdForProductSearch();
+    const almacenNombre = this.almacenes.find((a) => a.id === almacenId)?.nombre ?? '';
+    this.#vinculo.asegurarVinculo(item, almacenId!, almacenNombre).then((ok) => {
+      if (ok) this.selectedProduct = { ...item, vinculado: true };
+    });
   }
 
   getWarehouseLabel(field: MovimientoField): string {

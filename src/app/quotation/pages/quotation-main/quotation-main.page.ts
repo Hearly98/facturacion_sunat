@@ -1,4 +1,5 @@
-import { Component, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
+import { focusFirstInvalid } from '@shared/functions';
+import { Component, inject, Inject, OnInit, signal, ViewContainerRef, ElementRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import {
@@ -160,6 +161,7 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
   readonly #paymentMethodService = inject(PaymentMethodService);
   readonly #quotationService = inject(QuotationService);
   readonly #userService = inject(UserService);
+  readonly #host = inject(ElementRef<HTMLElement>);
   readonly #customerService = inject(CustomerService);
   readonly #productService = inject(ProductService);
   readonly #sucursalService = inject(SucursalService);
@@ -442,13 +444,15 @@ export class QuotationMainPage extends BaseComponent implements OnInit {
 
     if (missing.length > 0) {
       this.form.markAllAsTouched();
-      this.#confirmService.open({
-        title: 'Faltan datos obligatorios',
-        message: `Completá lo siguiente antes de guardar:<br>${missing.map((label) => `• ${label}`).join('<br>')}`,
-        color: 'danger',
-        confirmText: 'Entendido',
-        cancelText: '',
-      });
+      this.#confirmService
+        .open({
+          title: 'Faltan datos obligatorios',
+          message: `Completa lo siguiente antes de guardar:<br>${missing.map((label) => `• ${label}`).join('<br>')}`,
+          color: 'danger',
+          confirmText: 'Entendido',
+          cancelText: '',
+        })
+        .then(() => setTimeout(() => focusFirstInvalid(this.#host.nativeElement)));
       return;
     }
 

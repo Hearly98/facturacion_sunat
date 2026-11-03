@@ -9,29 +9,62 @@ export interface Ubigeo {
   label: string;
 }
 
-interface UbigeoDto {
-  codigo_ubigeo: string;
-  departamento: string;
-  provincia: string;
-  distrito: string;
+export interface UbigeoDistrito {
+  codigo: string;
+  nombre: string;
 }
 
+export interface UbigeoProvincia {
+  codigo: string;
+  nombre: string;
+  distritos: UbigeoDistrito[];
+}
+
+export interface UbigeoDepartamento {
+  codigo: string;
+  nombre: string;
+  provincias: UbigeoProvincia[];
+}
+
+/**
+ * Catálogo oficial de SUNAT (~1900 distritos). El backend lo entrega como árbol
+ * departamento -> provincias -> distritos; se pide una sola vez por sesión.
+ */
 @Injectable({ providedIn: 'root' })
 export class UbigeoService {
   readonly #http = inject(HttpClient);
 
-  // Catálogo estático (~1900 filas): se pide una sola vez por sesión
-  readonly #all$ = this.#http.get<ResponseDto<UbigeoDto[]>>(`${environment.apiUrl}/ubigeos/list`).pipe(
-    map((response) =>
-      (response.data ?? []).map((u) => ({
-        code: u.codigo_ubigeo,
-        label: `${u.departamento} / ${u.provincia} / ${u.distrito}`,
-      })),
+  readonly #tree$ = this.#http
+    .get<ResponseDto<UbigeoDepartamento[]>>(`${environment.apiUrl}/ubigeos/list`)
+    .pipe(
+      map((response) => response.data ?? []),
+      shareReplay(1),
+    );
+
+  readonly #flat$ = this.#tree$.pipe(
+    map((departamentos) =>
+      departamentos.flatMap((dep) =>
+        dep.provincias.flatMap((prov) =>
+          prov.distritos.map((dist) => ({
+            code: dist.codigo,
+            label: `${dep.nombre} / ${prov.nombre} / ${dist.nombre}`,
+          })),
+        ),
+      ),
     ),
     shareReplay(1),
   );
 
+  tree(): Observable<UbigeoDepartamento[]> {
+    return this.#tree$;
+  }
+
   list(): Observable<Ubigeo[]> {
-    return this.#all$;
+    return this.#flat$;
+  }
+
+  /** "Departamento / Provincia / Distrito" para un código, o null si no existe. */
+  describe(code: string | null | undefined): Observable<string | null> {
+    return this.#flat$.pipe(map((all) => all.find((u) => u.code === code)?.label ?? null));
   }
 }

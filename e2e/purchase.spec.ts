@@ -33,7 +33,9 @@ async function crearCompraCredito(page: Page) {
   await selectViaSearchSelect(page, 'Proveedor', 'Distribuidora ABC');
 
   await page.locator('select[formcontrolname="suc_id"]').selectOption({ index: 1 });
-  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ index: 1 });
+  // Solo se compra en almacenes donde el producto está vinculado (producto_almacen); el
+  // seeder vincula los productos al almacén secundario.
+  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ label: 'ALMACEN SECUNDARIO' });
   await selectViaSearchSelect(page, 'Producto', 'Arroz');
 
   await page.getByRole('button', { name: 'Agregar Producto', exact: true }).click();
@@ -142,7 +144,9 @@ test('Compra: contado nace Completada y no admite edición ni pagos', async ({ p
   await selectViaSearchSelect(page, 'Proveedor', 'Distribuidora ABC');
 
   await page.locator('select[formcontrolname="suc_id"]').selectOption({ index: 1 });
-  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ index: 1 });
+  // Solo se compra en almacenes donde el producto está vinculado (producto_almacen); el
+  // seeder vincula los productos al almacén secundario.
+  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ label: 'ALMACEN SECUNDARIO' });
   await selectViaSearchSelect(page, 'Producto', 'Arroz');
   await page.getByRole('button', { name: 'Agregar Producto', exact: true }).click();
   await page.locator('input[formcontrolname="costo_unitario"]').first().fill('50');
@@ -168,7 +172,9 @@ test('Compra: efectivo también autocompleta la compra al crearla', async ({ pag
   await selectViaSearchSelect(page, 'Proveedor', 'Distribuidora ABC');
 
   await page.locator('select[formcontrolname="suc_id"]').selectOption({ index: 1 });
-  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ index: 1 });
+  // Solo se compra en almacenes donde el producto está vinculado (producto_almacen); el
+  // seeder vincula los productos al almacén secundario.
+  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ label: 'ALMACEN SECUNDARIO' });
   await selectViaSearchSelect(page, 'Producto', 'Arroz');
   await page.getByRole('button', { name: 'Agregar Producto', exact: true }).click();
   await page.locator('input[formcontrolname="costo_unitario"]').first().fill('75');
@@ -179,4 +185,55 @@ test('Compra: efectivo también autocompleta la compra al crearla', async ({ pag
   expect(createBody.isValid, JSON.stringify(createBody)).toBe(true);
   expect(createBody.data.estado_id, 'efectivo debe autocompletarse igual que contado (estado_id 2)').toBe(2);
   expect(Number(createBody.data.monto_pendiente)).toBe(0);
+});
+
+test('Compra: un producto no vinculado al almacén se ofrece marcado y se vincula al elegirlo', async ({ page }) => {
+  await page.goto('/compras');
+  // Producto nuevo en cada corrida: garantiza que no esté vinculado a ningún almacén.
+  const api = process.env['E2E_API_URL'] ?? 'http://127.0.0.1:8000/api/v1';
+  const token = await page.evaluate(() => localStorage.getItem('factu_token'));
+  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
+  const nombre = unique('Producto Sin Vincular');
+  const creado = await (await page.request.post(`${api}/productos`, {
+    headers,
+    multipart: { nombre, unidad_id: '1', precio_compra_base: '10', tipo_afectacion_igv: '10' },
+  })).json();
+  expect(creado.isValid, JSON.stringify(creado)).toBe(true);
+
+  await fieldByLabel(page, 'Tipo Documento').selectOption({ index: 1 });
+  await fieldByLabel(page, 'Tipo de Pago').selectOption({ label: 'CONTADO' });
+  await fieldByLabel(page, 'Moneda').selectOption({ index: 1 });
+  await selectViaSearchSelect(page, 'Proveedor', 'Distribuidora ABC');
+  await page.locator('select[formcontrolname="suc_id"]').selectOption({ index: 1 });
+  await page.locator('select[formcontrolname="almacen_id"]').selectOption({ label: 'ALMACEN PRINCIPAL' });
+
+  // Antes el buscador lo ocultaba sin explicación; ahora aparece marcado.
+  const input = page.locator('input[placeholder="Producto"]');
+  await input.click();
+  await input.fill(nombre);
+  const opcion = page.locator('li[cdropdownitem]', { hasText: nombre }).first();
+  await expect(opcion).toContainText('no vinculado a este almacén');
+  await opcion.click();
+
+  const aviso = page.locator('.modal.show', { hasText: 'Producto no vinculado' });
+  await expect(aviso).toContainText('ALMACEN PRINCIPAL');
+  await aviso.getByRole('button', { name: 'Vincular' }).click();
+
+  await page.getByRole('button', { name: 'Agregar Producto', exact: true }).click();
+  await expect(page.locator('input[formcontrolname="cantidad"]').first()).toBeVisible();
+  await page.locator('#afecta_stock').check(); // la compra ingresa la mercadería al almacén
+  const compra = (await clickAndWaitForApi(page, ['POST'], () =>
+    page.getByRole('button', { name: 'Guardar Compra', exact: true }).click(),
+  )) as { isValid: boolean };
+  expect(compra.isValid, JSON.stringify(compra)).toBe(true);
+
+  // Quedó vinculado al almacén y con el stock que entró con la compra.
+  const almacenes = await (await page.request.get(`${api}/almacenes`, { headers })).json();
+  const principal = (almacenes.data?.items ?? almacenes.data).find((a: any) => a.nombre === 'ALMACEN PRINCIPAL');
+  const enAlmacen = await (await page.request.post(`${api}/productos/search-quick`, {
+    headers,
+    data: { term: nombre, almacen_id: principal.id },
+  })).json();
+  expect(enAlmacen.data[0]?.vinculado).toBe(true);
+  expect(Number(enAlmacen.data[0]?.stock)).toBeGreaterThan(0);
 });

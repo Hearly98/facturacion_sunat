@@ -42,11 +42,43 @@
                 <c-spinner></c-spinner>
               </div>
             } @else {
-              @if (isCotizacionAttached()) {
+              @if (guideId()) {
+                <c-row class="mb-2">
+                  <c-col xs="12">
+                    <h5 class="mb-0">
+                      Editando guía {{ editingNumber() }}
+                      @if (editingEstado(); as estado) {
+                        <span
+                          class="badge ms-2"
+                          [class.bg-success]="estado.codigo === '01'"
+                          [class.bg-info]="estado.codigo === '02'"
+                          [class.bg-danger]="estado.codigo === '03'"
+                          >{{ estado.nombre }}</span
+                        >
+                      }
+                    </h5>
+                  </c-col>
+                </c-row>
+              }
+              @if (isReadOnly()) {
                 <c-row class="mb-3">
                   <c-col xs="12">
-                    <c-alert color="warning" closeButton>
-                      <strong>Aviso:</strong> Esta guía está vinculada a una cotización y no puede editarse.
+                    <c-alert color="secondary">
+                      Esta guía está <strong>{{ editingEstado()?.nombre | lowercase }}</strong> y ya no se puede
+                      modificar. Puedes imprimirla desde el historial.
+                    </c-alert>
+                  </c-col>
+                </c-row>
+              } @else if (isCotizacionAttached()) {
+                <c-row class="mb-3">
+                  <c-col xs="12">
+                    <c-alert color="info">
+                      Vinculada a la cotización <strong>{{ linkedQuotationNumber() }}</strong>: el cliente y los
+                      productos (cantidades y unidades) vienen de ella y no se pueden cambiar aquí.
+                      Completa los datos de partida, destino y transporte.
+                      @if (!guideId()) {
+                        Si necesitas otros productos, desvincula la cotización.
+                      }
                     </c-alert>
                   </c-col>
                 </c-row>
@@ -75,30 +107,35 @@
                         </c-col>
                         <c-col lg="3" md="6" sm="12">
                           <label>Cotización</label>
-                          @if (selectedCotizacion()) {
+                          @if (linkedQuotationNumber()) {
                             <div class="d-flex align-items-center gap-2">
                               <input
                                 class="form-control bg-light"
-                                [value]="selectedCotizacion()!.fullNumber"
+                                [value]="linkedQuotationNumber()"
                                 disabled
                               />
-                              <button
-                                cButton
-                                color="secondary"
-                                variant="ghost"
-                                size="sm"
-                                (click)="clearCotizacion()"
-                                title="Desvincular"
-                              >
-                                <svg cIcon name="cilX"></svg>
-                              </button>
+                              @if (!guideId()) {
+                                <button
+                                  type="button"
+                                  cButton
+                                  color="secondary"
+                                  variant="ghost"
+                                  size="sm"
+                                  (click)="clearCotizacion()"
+                                  title="Desvincular cotización"
+                                >
+                                  <svg cIcon name="cilX"></svg>
+                                </button>
+                              }
                             </div>
                           } @else {
                             <button
+                              type="button"
                               cButton
                               color="primary"
                               variant="outline"
                               class="w-100"
+                              [disabled]="isReadOnly() || !!guideId()"
                               (click)="openCotizacionSearch()"
                             >
                               <svg cIcon name="cilSearch" class="me-2"></svg>
@@ -154,8 +191,20 @@
                         </c-col>
                       </c-row>
                       <c-row>
+                        @if (!isCotizacionAttached() && !isReadOnly()) {
+                          <c-col lg="12" class="mb-2">
+                            <label class="form-label">Buscar cliente registrado</label>
+                            <app-search-select
+                              [serviceFn]="getServiceFn('customerSearch')"
+                              bindLabel="businessName"
+                              bindValue="id"
+                              placeholder="Nombre, razón social o documento..."
+                              (itemSelected)="onSelectCustomer($event)"
+                            ></app-search-select>
+                          </c-col>
+                        }
                         <c-col lg="6" md="6" sm="12">
-                          <label for="nombre_cliente">Cliente</label>
+                          <label for="nombre_cliente">Cliente / Razón social <span class="text-danger">*</span></label>
                           <input
                             class="form-control"
                             type="text"
@@ -165,7 +214,7 @@
                           />
                         </c-col>
                         <c-col lg="6" md="6" sm="12">
-                          <label for="doc_cliente">Nro Documento</label>
+                          <label for="doc_cliente">N° Documento <span class="text-danger">*</span></label>
                           <input
                             class="form-control"
                             type="text"
@@ -175,7 +224,7 @@
                           />
                         </c-col>
                         <c-col lg="12" md="12" sm="12">
-                          <label for="direccion_cliente">Direccion</label>
+                          <label for="direccion_cliente">Dirección <span class="text-danger">*</span></label>
                           <input
                             class="form-control"
                             type="text"
@@ -200,17 +249,16 @@
                         </c-col>
                         <c-row>
                           <c-col lg="6" md="6" sm="12">
-                            <label for="partida_ubigeo">Ubigeo Partida</label>
-                            <input
-                              class="form-control"
-                              type="text"
-                              id="partida_ubigeo"
-                              name="partida_ubigeo"
+                            <label for="partida_ubigeo">Ubigeo de partida <span class="text-danger">*</span></label>
+                            <app-ubigeo-picker
+                              inputId="partida_ubigeo"
+                              title="Ubigeo del punto de partida"
                               formControlName="partida_ubigeo"
-                            />
+                              [invalid]="isInvalid('partida_ubigeo')"
+                            ></app-ubigeo-picker>
                           </c-col>
                           <c-col lg="6" md="6" sm="12">
-                            <label for="partida_direccion">Dirección Partida</label>
+                            <label for="partida_direccion">Dirección de partida <span class="text-danger">*</span></label>
                             <input
                               class="form-control"
                               type="text"
@@ -233,17 +281,16 @@
                         </c-col>
                         <c-row>
                           <c-col lg="6" md="6" sm="12">
-                            <label for="destino_ubigeo">Ubigeo Destino</label>
-                            <input
-                              class="form-control"
-                              type="text"
-                              id="destino_ubigeo"
-                              name="destino_ubigeo"
+                            <label for="destino_ubigeo">Ubigeo de destino <span class="text-danger">*</span></label>
+                            <app-ubigeo-picker
+                              inputId="destino_ubigeo"
+                              title="Ubigeo del punto de destino"
                               formControlName="destino_ubigeo"
-                            />
+                              [invalid]="isInvalid('destino_ubigeo')"
+                            ></app-ubigeo-picker>
                           </c-col>
                           <c-col lg="6" md="6" sm="12">
-                            <label for="destino_direccion">Dirección Destino</label>
+                            <label for="destino_direccion">Dirección de destino <span class="text-danger">*</span></label>
                             <input
                               class="form-control"
                               type="text"
@@ -269,7 +316,7 @@
                         </c-col>
                         <c-row>
                           <c-col>
-                            <label for="fecha_inicio_traslado">Fecha Traslado</label>
+                            <label for="fecha_inicio_traslado">Fecha de traslado <span class="text-danger">*</span></label>
                             <input
                               type="date"
                               id="fecha_inicio_traslado"
@@ -279,19 +326,19 @@
                             />
                           </c-col>
                           <c-col>
-                            <label for="tipo_traslado">Tipo Traslado</label>
+                            <label for="tipo_traslado">Tipo de traslado <span class="text-danger">*</span></label>
                             <select
                               id="tipo_traslado"
                               name="tipo_traslado"
                               class="form-select"
                               formControlName="tipo_traslado"
                             >
-                              <option value="PUBLICO">Público</option>
-                              <option value="PRIVADO">Privado</option>
+                              <option value="PRIVADO">Privado (vehículo propio)</option>
+                              <option value="PUBLICO">Público (empresa de transporte)</option>
                             </select>
                           </c-col>
                           <c-col>
-                            <label for="motivo_traslado">Motivo Traslado</label>
+                            <label for="motivo_traslado">Motivo de traslado <span class="text-danger">*</span></label>
                             <select
                               id="motivo_traslado"
                               name="motivo_traslado"
@@ -319,7 +366,7 @@
                         <c-col>
                           <h5>Datos del Transportista / Conductor</h5>
                         </c-col>
-                        @if (form.value.tipo_traslado == 'PUBLICO') {
+                        @if (form.getRawValue().tipo_traslado === 'PUBLICO') {
                           <c-row>
                             <c-col>
                               <label for="empresa_transporte_tipo_doc">Tipo Documento</label>
@@ -333,7 +380,7 @@
                               </select>
                             </c-col>
                             <c-col>
-                              <label for="empresa_transporte_nro_doc">N° Documento</label>
+                              <label for="empresa_transporte_nro_doc">RUC transportista <span class="text-danger">*</span></label>
                               <input
                                 type="text"
                                 id="empresa_transporte_nro_doc"
@@ -343,7 +390,7 @@
                               />
                             </c-col>
                             <c-col>
-                              <label for="empresa_transporte_razon_social">Razón Social</label>
+                              <label for="empresa_transporte_razon_social">Razón social <span class="text-danger">*</span></label>
                               <input
                                 type="text"
                                 id="empresa_transporte_razon_social"
@@ -363,14 +410,13 @@
                                 name="transportista_tipo_doc"
                                 id="transportista_tipo_doc"
                               >
-                                <option [ngValue]="null">Seleccione</option>
-                                @for (tipo of tiposDocumento; track tipo.value) {
-                                  <option [value]="tipo.label">{{ tipo.label }}</option>
-                                }
+                                <option value="DNI">DNI</option>
+                                <option value="CARNET">Carnet de extranjería</option>
+                                <option value="RUC">RUC</option>
                               </select>
                             </c-col>
                             <c-col>
-                              <label for="transportista_nro_doc">N° Documento</label>
+                              <label for="transportista_nro_doc">Doc. conductor <span class="text-danger">*</span></label>
                               <input
                                 type="text"
                                 id="transportista_nro_doc"
@@ -380,7 +426,7 @@
                               />
                             </c-col>
                             <c-col>
-                              <label for="transportista_licencia">Licencia</label>
+                              <label for="transportista_licencia">Licencia <span class="text-danger">*</span></label>
                               <input
                                 type="text"
                                 id="transportista_licencia"
@@ -400,7 +446,7 @@
                               />
                             </c-col>
                             <c-col>
-                              <label for="transportista_placa">Placa del Vehículo</label>
+                              <label for="transportista_placa">Placa <span class="text-danger">*</span></label>
                               <input
                                 type="text"
                                 id="transportista_placa"
@@ -439,6 +485,7 @@
 
                       <!-- Búsqueda y agregar producto -->
                       <c-row class="mb-3">
+                        @if (canEditItems()) {
                         <c-col lg="5" md="12">
                           <label class="form-label">Producto</label>
                           <div class="d-flex gap-2 align-items-center">
@@ -465,13 +512,17 @@
                         </c-col>
 
                         <c-col lg="3" md="6" class="d-flex align-items-end"> </c-col>
-                        <c-col lg="2">
+                        }
+                        <c-col lg="2" class="ms-auto">
                           <label for="total_peso_bruto" class="form-label">Peso Bruto Total:</label>
                           <input
                             class="form-control"
                             type="number"
                             min="0"
                             formControlName="total_peso_bruto"
+                            readonly
+                            [value]="getTotalWeight()"
+                            title="Se calcula con el peso unitario de cada producto"
                           />
                         </c-col>
                       </c-row>
@@ -519,20 +570,23 @@
                                       >
                                         <option [ngValue]="null">Seleccione</option>
                                         @for (um of unidadesMedida; track um.value) {
-                                          <option [value]="um.value">{{ um.label }}</option>
+                                          <option [ngValue]="um.value">{{ um.label }}</option>
                                         }
                                       </select>
                                     </td>
                                     <td>
-                                      <button
-                                        type="button"
-                                        size="sm"
-                                        cButton
-                                        color="danger"
-                                        (click)="onDetailRemoved(i)"
-                                      >
-                                        <svg cIcon name="cilTrash"></svg>
-                                      </button>
+                                      @if (canEditItems()) {
+                                        <button
+                                          type="button"
+                                          size="sm"
+                                          cButton
+                                          color="danger"
+                                          title="Quitar producto"
+                                          (click)="onDetailRemoved(i)"
+                                        >
+                                          <svg cIcon name="cilTrash"></svg>
+                                        </button>
+                                      }
                                     </td>
                                   </tr>
                                 }
@@ -563,18 +617,14 @@
                     color="secondary"
                     (click)="resetForm()"
                   >
-                    Cancelar
+                    {{ guideId() ? 'Cerrar' : 'Cancelar' }}
                   </button>
-                  <button
-                    type="button"
-                    cButton
-                    color="success"
-                    (click)="save()"
-                    [disabled]="detailsArray.length === 0"
-                  >
-                    <svg cIcon name="cilSave" class="me-2"></svg>
-                    Guardar Guía
-                  </button>
+                  @if (!isReadOnly()) {
+                    <button type="button" cButton color="success" (click)="save()">
+                      <svg cIcon name="cilSave" class="me-2"></svg>
+                      {{ guideId() ? 'Guardar cambios' : 'Guardar guía' }}
+                    </button>
+                  }
                 </c-col>
               </c-row>
             }
@@ -665,40 +715,53 @@
                         </thead>
                         <tbody>
                           @if (guides.length > 0) {
-                            @for (guide of guides; track guide.guia_id) {
+                            @for (guide of guides; track guide.id) {
                               <tr>
-                                <td>
+                                <td class="text-nowrap">
                                   <button
                                     size="sm"
                                     class="me-2"
                                     cButton
                                     color="secondary"
-                                    (click)="onPrint(guide.guia_id, guide.numero_completo)"
+                                    title="Imprimir"
+                                    (click)="onPrint(guide.id, guide.numero_completo)"
                                   >
                                     <svg cIcon name="cilPrint"></svg>
                                   </button>
-                                  @if (guide.est) {
+                                  <button
+                                    size="sm"
+                                    class="me-2"
+                                    cButton
+                                    color="primary"
+                                    [title]="guide.estado_guia_remision?.codigo === '01' ? 'Editar' : 'Ver'"
+                                    (click)="onEdit(guide.id)"
+                                  >
+                                    <svg cIcon [name]="guide.estado_guia_remision?.codigo === '01' ? 'cilPencil' : 'cilMagnifyingGlass'"></svg>
+                                  </button>
+                                  @if (guide.est && guide.estado_guia_remision?.codigo === '01') {
                                     <button
-                                      (click)="onDelete(guide.guia_id)"
+                                      (click)="onDelete(guide.id)"
                                       size="sm"
                                       cButton
                                       color="danger"
+                                      title="Anular"
                                     >
                                       <svg cIcon name="cilTrash"></svg>
                                     </button>
                                   }
                                 </td>
                                 <td>{{ guide.numero_completo }}</td>
-                                <td>{{ guide.fecha_emision | date: 'dd/MM/yyyy' }}</td>
+                                <td>{{ guide.fecha_emision | date: 'dd/MM/yyyy' : 'UTC' }}</td>
                                 <td>{{ guide.nombre_cliente }}</td>
                                 <td>{{ guide.tipo_traslado }}</td>
                                 <td>
                                   <span
                                     class="badge"
-                                    [class.bg-success]="guide.est"
-                                    [class.bg-danger]="!guide.est"
+                                    [class.bg-success]="guide.estado_guia_remision?.codigo === '01'"
+                                    [class.bg-info]="guide.estado_guia_remision?.codigo === '02'"
+                                    [class.bg-danger]="guide.estado_guia_remision?.codigo === '03'"
                                   >
-                                    {{ guide.est ? 'Activo' : 'Anulado' }}
+                                    {{ guide.estado_guia_remision?.nombre ?? '-' }}
                                   </span>
                                 </td>
                               </tr>
