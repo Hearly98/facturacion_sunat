@@ -157,7 +157,8 @@ test('Cotización -> Guía -> Venta, con validaciones e impresión', async ({ pa
   await faltanVenta.getByRole('button', { name: 'Entendido' }).click();
   await expect(page.locator('#doc_id')).toBeFocused();
 
-  await page.locator('#doc_id').selectOption({ index: 1 });
+  // El cliente de prueba tiene DNI: le corresponde boleta (una factura exige RUC).
+  await page.locator('#doc_id').selectOption({ label: 'BOLETA DE VENTA ELECTRÓNICA' });
   await page.locator('#suc_id').selectOption({ index: 1 });
   await page.locator('#mp_cod').selectOption({ index: 1 });
   await page.locator('#mon_id').selectOption({ index: 1 });
@@ -177,6 +178,15 @@ test('Cotización -> Guía -> Venta, con validaciones e impresión', async ({ pa
   const { request, headers } = await api(page);
   const guiaFinal = (await (await request.get(`${API}/guias-remision/${guia.data.id}`, { headers })).json()).data;
   expect(guiaFinal.estado_guia_remision.codigo).toBe('02');
+  // La guía guarda su cliente (antes el front mandaba cli_id y quedaba null).
+  expect(guiaFinal.cliente_id).not.toBeNull();
+
+  // La venta va al mismo cliente y por el mismo total que se cotizó (el precio cotizado es sin
+  // IGV y la venta lo espera con IGV: antes se facturaba ~15% menos).
+  const ventaFinal = (await (await request.get(`${API}/ventas/${ventaBody.data.id}`, { headers })).json()).data;
+  const cotizada = (await (await request.get(`${API}/cotizaciones/${cotizacion.id}`, { headers })).json()).data;
+  expect(ventaFinal.cliente_id ?? ventaFinal.idCliente).toBe(guiaFinal.cliente_id);
+  expect(Number(ventaFinal.total)).toBeCloseTo(Number(cotizada.total), 2);
   const cotFinal = (await (await request.get(`${API}/cotizaciones/${cotizacion.id}`, { headers })).json()).data;
   expect(String(cotFinal.estado?.codigo ?? cotFinal.estado_id)).toMatch(/^(02|2)$/);
 
