@@ -1,3 +1,4 @@
+import { VinculoProductoAlmacenService } from 'src/app/almacen/core/services/vinculo-producto-almacen.service';
 import { Component, inject, Inject, OnInit, signal, ViewContainerRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -30,7 +31,7 @@ import { mapToSelectOption } from '@shared/functions';
 import { ConfirmService } from '@shared/confirm-modal/core/services/confirm-modal.service';
 import { PurchaseService } from '../../core/services/purchase.service';
 import { PurchaseCreateDto } from '../../core/purchase-create-dto';
-import { buildPurchaseForm } from '../../helpers/build-purchase-form';
+import { buildPurchaseForm, PURCHASE_FORM_DEFAULTS } from '../../helpers/build-purchase-form';
 import { purchaseStructure, buildFilterForm, filterSort, mapParams } from '../../helpers';
 import { PageParamsModel } from '@shared/models/query/page-params.model';
 import { CurrencyService } from 'src/app/currency/core/services/currency.service';
@@ -145,13 +146,11 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     return this.form.get('detalles') as FormArray<TypedFormGroup<PurchaseDetailForm>>;
   }
 
+  readonly #vinculo = inject(VinculoProductoAlmacenService);
+
   serviceMap: Record<string, any> = {
     providerSearch: (term: string) => this.#supplierService.searchQuick(term),
-    productSearch: (term: string) =>
-      this.#productService.searchQuick({
-        term,
-        almacen_id: this.form.get('almacen_id')?.value,
-      }),
+    productSearch: (term: string) => this.#vinculo.buscarParaIngreso(term, this.form.get('almacen_id')?.value),
   };
 
   getProductSearchFn(): (term: string) => any {
@@ -161,10 +160,8 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
         return { data: [] };
       }
       this.almacenError.set(false);
-      return this.#productService.searchQuick({
-        term,
-        almacen_id: this.form.get('almacen_id')?.value,
-      });
+      // Una compra ingresa mercadería: se ofrecen también los productos aún no vinculados.
+      return this.#vinculo.buscarParaIngreso(term, this.form.get('almacen_id')?.value);
     };
   }
 
@@ -197,11 +194,15 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
     if (!item) return;
 
     if (formControlName === 'prod_id') {
-      this.form.patchValue({
-        prod_id: item.id,
+      this.selectedProduct = null;
+      const almacenId = this.form.get('almacen_id')?.value;
+      const almacenNombre = this.almacenOptions().find((a) => a.value === almacenId)?.label ?? '';
+      this.#vinculo.asegurarVinculo(item, almacenId, almacenNombre).then((ok) => {
+        if (!ok) return;
+        this.form.patchValue({ prod_id: item.id });
+        this.selectedProduct = { ...item, vinculado: true };
+        this.selectedProductStock.set(item.stock);
       });
-      this.selectedProduct = item;
-      this.selectedProductStock.set(item.stock);
       return;
     }
 
@@ -319,7 +320,7 @@ export class PurchaseMainPage extends BaseSearchComponent implements OnInit {
   }
 
   resetForm() {
-    this.form.reset();
+    this.form.reset(PURCHASE_FORM_DEFAULTS);
     this.detailsArray.clear();
     this.selectedProduct = null;
     this.selectedProductStock.set(null);
