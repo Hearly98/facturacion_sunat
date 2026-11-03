@@ -60,6 +60,7 @@ export class QuotationMapper {
             address: dto.cliente.direccion,
             phone: dto.cliente.telefono,
             email: dto.cliente.email,
+            ubigeoCode: dto.cliente.codigo_ubigeo ?? null,
           }
         : null,
       currencyName: dto.moneda?.nombre ?? null,
@@ -79,6 +80,7 @@ export class QuotationMapper {
       productUnit: dto.producto?.unidad?.nombre ?? null,
       productUnitId: dto.producto?.unidad?.id ?? null,
       productWeight: dto.producto?.peso ? Number(dto.producto.peso) : null,
+      productTaxAffectation: dto.producto?.tipo_afectacion_igv ?? null,
       unitPrice: Number(dto.precio_unitario),
       quantity: dto.cantidad,
       discount: Number(dto.descuento),
