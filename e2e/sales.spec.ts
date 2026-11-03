@@ -19,11 +19,14 @@ async function fillVentaBase(page: Page) {
   await page.goto('/ventas');
 
   await page.locator('#emp_id').selectOption({ index: 1 });
-  await page.locator('#doc_id').selectOption({ index: 1 });
+  // El cliente de prueba tiene DNI: le corresponde boleta (una factura exige RUC).
+  await page.locator('#doc_id').selectOption({ label: 'BOLETA DE VENTA ELECTRÓNICA' });
   await page.locator('#suc_id').selectOption({ index: 1 });
-  await page.locator('#almacen_id').selectOption({ index: 1 });
+  // El seeder (ProductoAlmacenSeeder) carga el stock de los productos en el almacén secundario.
+  await page.locator('#almacen_id').selectOption({ label: 'ALMACEN SECUNDARIO' });
   await page.locator('#mon_id').selectOption({ index: 1 });
-  await page.locator('#vendedor_id').fill('1');
+  // Vendedor es un combo de usuarios y viene preseleccionado con el usuario actual.
+  await expect(page.locator('#vendedor_id')).not.toHaveValue(/null/);
 
   await selectViaSearchSelect(page, 'Buscar cliente...', 'Hearly');
 }
@@ -121,12 +124,15 @@ test('Venta vinculada a una Cotización existente la pasa a Facturado', async ({
   // Vincular auto-completa cliente (readonly) -- solo faltan los campos que no vienen del documento.
   await expect(page.locator('span.fw-semibold', { hasText: cotizacionNumero })).toBeVisible();
   await page.locator('#emp_id').selectOption({ index: 1 });
-  await page.locator('#doc_id').selectOption({ index: 1 });
+  // El cliente de prueba tiene DNI: le corresponde boleta (una factura exige RUC).
+  await page.locator('#doc_id').selectOption({ label: 'BOLETA DE VENTA ELECTRÓNICA' });
   await page.locator('#suc_id').selectOption({ index: 1 });
-  await page.locator('#almacen_id').selectOption({ index: 1 });
+  // El seeder (ProductoAlmacenSeeder) carga el stock de los productos en el almacén secundario.
+  await page.locator('#almacen_id').selectOption({ label: 'ALMACEN SECUNDARIO' });
   await page.locator('#mon_id').selectOption({ index: 1 });
   await page.locator('#mp_cod').selectOption({ label: 'CONTADO' });
-  await page.locator('#vendedor_id').fill('1');
+  // Vendedor es un combo de usuarios y viene preseleccionado con el usuario actual.
+  await expect(page.locator('#vendedor_id')).not.toHaveValue(/null/);
 
   await addProducto(page, 'Arroz');
 

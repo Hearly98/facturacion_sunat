@@ -1,130 +1,179 @@
-import { FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { buildShippingGuideForm } from './build-shipping-guide.form';
+import { buildShippingGuideDetail } from './build-shipping-guide-detail';
+import {
+  applyCotizacionLock,
+  applyTransportValidators,
+  shippingGuideFromApi,
+  toShippingGuidePayload,
+  SHIPPING_GUIDE_LABELS,
+} from './shipping-guide-rules';
+import { findMissingFields } from '@shared/functions';
 
-describe('buildShippingGuideForm', () => {
-  let formBuilder: FormBuilder;
+describe('Guía de remisión: formulario y reglas', () => {
+  const fb = new FormBuilder();
+  let form: FormGroup;
+
+  const detalles = () => form.get('detalles') as FormArray;
+
+  const completarValido = () => {
+    form.patchValue({
+      nombre_cliente: 'Hearly Prueba',
+      doc_cliente: '70000001',
+      direccion_cliente: 'Av. Prueba 123',
+      partida_ubigeo: '150101',
+      partida_direccion: 'Av. Principal 123',
+      destino_ubigeo: '150104',
+      destino_direccion: 'Av. Prueba 123',
+      fecha_inicio_traslado: '2026-11-03',
+      motivo_traslado: 'Venta',
+      tipo_traslado: 'PRIVADO',
+      transportista_nro_doc: '44556677',
+      transportista_licencia: 'Q44556677',
+      transportista_placa: 'ABC-123',
+    });
+    detalles().push(fb.group(buildShippingGuideDetail({ prod_id: 1, prod_nom: 'Arroz', cantidad: 2, und_id: 2 })));
+  };
 
   beforeEach(() => {
-    formBuilder = new FormBuilder();
+    form = fb.group(buildShippingGuideForm());
+    applyTransportValidators(form);
   });
 
-  describe('Free guía (isCotizacionAttached = false)', () => {
-    it('should create form with all fields enabled', () => {
-      const controls = buildShippingGuideForm(false);
-      const form = formBuilder.group(controls);
-
-      // Sample of cabecera fields that should be enabled
-      expect(form.get('cli_id')?.enabled).toBe(true);
-      expect(form.get('fecha_emision')?.enabled).toBe(false); // Always disabled
-      expect(form.get('nombre_cliente')?.enabled).toBe(true);
-      expect(form.get('tipo_traslado')?.enabled).toBe(true);
-      expect(form.get('observaciones')?.enabled).toBe(true);
-    });
-
-    it('should allow patching all fields', () => {
-      const controls = buildShippingGuideForm(false);
-      const form = formBuilder.group(controls);
-
-      form.patchValue({
-        cli_id: 10,
-        nombre_cliente: 'Test Customer',
-        tipo_traslado: 'PRIVADO',
-      });
-
-      expect(form.get('cli_id')?.value).toBe(10);
-      expect(form.get('nombre_cliente')?.value).toBe('Test Customer');
-      expect(form.get('tipo_traslado')?.value).toBe('PRIVADO');
-    });
+  it('una guía completa es válida', () => {
+    completarValido();
+    expect(form.valid).toBeTrue();
   });
 
-  describe('Cotización-linked guía (isCotizacionAttached = true)', () => {
-    it('should disable all cabecera fields', () => {
-      const controls = buildShippingGuideForm(true);
-      const form = formBuilder.group(controls);
+  it('exige los datos que pide SUNAT y los nombra en lenguaje del usuario', () => {
+    const missing = findMissingFields(form, SHIPPING_GUIDE_LABELS);
 
-      // Locked fields should be disabled
-      expect(form.get('cli_id')?.disabled).toBe(true);
-      expect(form.get('nombre_cliente')?.disabled).toBe(true);
-      expect(form.get('doc_cliente')?.disabled).toBe(true);
-      expect(form.get('direccion_cliente')?.disabled).toBe(true);
-      expect(form.get('tipo_traslado')?.disabled).toBe(true);
-      expect(form.get('motivo_traslado')?.disabled).toBe(true);
-      expect(form.get('observaciones')?.disabled).toBe(true);
-    });
-
-    it('should prevent editing via getRawValue()', () => {
-      const controls = buildShippingGuideForm(true);
-      const form = formBuilder.group(controls);
-
-      // Set initial values
-      form.patchValue({
-        cli_id: 10,
-        nombre_cliente: 'Original',
-      });
-
-      // Try to patch (will be ignored for disabled fields)
-      form.patchValue({
-        cli_id: 99,
-        nombre_cliente: 'Modified',
-      });
-
-      // getRawValue includes disabled fields, showing what would be sent
-      const rawValue = form.getRawValue();
-      expect(rawValue.cli_id).toBe(99); // Raw value includes patched value
-      expect(rawValue.nombre_cliente).toBe('Modified');
-
-      // But value() excludes disabled fields
-      expect(form.value.cli_id).toBeUndefined();
-      expect(form.value.nombre_cliente).toBeUndefined();
-    });
-
-    it('should disable detalles FormArray fields', () => {
-      const controls = buildShippingGuideForm(true);
-      const form = formBuilder.group(controls);
-
-      // Detalles array should respect the disabled state
-      // (Specific detail field disabling would be handled per row, not in form builder)
-      expect(form.get('detalles')).toBeDefined();
-    });
+    expect(missing).toEqual(jasmine.arrayContaining([
+      'Cliente', 'Ubigeo de partida', 'Dirección de partida', 'Ubigeo de destino',
+      'Dirección de destino', 'Motivo de traslado',
+    ]));
   });
 
-  describe('Shared behavior', () => {
-    it('should have fecha_emision always disabled', () => {
-      const controlsFree = buildShippingGuideForm(false);
-      const formFree = formBuilder.group(controlsFree);
+  it('el ubigeo debe tener 6 dígitos', () => {
+    completarValido();
+    form.patchValue({ partida_ubigeo: '1501' });
 
-      const controlsLocked = buildShippingGuideForm(true);
-      const formLocked = formBuilder.group(controlsLocked);
+    expect(form.get('partida_ubigeo')!.invalid).toBeTrue();
+  });
 
-      // fecha_emision is always disabled in both cases
-      expect(formFree.get('fecha_emision')?.disabled).toBe(true);
-      expect(formLocked.get('fecha_emision')?.disabled).toBe(true);
+  it('transporte público exige la empresa transportista y no el conductor', () => {
+    completarValido();
+    form.patchValue({
+      tipo_traslado: 'PUBLICO',
+      transportista_nro_doc: null, transportista_licencia: null, transportista_placa: null,
+    });
+    applyTransportValidators(form); // la página lo hace al cambiar tipo_traslado (valueChanges)
+
+    expect(findMissingFields(form, SHIPPING_GUIDE_LABELS)).toEqual([
+      'RUC de la empresa de transporte', 'Razón social de la empresa de transporte',
+    ]);
+
+    form.patchValue({ empresa_transporte_nro_doc: '20100070970', empresa_transporte_razon_social: 'Transportes SAC' });
+    expect(form.valid).toBeTrue();
+  });
+
+  it('la línea exige unidad de medida y cantidad mayor a 0', () => {
+    completarValido();
+    detalles().at(0).patchValue({ und_id: null, cantidad: 0 });
+
+    expect(detalles().at(0).invalid).toBeTrue();
+  });
+
+  it('la descripción de la línea toma el nombre del producto si no viene', () => {
+    const linea = fb.group(buildShippingGuideDetail({ prod_id: 1, prod_nom: 'Arroz', cantidad: 1, und_id: 2 }));
+    expect(linea.get('descripcion')!.value).toBe('Arroz');
+  });
+
+  describe('vinculada a cotización', () => {
+    beforeEach(() => {
+      completarValido();
+      applyCotizacionLock(form, true);
     });
 
-    it('should create detalles FormArray', () => {
-      const controls = buildShippingGuideForm(false);
-      const form = formBuilder.group(controls);
-
-      expect(form.get('detalles')).toBeDefined();
-      expect(form.get('detalles')?.value).toEqual([]);
+    it('bloquea el cliente y la cantidad/unidad de cada línea', () => {
+      expect(form.get('nombre_cliente')!.disabled).toBeTrue();
+      expect(form.get('doc_cliente')!.disabled).toBeTrue();
+      expect(form.get('direccion_cliente')!.disabled).toBeTrue();
+      expect(detalles().at(0).get('cantidad')!.disabled).toBeTrue();
+      expect(detalles().at(0).get('und_id')!.disabled).toBeTrue();
     });
 
-    it('should include cot_id field', () => {
-      const controls = buildShippingGuideForm(false);
-      const form = formBuilder.group(controls);
+    it('deja editables los datos logísticos, que la cotización no trae', () => {
+      for (const campo of ['partida_ubigeo', 'destino_direccion', 'tipo_traslado', 'motivo_traslado',
+        'fecha_inicio_traslado', 'transportista_placa', 'observaciones']) {
+        expect(form.get(campo)!.enabled).withContext(campo).toBeTrue();
+      }
+    });
 
-      expect(form.get('cot_id')).toBeDefined();
+    it('lo bloqueado igual viaja al backend con getRawValue', () => {
+      expect(form.getRawValue().nombre_cliente).toBe('Hearly Prueba');
+      expect(form.getRawValue().detalles[0].cantidad).toBe(2);
+    });
+
+    it('al desvincular se vuelve a habilitar todo', () => {
+      applyCotizacionLock(form, false);
+
+      expect(form.get('nombre_cliente')!.enabled).toBeTrue();
+      expect(detalles().at(0).get('cantidad')!.enabled).toBeTrue();
     });
   });
 
-  describe('Default parameter behavior', () => {
-    it('should default to isCotizacionAttached = false', () => {
-      // Call without parameter
-      const controls = buildShippingGuideForm();
-      const form = formBuilder.group(controls);
+  describe('shippingGuideFromApi', () => {
+    // Forma real de GET /guias-remision/{id}: el modelo Eloquent crudo.
+    const api = {
+      id: 7,
+      cotizacion_id: 1,
+      cliente_id: 3,
+      numero_completo: 'T001-00000007',
+      fecha_emision: '2026-11-03T00:00:00.000000Z',
+      fecha_inicio_traslado: '2026-11-04T00:00:00.000000Z',
+      nro_cotizacion: 'COT01-00000001',
+      nombre_cliente: 'Hearly Prueba',
+      partida_ubigeo: '150101',
+      tipo_traslado: 'PRIVADO',
+      estado_guia_remision: { codigo: '02', nombre: 'Facturado' },
+      detalles: [
+        { id: 11, producto_id: 1, unidad_id: 2, prod_nom: 'Arroz', cantidad: 3, peso_unitario: '1.50',
+          peso_total: '4.50', descripcion: null, precio_unitario: '114.00', descuento: '0.00',
+          producto: { codigo_interno: 'ARR-001', nombre: 'Arroz Costeño' } },
+      ],
+    };
 
-      // Should behave like free guía (fields enabled)
-      expect(form.get('cli_id')?.enabled).toBe(true);
+    it('traduce los nombres reales del backend a los del formulario', () => {
+      const { header, details, estado } = shippingGuideFromApi(api);
+
+      expect(header.cot_id).toBe(1);
+      expect(header.cli_id).toBe(3);
+      expect(header.fecha_emision).toBe('2026-11-03');
+      expect(header.fecha_inicio_traslado).toBe('2026-11-04');
+      expect(estado).toEqual({ codigo: '02', nombre: 'Facturado' });
+      expect(details[0]).toEqual(jasmine.objectContaining({
+        prod_id: 1, und_id: 2, cantidad: 3, prod_cod: 'ARR-001', prod_nom: 'Arroz',
+        peso_unitario: 1.5, precio_unitario: 114, descripcion: 'Arroz',
+      }));
+    });
+  });
+
+  describe('toShippingGuidePayload', () => {
+    it('usa los nombres que valida el backend (cliente_id, producto_id, unidad_id)', () => {
+      completarValido();
+      form.patchValue({ cli_id: 3, cot_id: 16 });
+      applyCotizacionLock(form, true); // lo bloqueado también debe viajar
+
+      const payload = toShippingGuidePayload(form.getRawValue(), 1);
+
+      // Antes se enviaba cli_id, que el backend ignora: la guía quedaba sin cliente y la
+      // venta armada desde ella salía a "CLIENTES VARIOS".
+      expect(payload.cliente_id).toBe(3);
+      expect(payload.cot_id).toBe(16);
+      expect(payload.sucursal_id).toBe(1);
+      expect(payload.detalles[0]).toEqual(jasmine.objectContaining({ producto_id: 1, unidad_id: 2, cantidad: 2 }));
+      expect('cli_id' in payload).toBeFalse();
     });
   });
 });

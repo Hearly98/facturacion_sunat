@@ -1,3 +1,4 @@
+import { UbigeoPickerComponent } from '@shared/components/ubigeo-picker/ubigeo-picker.component';
 import { Component, Inject, inject, OnInit, signal, ViewContainerRef } from '@angular/core';
 import {
   ButtonDirective,
@@ -28,6 +29,7 @@ import { ValidationMessagesComponent } from '@shared/components/error-messages/v
 @Component({
   selector: 'app-customer-new-edit-modal',
   imports: [
+    UbigeoPickerComponent,
     CardComponent,
     CardBodyComponent,
     ModalBodyComponent,

@@ -7,6 +7,9 @@ export interface QuotationDetailModel {
   productUnit: string | null;
   productUnitId: number | null;
   productWeight: number | null;
+  /** Catálogo 07 SUNAT: 10 gravado, 20 exonerado, 30 inafecto. */
+  productTaxAffectation?: string | null;
+  /** Precio SIN IGV (así se cotiza). */
   unitPrice: number;
   quantity: number;
   discount: number;
@@ -22,6 +25,7 @@ export interface QuotationCustomerModel {
   address: string | null;
   phone: string | null;
   email: string | null;
+  ubigeoCode?: string | null;
 }
 
 export interface QuotationModel {

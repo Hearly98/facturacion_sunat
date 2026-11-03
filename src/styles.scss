@@ -44,3 +44,10 @@
     color: red;
     display: block;
 }
+
+// Campo obligatorio sin completar, después de intentar guardar (ng-touched).
+// Mismo color que .is-invalid de CoreUI para que el usuario vea qué falta.
+.form-control.ng-invalid.ng-touched:not(:disabled),
+.form-select.ng-invalid.ng-touched:not(:disabled) {
+  border-color: var(--cui-form-invalid-border-color, #e55353);
+}

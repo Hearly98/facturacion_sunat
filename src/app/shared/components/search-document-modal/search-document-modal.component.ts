@@ -71,7 +71,12 @@ export class SearchDocumentModalComponent {
   @Input() set isVisible(value: boolean) {
     this._isVisible.set(value);
     if (value) {
-      this.load();
+      // Los setters de @Input corren en el orden del template y [isVisible] llega antes que
+      // [documentType]: cargar en el acto buscaba el tipo anterior (cotizaciones pintadas como
+      // guías, sin número). Se espera a que terminen de aplicarse todos los inputs.
+      this.allItems.set([]);
+      this.filteredItems.set([]);
+      queueMicrotask(() => this.load());
     }
   }
   get isVisible(): boolean {
@@ -106,7 +111,9 @@ export class SearchDocumentModalComponent {
   private load() {
     this.loading.set(true);
     const params = {
-      filter: this.type() === 'cotizacion' ? { estados: ['01'] } : [],
+      // Solo lo que todavía se puede usar: cotizaciones Pendientes y guías Generadas
+      // (una guía facturada o anulada no se vuelve a facturar).
+      filter: this.type() === 'cotizacion' ? { estados: ['01'] } : { estados: ['01'] },
       page: { page: 1, pageSize: 100 },
       sort: [{ property: 'fecha_emision', direction: 'desc' }],
     };
@@ -148,6 +155,7 @@ export class SearchDocumentModalComponent {
         (this.allItems() as GetShippingGuideModel[]).filter(
           (g) =>
             g.numero_completo?.toLowerCase().includes(term) ||
+            g.nombre_cliente?.toLowerCase().includes(term) ||
             g.cliente?.razonSocial?.toLowerCase().includes(term),
         ),
       );
@@ -171,9 +179,11 @@ export class SearchDocumentModalComponent {
   }
 
   selectGuia(item: GetShippingGuideModel) {
-    if (item.guia_id == null) return;
+    // El backend devuelve el modelo crudo: la clave es `id` (guia_id nunca existió y por eso
+    // elegir una guía no hacía nada).
+    if (item.id == null) return;
 
-    this.#guiaService.getById(item.guia_id).subscribe({
+    this.#guiaService.getById(item.id).subscribe({
       next: (response) => {
         if (response.isValid) {
           this.itemSelected.emit(response.data);

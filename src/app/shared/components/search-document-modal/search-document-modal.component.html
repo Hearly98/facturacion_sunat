@@ -112,7 +112,7 @@
               </div>
             }
           } @else {
-            @for (item of asGuias(); track item.guia_id) {
+            @for (item of asGuias(); track item.id) {
               <div
                 class="document-item border rounded p-3 mb-2 cursor-pointer"
                 (click)="selectGuia(item)"
@@ -121,13 +121,12 @@
                   <div class="flex-grow-1">
                     <div class="d-flex align-items-center gap-2 mb-1">
                       <span class="fw-semibold">{{ item.numero_completo }}</span>
-                      <span
-                        class="badge"
-                        [class.bg-success]="item.est"
-                        [class.bg-danger]="!item.est"
-                      >
-                        {{ item.est ? 'Activo' : 'Anulado' }}
+                      <span class="badge bg-success">
+                        {{ item.estado_guia_remision?.nombre ?? 'Generado' }}
                       </span>
+                      @if (item.nro_cotizacion) {
+                        <span class="small text-muted">de {{ item.nro_cotizacion }}</span>
+                      }
                     </div>
                     <div class="row g-2 small text-muted">
                       <div class="col-6">
@@ -137,7 +136,7 @@
                           class="me-1"
                           style="width: 12px; height: 12px"
                         ></svg>
-                        {{ item.fecha_emision | date: 'dd/MM/yyyy' }}
+                        {{ item.fecha_emision | date: 'dd/MM/yyyy' : 'UTC' }}
                       </div>
                       <div class="col-6">
                         <svg
